@@ -1,5 +1,5 @@
-import Doctor from "../models/Doctor";
-import { uploadToCloudinary, deleteFromCloudinary } from "../utils/cloudinary";
+import Doctor from "../models/Doctor.js";
+import { uploadToCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
 
 // HELPER FUNCTIONS
