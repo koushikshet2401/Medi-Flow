@@ -294,13 +294,11 @@ export const createAppointment = async (req, res) => {
 
     const frontBase = buildFrontendBase(req);
     if (!frontBase) {
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message:
-            "Frontend URL could not be determined. Set FRONTEND_URL or send Origin header.",
-        });
+      return res.status(500).json({
+        success: false,
+        message:
+          "Frontend URL could not be determined. Set FRONTEND_URL or send Origin header.",
+      });
     }
 
     const successUrl = `${frontBase}/appointment/success?session_id={CHECKOUT_SESSION_ID}`;
@@ -339,12 +337,10 @@ export const createAppointment = async (req, res) => {
       console.error("Stripe create session error:", stripeErr);
       const message =
         stripeErr?.raw?.message || stripeErr?.message || "Stripe error";
-      return res
-        .status(502)
-        .json({
-          success: false,
-          message: `Payment provider error: ${message}`,
-        });
+      return res.status(502).json({
+        success: false,
+        message: `Payment provider error: ${message}`,
+      });
     }
 
     try {
@@ -357,24 +353,166 @@ export const createAppointment = async (req, res) => {
         },
         status: "Pending",
       });
-      return res
-        .status(201)
-        .json({
-          success: true,
-          appointment: created,
-          checkoutUrl: session.url || null,
-        });
+      return res.status(201).json({
+        success: true,
+        appointment: created,
+        checkoutUrl: session.url || null,
+      });
     } catch (dbErr) {
       console.error("DB error saving appointment after stripe session:", dbErr);
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Failed to create appointment record",
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Failed to create appointment record",
+      });
     }
   } catch (err) {
     console.error("createAppointment unexpected:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
+};
+
+// to confirm the online payment and make it paid
+export const confirmPayment = async (req, res) => {
+  try {
+    const { session_id } = req.query;
+    if (!session_id)
+      return res.status(400).json({
+        success: false,
+        message: "session id is required",
+      });
+    if (!stripe)
+      return res.status(500).json({
+        success: false,
+        message: "stripe is not setup",
+      });
+    let session;
+    try {
+      session = await stripe.checkout.sessions.retrieve(session_id);
+    } catch (err) {
+      console.error("Stripe retrieve session error:", err);
+      return res.status(400).json({
+        success: false,
+        message: "Stripe session not found",
+      });
+    }
+    if (!session)
+      return res.status(404).json({
+        success: false,
+        message: "Invalid Session",
+      });
+    if (session.payment_status !== "paid") {
+      return res.status(400).json({
+        success: false,
+        message: "Payment not completed",
+      });
+    }
+    // confirmPayment
+    // Try match by sessionId first
+    let appt = await Appointment.findOneAndUpdate(
+      { sessionId: session_id },
+      {
+        "payment.status": "Paid",
+        "payment.providerId":
+          session.payment_intent || session.payment_intent_id || null,
+        status: "Confirmed",
+        paidAt: new Date(),
+      },
+      { new: true },
+    );
+
+    // fallback: try match via metadata (doctorId + mobile + patientName)
+    if (!appt) {
+      const meta = session.metadata || {};
+      if (meta.doctorId && meta.mobile && meta.patientName) {
+        appt = await Appointment.findOneAndUpdate(
+          {
+            doctorId: meta.doctorId,
+            mobile: meta.mobile,
+            patientName: meta.patientName,
+            fees: Math.round((session.amount_total || 0) / 100) || undefined,
+          },
+          {
+            "payment.status": "Paid",
+            "payment.providerId": session.payment_intent || null,
+            status: "Confirmed",
+            paidAt: new Date(),
+            sessionId: session_id,
+          },
+          { new: true },
+        );
+      }
+    }
+
+    // last attempt: find appointment created in last 15 minutes with matching amount
+    if (!appt) {
+      const amount = Math.round((session.amount_total || 0) / 100);
+      const fifteenAgo = new Date(Date.now() - 1000 * 60 * 15);
+      appt = await Appointment.findOneAndUpdate(
+        { fees: amount, createdAt: { $gte: fifteenAgo } },
+        {
+          "payment.status": "Paid",
+          "payment.providerId": session.payment_intent || null,
+          status: "Confirmed",
+          paidAt: new Date(),
+          sessionId: session_id,
+        },
+        { new: true },
+      );
+    }
+
+    if (!appt) {
+      return res.status(404).json({
+        success: false,
+        message: "Appointment not found for this payment session",
+      });
+    }
+    return res.json({ success: true, appointment: appt });
+  } catch (err) {
+    console.error("confirm payment error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// to update an appointment
+export const updateAppointment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const body = req.body || {};
+    const appt = await Appointment.findById(id);
+    if (!appt)
+      return res.status(404).json({
+        success: false,
+        message: "Appointment not found",
+      });
+    const terminal = appt.status === "Completed" || appt.status === "Canceled";
+    if (terminal && body.status && body.status !== appt.status) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Cannot change status of a completed/canceled appointment",
+        });
+    }
+
+    const update = {};
+    if (body.status) update.status = body.status;
+    if (body.notes !== undefined) update.notes = body.notes;
+
+    if (body.date && body.time) {
+      if (appt.status === "Completed" || appt.status === "Canceled") {
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "Cannot reschedule completed/canceled appointment",
+          });
+      }
+      update.date = body.date;
+      update.time = body.time;
+      update.status = "Rescheduled";
+      update.rescheduledTo = { date: body.date, time: body.time };
+    }
+    const updated = await Appointment.findByIdAndUpdate(id,update,{})
+
+  } catch (error) {}
 };
