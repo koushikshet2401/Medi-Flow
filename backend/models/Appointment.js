@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
 
-const appointmentSchema = new mongoose.Schema({
-    owner:{type:String,required:true,index:true},
-    createdBy:{type:String,default:null,index:true},
+const appointmentSchema = new mongoose.Schema(
+  {
+    owner: { type: String, required: true, index: true },
+    createdBy: { type: String, default: null, index: true },
 
     // patient info
-        patientName: { type: String, required: true, trim: true },
+    patientName: { type: String, required: true, trim: true },
     mobile: { type: String, required: true, trim: true },
     age: { type: Number, default: null },
     gender: { type: String, default: "" },
-
 
     // doctor info
     doctorId: {
@@ -25,7 +25,6 @@ const appointmentSchema = new mongoose.Schema({
       url: { type: String, default: "" },
       publicId: { type: String, default: "" },
     },
-
 
     // appointment info
     date: { type: String, required: true },
@@ -45,7 +44,6 @@ const appointmentSchema = new mongoose.Schema({
       time: { type: String },
     },
 
-
     // payment info
     payment: {
       method: {
@@ -63,10 +61,14 @@ const appointmentSchema = new mongoose.Schema({
       meta: { type: mongoose.Schema.Types.Mixed, default: {} },
     },
     sessionId: { type: String, default: null, index: true },
-    paidAt: { type: Date, default: null }, 
-},{
-    timestamps:true
-})
+    paidAt: { type: Date, default: null },
+  },
+  {
+    timestamps: true,
+  },
+);
 
-const Appointment  = mongoose.model.Appointment || mongoose.model("Appointment",appointmentSchema);
+const Appointment =
+  mongoose.model.Appointment ||
+  mongoose.model("Appointment", appointmentSchema);
 export default Appointment;
