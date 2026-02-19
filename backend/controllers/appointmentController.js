@@ -512,7 +512,9 @@ export const updateAppointment = async (req, res) => {
       update.status = "Rescheduled";
       update.rescheduledTo = { date: body.date, time: body.time };
     }
+
     const updated = await Appointment.findByIdAndUpdate(id,update,{})
+    
 
   } catch (error) {}
 };
