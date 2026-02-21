@@ -1,7 +1,8 @@
-import React, {useRef, useState } from "react";
-import { navbarStyles as ns } from "../assets/dummyStyles"
+import React, { useRef, useState } from "react";
+import { navbarStyles as ns } from "../assets/dummyStyles.js"
 import logoImg from '../assets/logo.png'
-import { Link, useLocation , useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Home, UserPlus, Users, Calendar, Grid, PlusSquare, List } from "lucide-react";
 
 
 const Navbar = () => {
