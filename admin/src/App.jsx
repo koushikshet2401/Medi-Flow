@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import Hero from "./pages/Hero";
 import { useUser } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
+import Home from "./pages/Home";
 
 function RequireAuth({ children }) {
   const { isLoaded, isSignedIn } = useUser();
@@ -31,6 +32,10 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Hero />} />
+
+      <Route path="/h" element={<RequireAuth>
+        <Home/>
+      </RequireAuth>}/>
     </Routes>
   );
 }
