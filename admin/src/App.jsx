@@ -3,6 +3,7 @@ import Hero from "./pages/Hero";
 import { useUser } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
 import Home from "./pages/Home";
+import Add from "./pages/Add";  
 
 function RequireAuth({ children }) {
   const { isLoaded, isSignedIn } = useUser();
@@ -34,8 +35,13 @@ export default function App() {
       <Route path="/" element={<Hero />} />
 
       <Route path="/h" element={<RequireAuth>
-        <Home/>
-      </RequireAuth>}/>
+        <Home />
+      </RequireAuth>} />
+      <Route 
+      path="/add" 
+      element={<RequireAuth>
+        <Add />
+      </RequireAuth>} />
     </Routes>
   );
 }

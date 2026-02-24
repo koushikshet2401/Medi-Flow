@@ -38,7 +38,7 @@ const Navbar = () => {
     const ind = indicatorRef.current;
     if (!container || !ind) return;
 
-    const active = container.querySelector(".nav-item.active");
+    const active = container.querySelector(".nav-items.active");
     if (!active) {
       ind.style.opacity = "0";
       return;
@@ -167,7 +167,7 @@ const Navbar = () => {
     <header className={ns.header}>
       <nav className={ns.navContainer}>
         <div className={ns.flexContainer}>
-            
+
           <div className={ns.logoContainer}>
             <img src={logoImg} alt="logo" className={ns.logoImage} />
 
@@ -366,8 +366,7 @@ function CenterNavItem({ to, icon, label }) {
       to={to}
       end
       className={({ isActive }) =>
-        `nav-items ${isActive ? "active" : ""} ${ns.centerNavItemBase} ${
-          isActive ? ns.centerNavItemActive : ns.centerNavItemInactive
+        `nav-items ${isActive ? "active" : ""} ${ns.centerNavItemBase} ${isActive ? ns.centerNavItemActive : ns.centerNavItemInactive
         }`
       }
     >
@@ -383,8 +382,7 @@ function MobileItem({ to, icon, label, onClick }) {
       to={to}
       onClick={onClick}
       className={({ isActive }) =>
-        `${ns.mobileItemBase} ${
-          isActive ? ns.mobileItemActive : ns.mobileItemInactive
+        `${ns.mobileItemBase} ${isActive ? ns.mobileItemActive : ns.mobileItemInactive
         }`
       }
     >
