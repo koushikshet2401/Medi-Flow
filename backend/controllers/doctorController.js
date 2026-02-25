@@ -365,7 +365,7 @@ export async function deleteDoctor(req, res) {
         console.warn("deleteFromCloudinary warning:", e?.message || e);
       }
     }
-    await Doctor.deleteOne(id);
+    await Doctor.deleteOne();
     return res.json({ success: true, message: "Doctor removed " });
   } catch (err) {
     console.error("deleteDoctor error:", err);
