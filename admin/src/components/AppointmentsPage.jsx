@@ -397,7 +397,14 @@ const AppointmentsPage = () => {
             </main>
           )
         }
-        
+        {sortedFiltered.length > 8 && (
+          <div className="flex justify-center mt-4">
+            <button onClick={()=> setShowAll((s)=>!s)}
+              className={pageStyles.showMoreButton}>
+                {showAll ? "Show Less" : `Show more (${sortedFiltered.length - 8})`}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
