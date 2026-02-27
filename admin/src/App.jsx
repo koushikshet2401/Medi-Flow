@@ -6,6 +6,8 @@ import Home from "./pages/Home";
 import Add from "./pages/Add";
 import List from "./pages/List";
 import Appointments from "./pages/Appointments";
+import SerDashboard from "./pages/SerDashboard";
+import ServiceDashboard from "./components/ServiceDashboard";
 
 function RequireAuth({ children }) {
   const { isLoaded, isSignedIn } = useUser();
@@ -69,6 +71,16 @@ export default function App() {
           </RequireAuth>
         }
       />
+
+
+<Route
+  path="/service-dashboard"
+  element={
+    <RequireAuth>
+      <SerDashboard/>
+    </RequireAuth>
+  }
+/>
     </Routes>
   );
 }
