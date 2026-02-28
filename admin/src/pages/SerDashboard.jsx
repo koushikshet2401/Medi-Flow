@@ -6,9 +6,9 @@ import Navbar from '../components/Navbar'
 function SerDashboard() {
   return (
     <div>
-      
- <Navbar/>
-      <ServiceDashboard/>
+
+      <Navbar />
+      <ServiceDashboard />
     </div>
   )
 }

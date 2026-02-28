@@ -8,6 +8,7 @@ import List from "./pages/List";
 import Appointments from "./pages/Appointments";
 import SerDashboard from "./pages/SerDashboard";
 import ServiceDashboard from "./components/ServiceDashboard";
+import AddSer from "./pages/AddSer";
 
 function RequireAuth({ children }) {
   const { isLoaded, isSignedIn } = useUser();
@@ -78,6 +79,14 @@ export default function App() {
   element={
     <RequireAuth>
       <SerDashboard/>
+    </RequireAuth>
+  }
+/>
+<Route
+  path="/add-service"
+  element={
+    <RequireAuth>
+      <AddSer/>
     </RequireAuth>
   }
 />
