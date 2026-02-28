@@ -1,8 +1,8 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { addServiceStyles } from '../assets/dummyStyles'
-import { AlertTriangle, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, Plus, XCircle,Image } from 'lucide-react';
 
-function Addservice({ serviceId }) {
+function AddService({ serviceId }) {
     const API_BASE = "http://localhost:4000";
     const fileRef = useRef(null);
     const [imagePreview, setImagePreview] = useState(null);
@@ -363,9 +363,74 @@ function Addservice({ serviceId }) {
                         </div>
                     )}
             </div>
+            <form onSubmit={handleSubmit} className={addServiceStyles.container.form}>
+                <div className=" flex flex-col sm:flex-row items-start sm:items-center
+                    justify-between mb-6 sm:mb-8 gap-4">
+                    <div>
+                        <h1 className={addServiceStyles.header.title}>
+                            {serviceId ? "Edit Service" : "Add Service"}
+                        </h1>
+                        <p className={addServiceStyles.header.subtitle}>
+                            Create a beautiful service card with unique time slots
+                        </p>
+                    </div>
+                    <div className={addServiceStyles.headerActions}>
+                        <button type="button" onClick={resetForm} className={addServiceStyles.buttons.reset}>
+                            Reset
+                        </button>
+                        <button type="submit" disabled={submitting} className={addServiceStyles.buttons.submit}>
+                            {submitting ? (
+                                <>
+                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin">
+                                        Saving...
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <CheckCircle className="w-4 h-4" />
+                                    {serviceId ? "Update Service" : "Save Service"}
+                                </>
+                            )}
 
+                        </button>
+                    </div>
+                </div>
+                {/* left side */}
+                <div className={addServiceStyles.grids.main}>
+                    <div className=" lg:col-span-1 md:col-span-1 col-span-1 flex flex-col items-center">
+                        <div className={addServiceStyles.imageUpload.container(errors.image)}>
+                            <div className={addServiceStyles.imageUpload.preview}>
+                                {imagePreview ? (
+                                    <img src={imagePreview} alt='preview' className='w-full h-full object-cover' />
+                                ) : (
+                                    <div className={addServiceStyles.imageUpload.placeholder} >
+                                        <Image className="w-10 h-10" />
+                                        <div className="mt-2 text-sm">
+                                            Service image (required)
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            <div className=" w-full flex gap-2 items-center">
+                                <input type="file" accept="image/*"
+                                    ref={fileRef} onChange= {handleImageChange}
+                                    className='hidden'
+                                    />
+                                    <button type='button' onClick={() => fileRef.current?.click()}
+                                        className={addServiceStyles.buttons.uploadImage}
+                                        >
+                                            <Plus className="w-4 h-4" />{" "}
+                                            {imagePreview ? "Replace Image" : "Upload Image"}
+
+                                    </button>
+                                    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
     );
 };
 
-export default Addservice;
+export default AddService;
