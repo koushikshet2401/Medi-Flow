@@ -9,6 +9,8 @@ import Appointments from "./pages/Appointments";
 import SerDashboard from "./pages/SerDashboard";
 import ServiceDashboard from "./components/ServiceDashboard";
 import AddSer from "./pages/AddSer";
+import ListService from "./pages/ListService";
+import ServiceAppointments from "./pages/ServiceAppointments";
 
 function RequireAuth({ children }) {
   const { isLoaded, isSignedIn } = useUser();
@@ -90,6 +92,26 @@ export default function App() {
     </RequireAuth>
   }
 />
+
+<Route
+  path="/list-service"
+  element={
+    <RequireAuth>
+      <ListService/>
+    </RequireAuth>
+  }
+/>
+
+
+<Route
+  path="/service-appointments"
+  element={
+    <RequireAuth>
+      <ServiceAppointments/>
+    </RequireAuth>
+  }
+/>
+
     </Routes>
   );
 }
