@@ -3,7 +3,7 @@ import { bannerStyles } from '../assets/dummyStyles';
 import { Calendar, Clock, Phone, Ribbon, ShieldUser, Star, Stethoscope, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import banner from '../assets/BannerImg.png';
-export const Banner = () => {
+function Banner() {
     const navigate = useNavigate();
   return (
     <div className={bannerStyles.bannerContainer}>
@@ -109,3 +109,4 @@ export const Banner = () => {
     </div>
   )
 }
+export default Banner;

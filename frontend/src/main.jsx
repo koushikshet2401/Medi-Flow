@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from "react-router-dom";   // ✅ ADD THIS
+import { BrowserRouter } from "react-router-dom";   //  ADDED THIS
 import './index.css'
 import App from './App.jsx'
 import { ClerkProvider } from '@clerk/clerk-react'
