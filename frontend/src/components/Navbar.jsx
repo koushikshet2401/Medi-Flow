@@ -100,7 +100,8 @@ function Navbar() {
   ];
 
   return (
-    <div className={navbarStyles.navbarBorder}>
+    <div className={navbarStyles.navbarWrapper}>
+      <div className={navbarStyles.navbarBorder} />
       <nav
         ref={navRef}
         className={`${navbarStyles.navbarContainer} ${

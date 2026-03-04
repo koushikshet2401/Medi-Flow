@@ -167,7 +167,7 @@ export const commonStyles = {
 
 export const certificationStyles = {
   // Container styles
-  container: "relative py-6 bg-linear-to-brfrom-emerald-50 via-green-50 to-teal-50 overflow-hidden",
+  container: "relative py-12 bg-linear-to-brfrom-emerald-50 via-green-50 to-teal-50 overflow-hidden",
   
   // Background styles
   backgroundGrid: "absolute inset-0",
@@ -372,7 +372,7 @@ export const doctorsPageStyles = {
 // Footer styles
 export const footerStyles = {
   // Main container
-  footerContainer: "relative font-serif bg-linear-to-br from-emerald-50 via-green-50 to-teal-50 border-t border-emerald-200 overflow-hidden",
+  footerContainer: "relative font-serif bg-linear-to-br from-emerald-50 via-green-50 to-teal-50 border-t border-emerald-200 overflow-hidden mt-16 pt-8",
   
   // Floating icons
   floatingIcon1: "absolute top-5 right-5 animate-float hidden md:block",
@@ -598,7 +598,8 @@ export const toastStyles = {
 // Navbar styles
 export const navbarStyles = {
   // Main container
-  navbarContainer: "sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-emerald-100 transition-transform duration-500",
+  navbarWrapper: "sticky top-0 z-50",
+  navbarContainer: "bg-white/95 backdrop-blur-md border-b border-emerald-100 transition-transform duration-500",
   navbarHidden: "-translate-y-full",
   navbarVisible: "translate-y-0",
   
@@ -815,7 +816,7 @@ export const serviceCardStyles = {
 // Testimonial styles
 export const testimonialStyles = {
   // Main container
-  container: "min-h-[70vh] bg-linear-to-br from-slate-50 to-blue-50 py-10 px-4 relative overflow-hidden",
+  container: "min-h-[70vh] bg-linear-to-br from-slate-50 to-blue-50 py-10 px-4 relative overflow-hidden mb-16",
   
   // Header
   headerContainer: "max-w-6xl font-serif mx-auto text-center mb-8 sm:mb-12",
