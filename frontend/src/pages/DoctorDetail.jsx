@@ -309,7 +309,7 @@ export default function DoctorDetail() {
       }
 
       // If checkoutUrl is returned -> redirect to Stripe Checkout
-      if (body.checkoutUrl) {
+      if (body?.checkoutUrl) {
         // redirect user to Stripe Checkout
         window.location.href = body.checkoutUrl;
         return;

@@ -137,7 +137,7 @@ const StatusBadge = ({ itemStatus }) => {
     </span>
   );
 };
-
+ 
 const AppointmentPage = () => {
 
   const { isLoaded, isSignedIn, getToken } = useAuth();
