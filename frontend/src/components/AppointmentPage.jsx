@@ -28,7 +28,6 @@ function parseDateTime(dateStr, timeStr) {
       Mar: 2,
       Apr: 3,
       May: 4,
-      Jun: 5,
       Jul: 6,
       Aug: 7,
       Sep: 8,
@@ -531,12 +530,12 @@ const AppointmentPage = () => {
         <h2 className={appointmentPageStyles.serviceTitle}>
           Your Booked Services
         </h2>
-        {loadingDoctors && (
+        {loadingServices && (
           <div className={appointmentPageStyles.serviceLoadingText}>
             Loading Service Bookings...
           </div>
         )}
-        {!loadingDoctors && serviceData.length === 0 && (
+        {!loadingServices && serviceData.length === 0 && (
           <div className={appointmentPageStyles.serviceEmptyStateText}>
             No Service bookings found
           </div>

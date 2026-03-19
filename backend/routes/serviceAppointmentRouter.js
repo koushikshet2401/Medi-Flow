@@ -11,9 +11,9 @@ serviceAppointmentRouter.get("/",getServiceAppointment)
 serviceAppointmentRouter.get("/confirm", confirmServicePayment)
 serviceAppointmentRouter.get("/stats/summary",getServiceAppointmentStats);
 
-serviceAppointmentRouter.post("/", clerkMiddleware(), requireAuth(),createServiceAppointment);
+serviceAppointmentRouter.post("/", createServiceAppointment);
 
-serviceAppointmentRouter.get("/me",clerkMiddleware(), requireAuth(), getServiceAppointmentByPatient );
+serviceAppointmentRouter.get("/me",  getServiceAppointmentByPatient );
 
 serviceAppointmentRouter.get("/:id", getServiceAppointmentById);
 serviceAppointmentRouter.put("/:id",updateServiceAppointment)

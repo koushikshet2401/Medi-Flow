@@ -1,8 +1,9 @@
 import axios from "axios";
-import React from "react";
-import { replace, useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react"; // ✅ useEffect was missing
+import { useLocation, useNavigate } from "react-router-dom";
 
 const API_BASE = "http://localhost:4000";
+
 function VerifyPaymentPage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ function VerifyPaymentPage() {
   useEffect(() => {
     let cancelled = false;
 
-    const varifyPayment = async () => {
+    const verifyPayment = async () => {
       const params = new URLSearchParams(location.search || "");
       const sessionId = params.get("session_id");
 
@@ -19,6 +20,7 @@ function VerifyPaymentPage() {
           navigate("/appointments?payment_status=Cancelled", { replace: true });
         return;
       }
+
       if (!sessionId) {
         if (!cancelled)
           navigate("/appointments?payment_status=Failed", { replace: true });
@@ -32,24 +34,34 @@ function VerifyPaymentPage() {
         });
 
         if (cancelled) return;
+
         if (res?.data?.success) {
-          navigate("/appointment?payment_status=Paid", { replace: true });
+          // ✅ Fixed: was "/appointment" (no s) → appointment never showed up
+          navigate("/appointments?payment_status=Paid", { replace: true });
         } else {
-          navigate("/appointment?payment_status=Failed", { replace: true });
+          navigate("/appointments?payment_status=Failed", { replace: true });
         }
       } catch (error) {
         console.error("Payment verification failed:", error);
         if (!cancelled)
-          navigate("/appointment?payment_status=Failed", { replace: true });
+          navigate("/appointments?payment_status=Failed", { replace: true });
       }
     };
-    varifyPayment();
+
+    verifyPayment();
     return () => {
       cancelled = true;
     };
   }, [location, navigate]);
 
-  return null;
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-green-50">
+      <div className="text-center">
+        <div className="text-4xl mb-4">⏳</div>
+        <p className="text-gray-600 text-lg">Verifying your payment...</p>
+      </div>
+    </div>
+  );
 }
 
 export default VerifyPaymentPage;
