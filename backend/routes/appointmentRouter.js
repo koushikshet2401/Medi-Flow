@@ -6,7 +6,7 @@ import {
   confirmPayment,
   createAppointment,
   getAppointementsByDoctor,
-  getAppointmentByPatient,   // ✅ was missing from import
+  getAppointmentByPatient,   //  was missing from import
   getAppointments,
   getRegisteredUserCount,
   getStats,
