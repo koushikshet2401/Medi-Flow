@@ -33,7 +33,7 @@ function Footer() {
     { name: "Blood Sugar Test", href: "/services" },
     { name: "Full Blood Count", href: "/services" },
     { name: "X-Ray Scan", href: "/services" },
-    { name: "Blood Sugar Test", href: "/services" },
+    { name: "ECG Test", href: "/services" },
   ];
 
   const socialLinks = [
@@ -163,7 +163,7 @@ function Footer() {
             <h3 className={footerStyles.sectionTitle}>Our Services</h3>
             <ul className={footerStyles.linksList}>
               {services.map((service, index) => (
-                <li key={service.name}>
+                <li key={index}>
                   <a href={service.href} className={footerStyles.serviceLink}>
                     <div className={footerStyles.serviceIcon}></div>
                     <span>{service.name}</span>
@@ -235,8 +235,8 @@ function Footer() {
           </div>
 
 
-{/*Desiner Style Now Its blank timestamp 7.43*/ }
-          
+          {/*Desiner Style Now Its blank timestamp 7.43*/}
+
         </div>
       </div>
 

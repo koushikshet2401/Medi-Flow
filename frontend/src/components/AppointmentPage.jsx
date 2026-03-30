@@ -162,20 +162,20 @@ const AppointmentPage = () => {
     let token = null;
     try {
       token = await getToken();
-      console.log(
-        "Clerk token (frontend):",
-        token ? `${token.slice(0, 20)}...` : null,
-      );
+      // console.log(
+      //   "Clerk token (frontend):",
+      //   token ? `${token.slice(0, 20)}...` : null,
+      // );
     } catch (err) {
       console.error("Failed to get Clerk token (frontend):", err);
     }
 
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    console.log("Outgoing headers for /api/appointments/me:", headers);
+    // console.log("Outgoing headers for /api/appointments/me:", headers);
 
     try {
       const resp = await API.get("/api/appointments/me", { headers });
-      console.log("Response from /api/appointments/me:", resp?.data);
+      // console.log("Response from /api/appointments/me:", resp?.data);
 
       const fetched =
         resp?.data?.appointments ?? resp?.data?.data ?? resp?.data ?? [];
@@ -199,12 +199,12 @@ const AppointmentPage = () => {
 
       if (user?.id) {
         try {
-          console.log("Attempting debug request with ?createdBy=", user.id);
+          // console.log("Attempting debug request with ?createdBy=", user.id);
           const debugResp = await API.get(
             `/api/appointments/me?createdBy=${user.id}`,
             { headers },
           );
-          console.log("Debug fallback response:", debugResp?.data);
+          // console.log("Debug fallback response:", debugResp?.data);
 
           const fetched =
             debugResp?.data?.appointments ??
@@ -258,16 +258,16 @@ const AppointmentPage = () => {
       console.error("Failed to get Clerk token (frontend): err", err);
     }
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    console.log("Outgoing headers for /api/service-appointments/me:", headers);
+    // console.log("Outgoing headers for /api/service-appointments/me:", headers);
 
     try {
       const resp = await API.get("/api/service-appointments/me", { headers });
-      console.log("Response from /api/service-appointments/me:", resp?.data);
+      // console.log("Response from /api/service-appointments/me:", resp?.data);
 
       const fetched =
         resp?.data?.appointments ?? resp?.data?.data ?? resp?.data ?? [];
       const arr = Array.isArray(fetched) ? fetched : [];
-      console.log(arr);
+      // console.log(arr);
 
       setServiceAppts(arr);
       setAppointmentsRaw((p) => ({ ...p, services: arr }));
@@ -279,12 +279,12 @@ const AppointmentPage = () => {
 
       if (user?.id) {
         try {
-          console.log("Attempting debug request with ?createdBy=", user.id);
+          // console.log("Attempting debug request with ?createdBy=", user.id);
           const debugResp = await API.get(
             `/api/service-appointments/me?createdBy=${user.id}`,
             { headers },
           );
-          console.log("Debug fallback response (services):", debugResp?.data);
+          // console.log("Debug fallback response (services):", debugResp?.data);
 
           const fetched =
             debugResp?.data?.appointments ??
