@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { pageStyles, statusClasses, keyframesStyles } from '../assets/dummyStyles'
-import { Calendar, Search,BadgeIndianRupee } from 'lucide-react';
+import { Calendar, Search, IndianRupee } from 'lucide-react';
 
 const API_BASE = "http://localhost:4000";
 
@@ -347,7 +347,7 @@ const AppointmentsPage = () => {
                         Fees
                       </div>
                       <div className={pageStyles.feeAmount}>
-                        <BadgeIndianRupee size={16} />
+                        <IndianRupee size={16} />
                         <span>{a.fee}</span>
                       </div>
                     </div>
