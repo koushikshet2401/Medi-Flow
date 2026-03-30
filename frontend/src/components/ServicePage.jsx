@@ -114,7 +114,7 @@ function ServicePage({ previewCount = 9999 } = {}) {
     try {
       const res = await fetch(`${API_BASE}/api/services`);
       const json = await res.json().catch(() => null);
-      console.log("[ServicePage] API response:", json);
+      // console.log("[ServicePage] API response:", json);
 
       if (!res.ok) {
         const msg =

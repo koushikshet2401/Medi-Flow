@@ -6,9 +6,9 @@ import ServicePage from '../components/ServicePage'
 function Service() {
   return (
     <div>
-      <Navbar/>
-<ServicePage/>
-      <Footer/>
+      <Navbar />
+      <ServicePage />
+      <Footer />
     </div>
   )
 }
