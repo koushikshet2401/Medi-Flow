@@ -1,77 +1,55 @@
 // assets/dummyStyles.js
 
 export const appointmentPageStyles = {
-  // Main container styles
-  pageContainer: "min-h-screen font-serif bg-linear-to-br from-green-50 to-emerald-100 py-10 px-4",
+  pageContainer: "min-h-screen font-serif bg-[#f0f6fd] py-10 px-4",
   maxWidthContainer: "max-w-6xl mx-auto",
-  
-  // Title styles
-  doctorTitle: "text-3xl font-bold text-emerald-700 text-center mb-6",
-  serviceTitle: "text-3xl font-bold text-blue-700 text-center mb-6",
-  
-  // Loading and empty states
-  loadingText: "text-center text-emerald-600 py-4",
-  serviceLoadingText: "text-center text-blue-600 py-4",
-  emptyStateText: "text-center text-emerald-600 py-4",
-  serviceEmptyStateText: "text-center text-blue-600 py-4",
-  
-  // Grid layouts
-  doctorGrid: "grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12",
-  serviceGrid: "grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 gap-10",
+  doctorTitle: "text-2xl font-semibold text-[#042C53] text-center mb-6 tracking-tight",
+  serviceTitle: "text-2xl font-semibold text-[#042C53] text-center mb-6 tracking-tight",
+  loadingText: "text-center text-[#185FA5] py-4 text-sm",
+  serviceLoadingText: "text-center text-[#185FA5] py-4 text-sm",
+  emptyStateText: "text-center text-[#185FA5] py-4 text-sm",
+  serviceEmptyStateText: "text-center text-[#185FA5] py-4 text-sm",
+  doctorGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12",
+  serviceGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6",
 };
 
 export const cardStyles = {
-  // Doctor appointment card
-  doctorCard: "bg-white border border-emerald-200 rounded-2xl p-6 shadow-md hover:shadow-emerald-400 transform hover:-translate-y-2 transition-all duration-300 flex flex-col items-center",
-  serviceCard: "bg-white border border-blue-200 rounded-2xl p-6 shadow-md",
-  
-  // Image containers
-  doctorImageContainer: "w-28 h-28 rounded-full border-4 border-emerald-300 shadow-md bg-emerald-50 flex items-center justify-center overflow-hidden",
-  serviceImageContainer: "w-28 h-28 rounded-full border-4 border-blue-300 mx-auto bg-blue-50 flex items-center justify-center overflow-hidden",
-  
-  // Images
+  doctorCard: "bg-[#E6F1FB] border border-[#85B7EB] rounded-2xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col items-center gap-2",
+  serviceCard: "bg-[#E6F1FB] border border-[#85B7EB] rounded-2xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col items-center gap-2",
+  doctorImageContainer: "w-20 h-20 rounded-full bg-[#185FA5] border-2 border-[#378ADD] flex items-center justify-center overflow-hidden",
+  serviceImageContainer: "w-20 h-20 rounded-full bg-[#185FA5] border-2 border-[#378ADD] mx-auto flex items-center justify-center overflow-hidden",
   image: "w-full h-full object-cover",
-  
-  // Text styles
-  doctorName: "text-xl md:text-sm xl:text-md whitespace-nowrap lg:text-lg font-semibold mt-4 text-center",
-  serviceName: "text-xl md:text-sm lg:text-md xl:text-lg font-semibold text-center mt-4",
-  specialization: "text-sm text-emerald-700 mt-1",
-  price: "text-center text-green-700 font-semibold text-lg mt-2",
-  
-  // Date and time containers
-  dateContainer: "mt-4 rounded-full border bg-emerald-50 border-emerald-200 py-1 px-3 w-full flex justify-center gap-2",
-  serviceDateContainer: "mt-4 rounded-full border bg-blue-50 border-blue-200 py-1 px-3 flex justify-center gap-2 text-sm",
-  timeContainer: "mt-2 rounded-full border bg-emerald-50 border-emerald-200 py-1 px-3 w-full flex justify-center gap-2",
-  serviceTimeContainer: "mt-2 rounded-full border bg-blue-50 border-blue-200 py-1 px-3 flex justify-center gap-2 text-sm",
-  
-  // Badges container
-  badgesContainer: "mt-4 flex justify-center gap-2",
-  
-  // Rescheduled text
-  rescheduledText: "mt-3 text-center xl:text-md text-sm text-blue-700",
-  serviceRescheduledText: "mt-3 text-center xl:text-md xl:whitespace-nowrap text-sm text-blue-700",
-  rescheduledSpan: "font-semibold xl:line-clamp-2",
+  doctorName: "text-sm font-semibold text-[#042C53] text-center mt-1 leading-snug",
+  serviceName: "text-sm font-semibold text-[#042C53] text-center mt-1 leading-snug",
+  specialization: "text-xs text-[#185FA5] font-medium text-center",
+  price: "text-sm font-semibold text-[#0C447C] text-center",
+  dateContainer: "flex items-center gap-1.5 text-xs text-[#0C447C] bg-[#B5D4F4] border border-[#85B7EB] rounded-full px-3 py-1 w-full justify-center",
+  serviceDateContainer: "flex items-center gap-1.5 text-xs text-[#0C447C] bg-[#B5D4F4] border border-[#85B7EB] rounded-full px-3 py-1 w-full justify-center",
+  timeContainer: "flex items-center gap-1.5 text-xs text-[#0C447C] bg-[#B5D4F4] border border-[#85B7EB] rounded-full px-3 py-1 w-full justify-center",
+  serviceTimeContainer: "flex items-center gap-1.5 text-xs text-[#0C447C] bg-[#B5D4F4] border border-[#85B7EB] rounded-full px-3 py-1 w-full justify-center",
+  badgesContainer: "flex gap-2 flex-wrap justify-center mt-1",
+  rescheduledText: "mt-2 text-center text-xs text-[#185FA5]",
+  serviceRescheduledText: "mt-2 text-center text-xs text-[#185FA5]",
+  rescheduledSpan: "font-semibold",
 };
 
 export const badgeStyles = {
   paymentBadge: {
-    online: "px-3 py-1 rounded-full font-semibold text-xs bg-green-100 text-green-700 border border-green-300 flex items-center gap-1",
-    cash: "px-3 py-1 rounded-full font-semibold text-xs bg-yellow-100 text-yellow-700 border border-yellow-300 flex items-center gap-1"
+    online: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#E6F1FB] text-[#0C447C] border border-[#85B7EB] flex items-center gap-1",
+    cash: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#FAEEDA] text-[#633806] border border-[#FAC775] flex items-center gap-1",
   },
-  
   statusBadge: {
-    completed: "px-3 py-1 rounded-full font-semibold text-xs bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-1",
-    confirmed: "px-3 py-1 rounded-full font-semibold text-xs bg-green-100 text-green-700 border border-green-200 flex items-center gap-1",
-    pending: "px-3 py-1 rounded-full font-semibold text-xs bg-yellow-100 text-yellow-700 border border-yellow-200 flex items-center gap-1",
-    canceled: "px-3 py-1 rounded-full font-semibold text-xs bg-red-100 text-red-700 border border-red-200 flex items-center gap-1",
-    default: "px-3 py-1 rounded-full font-semibold text-xs bg-blue-100 text-blue-700 border border-blue-200 flex items-center gap-1"
-  }
+    completed: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#F1EFE8] text-[#444441] border border-[#D3D1C7] flex items-center gap-1",
+    confirmed: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#EAF3DE] text-[#27500A] border border-[#C0DD97] flex items-center gap-1",
+    pending: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#FAEEDA] text-[#633806] border border-[#FAC775] flex items-center gap-1",
+    canceled: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#FCEBEB] text-[#791F1F] border border-[#F7C1C1] flex items-center gap-1",
+    default: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#E6F1FB] text-[#0C447C] border border-[#85B7EB] flex items-center gap-1",
+  },
 };
 
-// Icon size helper
 export const iconSize = {
-  small: "w-3",
-  medium: "w-4"
+  small: "w-3 h-3",
+  medium: "w-3.5 h-3.5",
 };
 
 // assets/dummyStyles.js
