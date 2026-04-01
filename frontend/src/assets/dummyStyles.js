@@ -350,97 +350,93 @@ export const doctorsPageStyles = {
 // Footer styles
 export const footerStyles = {
   // Main container
-  footerContainer: "relative font-serif bg-linear-to-br from-emerald-50 via-green-50 to-teal-50 border-t border-emerald-200 overflow-hidden mt-16 pt-8",
-  
+  footerContainer: "relative font-serif bg-[#E6F1FB] border-t border-[#85B7EB] overflow-hidden mt-16 pt-8",
+
   // Floating icons
   floatingIcon1: "absolute top-5 right-5 animate-float hidden md:block",
   floatingIcon2: "absolute top-1/3 left-5 animate-float hidden md:block",
-  stethoscopeIcon: "w-8 h-8 text-emerald-600",
-  activityIcon: "w-5 h-5 text-green-500",
-  
+  stethoscopeIcon: "w-8 h-8 text-[#185FA5]",
+  activityIcon: "w-5 h-5 text-[#378ADD]",
+
   // Main content
   mainContent: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 relative z-10",
   gridContainer: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-12 mb-10 text-center lg:text-left",
-  
+
   // Company info
   companySection: "lg:col-span-1 flex flex-col items-center lg:items-start",
   logoContainer: "flex items-center space-x-5 mb-6 transform transition-transform duration-500",
   logoWrapper: "relative",
   logoImageContainer: "relative w-16 h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 p-1 transform transition-transform duration-500",
   logoImage: "w-full h-full object-contain",
-  companyName: "text-2xl md:text-3xl lg:text-3xl font-bold bg-linear-to-r from-emerald-600 to-green-700 bg-clip-text text-transparent font-['Poppins'] tracking-tight",
-  companyTagline: "text-emerald-600 font-serif text-xs md:text-sm font-semibold tracking-wide mt-1",
-  companyDescription: "text-emerald-700 font-serif italic mb-5 leading-relaxed text-sm md:text-base font-light",
-  
+  companyName: "text-2xl md:text-3xl font-bold text-[#042C53] font-['Poppins'] tracking-tight",
+  companyTagline: "text-[#185FA5] font-serif text-xs md:text-sm font-semibold tracking-wide mt-1",
+  companyDescription: "text-[#0C447C] font-serif italic mb-5 leading-relaxed text-sm md:text-base font-light",
+
   // Contact info
   contactContainer: "space-y-3 w-full md:w-auto",
-  contactItem: "flex items-center justify-center md:justify-start space-x-4 text-emerald-700 hover:text-emerald-800 transition-all duration-300 group transform hover:translate-x-0 md:hover:translate-x-2",
-  contactIconWrapper: "w-9 h-9 md:w-10 md:h-10 bg-emerald-100 rounded-full flex items-center justify-center transition-colors duration-300 shadow-sm",
-  contactIcon: "w-4 h-4 text-emerald-600",
+  contactItem: "flex items-center justify-center md:justify-start space-x-4 text-[#0C447C] hover:text-[#042C53] transition-all duration-300 group transform hover:translate-x-0 md:hover:translate-x-2",
+  contactIconWrapper: "w-9 h-9 md:w-10 md:h-10 bg-[#B5D4F4] rounded-full flex items-center justify-center transition-colors duration-300 shadow-sm",
+  contactIcon: "w-4 h-4 text-[#185FA5]",
   contactText: "text-sm font-medium",
-  
+
   // Links sections
   linksSection: "lg:col-span-1",
-  sectionTitle: "text-lg md:text-xl font-bold text-emerald-800 mb-6 relative inline-block",
+  sectionTitle: "text-lg md:text-xl font-bold text-[#042C53] mb-6 relative inline-block",
   linksList: "space-y-2",
   linkItem: "w-full",
-  
+
   // Quick Links
-  quickLink: "flex items-center justify-center md:justify-start text-emerald-700 hover:text-emerald-800 transition-all duration-300 group text-sm md:text-base font-medium py-2 px-3 rounded-lg hover:bg-emerald-50 border border-transparent hover:border-emerald-200",
-  quickLinkIconWrapper: "w-7 h-7 bg-emerald-100 rounded-full flex items-center justify-center mr-3",
-  quickLinkIcon: "w-3 h-3 text-emerald-600",
-  
+  quickLink: "flex items-center justify-center md:justify-start text-[#0C447C] hover:text-[#042C53] transition-all duration-300 group text-sm md:text-base font-medium py-2 px-3 rounded-lg hover:bg-[#B5D4F4] border border-transparent hover:border-[#85B7EB]",
+  quickLinkIconWrapper: "w-7 h-7 bg-[#B5D4F4] rounded-full flex items-center justify-center mr-3",
+  quickLinkIcon: "w-3 h-3 text-[#185FA5]",
+
   // Services
-  serviceLink: "flex items-center justify-center md:justify-start text-emerald-700 hover:text-green-700 transition-all duration-300 group text-sm md:text-base font-medium py-2 px-3 rounded-lg hover:bg-green-50 border border-transparent hover:border-green-200",
-  serviceIcon: "w-3 h-3 bg-green-500 rounded-full mr-3",
-  
+  serviceLink: "flex items-center justify-center md:justify-start text-[#0C447C] hover:text-[#042C53] transition-all duration-300 group text-sm md:text-base font-medium py-2 px-3 rounded-lg hover:bg-[#B5D4F4] border border-transparent hover:border-[#85B7EB]",
+  serviceIcon: "w-3 h-3 bg-[#378ADD] rounded-full mr-3",
+
   // Newsletter & Social
   newsletterSection: "lg:col-span-1 flex flex-col items-center lg:items-start",
-  newsletterTitle: "text-lg md:text-xl font-bold text-emerald-800 mb-4",
-  newsletterDescription: "text-emerald-700 text-sm md:text-base mb-4 font-light text-center lg:text-left",
+  newsletterTitle: "text-lg md:text-xl font-bold text-[#042C53] mb-4",
+  newsletterDescription: "text-[#0C447C] text-sm md:text-base mb-4 font-light text-center lg:text-left",
   newsletterForm: "w-full max-w-md",
-  
+
   // Mobile newsletter
   mobileNewsletterContainer: "flex flex-col gap-3 lg:hidden",
-  emailInput: "w-full px-4 py-3 text-base text-emerald-800 bg-white border-2 border-emerald-200 rounded-full focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:border-emerald-400 transition-all duration-300 shadow-sm placeholder-emerald-400",
-  mobileSubscribeButton: "w-full inline-flex items-center justify-center gap-2 py-3 rounded-full bg-linear-to-r from-emerald-500 to-green-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300",
+  emailInput: "w-full px-4 py-3 text-base text-[#042C53] bg-white border-2 border-[#85B7EB] rounded-full focus:outline-none focus:ring-4 focus:ring-[#B5D4F4] focus:border-[#378ADD] transition-all duration-300 shadow-sm placeholder-[#378ADD]",
+  mobileSubscribeButton: "w-full inline-flex items-center justify-center gap-2 py-3 rounded-full bg-[#185FA5] text-white font-semibold shadow-lg hover:bg-[#0C447C] hover:shadow-xl transition-all duration-300",
   mobileButtonIcon: "w-4 h-4",
-  
+
   // Desktop newsletter
   desktopNewsletterContainer: "relative hidden lg:block",
-  desktopEmailInput: "w-full px-6 py-4 text-base text-emerald-800 bg-white border-2 border-emerald-200 rounded-full focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:border-emerald-400 transition-all duration-300 transform shadow-lg placeholder-emerald-400",
-  desktopSubscribeButton: "absolute right-2 xl:px-2 top-2 bg-linear-to-r from-emerald-500 to-green-600 text-white px-4 py-2 rounded-full cursor-pointer transition-all duration-300 transform flex items-center shadow-lg hover:shadow-xl",
+  desktopEmailInput: "w-full px-6 py-4 text-base text-[#042C53] bg-white border-2 border-[#85B7EB] rounded-full focus:outline-none focus:ring-4 focus:ring-[#B5D4F4] focus:border-[#378ADD] transition-all duration-300 shadow-lg placeholder-[#378ADD]",
+  desktopSubscribeButton: "absolute right-2 top-2 bg-[#185FA5] hover:bg-[#0C447C] text-white px-4 py-2 rounded-full cursor-pointer transition-all duration-300 flex items-center shadow-lg hover:shadow-xl xl:px-2",
   desktopButtonIcon: "w-4 h-4 mr-2",
   desktopButtonText: "font-semibold",
-  
+
   // Social links
   socialContainer: "flex gap-3 justify-center lg:justify-start mt-6",
   socialLink: "relative group",
-  socialIconBackground: "absolute inset-0 bg-linear-to-r from-emerald-400 to-green-500 rounded-full transform scale-0 group-hover:scale-110 transition-transform duration-300 hidden lg:block",
-  socialIcon: "w-10 h-10 md:w-11 md:h-11 lg:w-12 lg:h-12 p-2 text-emerald-700 cursor-pointer transform hover:scale-110 hover:rotate-6 transition-all duration-300 relative z-10 bg-white rounded-2xl shadow-lg border-2 border-emerald-100",
-  
+  socialIconBackground: "absolute inset-0 bg-[#378ADD] rounded-full transform scale-0 group-hover:scale-110 transition-transform duration-300 hidden lg:block",
+  socialIcon: "w-10 h-10 md:w-11 md:h-11 lg:w-12 lg:h-12 p-2 cursor-pointer transform hover:scale-110 hover:rotate-6 transition-all duration-300 relative z-10 bg-white rounded-2xl shadow-lg border-2 border-[#B5D4F4]",
+
   // Social icon colors
-  facebookColor: "hover:text-blue-600",
-  twitterColor: "hover:text-blue-400",
-  instagramColor: "hover:text-pink-600",
-  linkedinColor: "hover:text-blue-700",
-  youtubeColor: "hover:text-red-600",
-  
+  facebookColor: "text-[#185FA5] hover:text-[#042C53]",
+  twitterColor: "text-[#378ADD] hover:text-[#185FA5]",
+  instagramColor: "text-[#D4537E] hover:text-[#993556]",
+  linkedinColor: "text-[#185FA5] hover:text-[#042C53]",
+  youtubeColor: "text-[#A32D2D] hover:text-[#791F1F]",
+
   // Bottom section
-  bottomSection: "flex flex-col md:flex-row justify-center lg:justify-between items-center gap-4 md:gap-6 border-t border-emerald-100 pt-6",
-  copyright: "text-emerald-700 text-sm md:text-base font-medium flex items-center gap-2",
-  designerText: "text-emerald-700 text-sm md:text-base font-medium flex items-center gap-2",
-  designerLink: "font-bold text-emerald-500 hover:text-purple-700 transition-colors duration-300",
-  
-  // Animation keyframes for floating icons (to be added via style tag)
+  bottomSection: "flex flex-col md:flex-row justify-center lg:justify-between items-center gap-4 md:gap-6 border-t border-[#85B7EB] pt-6",
+  copyright: "text-[#0C447C] text-sm md:text-base font-medium flex items-center gap-2",
+  designerText: "text-[#0C447C] text-sm md:text-base font-medium flex items-center gap-2",
+  designerLink: "font-bold text-[#185FA5] hover:text-[#042C53] transition-colors duration-300",
+
+  // Animation keyframes
   animationStyles: `
     @keyframes float {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
     .animate-float {
       animation: float 3s ease-in-out infinite;
@@ -577,74 +573,72 @@ export const toastStyles = {
 export const navbarStyles = {
   // Main container
   navbarWrapper: "sticky top-0 z-50",
-  navbarContainer: "bg-white/95 backdrop-blur-md border-b border-emerald-100 transition-transform duration-500",
+  navbarContainer: "bg-white/95 backdrop-blur-md border-b border-[#85B7EB] transition-transform duration-500",
   navbarHidden: "-translate-y-full",
   navbarVisible: "translate-y-0",
-  
+
   // Border animation
   navbarBorder: "navbar-border",
-  
+
   // Content wrapper
   contentWrapper: "max-w-7xl font-[pacifico] md:px-2 mx-auto px-4 sm:px-6 lg:px-8",
   flexContainer: "flex items-center justify-between h-20",
-  
+
   // Logo section
   logoLink: "flex items-center gap-3 -ml-3 sm:-ml-4",
   logoContainer: "relative group w-20 h-20 sm:w-24 sm:h-24 lg:w-15 lg:h-15 xl:w-32 xl:h-32",
   logoImageWrapper: "relative flex items-center justify-center overflow-hidden p-2 mx-1 h-full w-full",
   logoImage: "w-14 h-14 sm:w-18 sm:h-18 lg:w-15 lg:h-15 xl:w-24 xl:h-24 md:w-20 md:h-20 object-contain",
   logoTextContainer: "block sm:block",
-  logoTitle: "text-2xl md:text-2xl lg:text-2xl xl:text-2xl font-bold bg-clip-text text-transparent bg-linear-to-r from-emerald-600 to-green-600 tracking-tight",
-  logoSubtitle: "text-xs lg:text-xs text-gray-500",
-  
+  logoTitle: "text-2xl md:text-2xl lg:text-2xl xl:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#185FA5] to-[#378ADD] tracking-tight",
+  logoSubtitle: "text-xs lg:text-xs text-[#378ADD]",
+
   // Desktop navigation
   desktopNav: "hidden lg:-mx-5 lg:flex items-center gap-2",
-  navItemsContainer: "flex gap-1 bg-white border border-emerald-200 p-1 rounded-full shadow-lg",
+  navItemsContainer: "flex gap-1 bg-[#E6F1FB] border border-[#85B7EB] p-1 rounded-full shadow-sm",
   navItem: "nav-item px-5 md:px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300",
   navItemActive: "active",
-  navItemInactive: "text-gray-700 hover:text-emerald-600",
-  
+  navItemInactive: "text-[#0C447C] hover:text-[#042C53] hover:bg-[#B5D4F4]",
+
   // Right side
   rightContainer: "flex items-center gap-3",
-  
+
   // Signed out buttons
-  doctorAdminButton: "btn-add hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold transition-transform duration-200",
+  doctorAdminButton: "btn-add hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold transition-transform duration-200 text-[#0C447C]",
   doctorAdminIcon: "w-4 h-4",
   doctorAdminText: "hidden lg:text-xs lg:whitespace-nowrap sm:inline-block",
-  loginButton: "btn-login hidden lg:flex lg:text-sm items-center gap-2 bg-linear-to-r from-emerald-400 to-green-600 text-white px-6 py-2.5 rounded-full font-semibold hover:shadow-xl transition-all duration-300 cursor-default",
+  loginButton: "btn-login hidden lg:flex lg:text-sm items-center gap-2 bg-[#185FA5] text-white px-6 py-2.5 rounded-full font-semibold hover:bg-[#0C447C] hover:shadow-xl transition-all duration-300 cursor-default",
   loginIcon: "w-4 h-4",
-  
+
   // Mobile toggle
-  mobileToggle: "lg:hidden p-2.5 rounded-lg hover:bg-emerald-50 transition-colors",
-  toggleIcon: "w-6 h-6 text-gray-900",
-  
+  mobileToggle: "lg:hidden p-2.5 rounded-lg hover:bg-[#E6F1FB] transition-colors",
+  toggleIcon: "w-6 h-6 text-[#185FA5]",
+
   // Mobile menu
-  mobileMenu: "mobile-menu lg:hidden pb-4 space-y-2 border-t border-emerald-100 pt-4",
+  mobileMenu: "mobile-menu lg:hidden pb-4 space-y-2 border-t border-[#85B7EB] pt-4 px-4",
   mobileMenuItem: "block px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300",
-  mobileMenuItemActive: "bg-emerald-500 text-white",
-  mobileMenuItemInactive: "text-gray-700 hover:bg-emerald-50 hover:text-emerald-600",
-  
+  mobileMenuItemActive: "bg-[#185FA5] text-white",
+  mobileMenuItemInactive: "text-[#0C447C] hover:bg-[#E6F1FB] hover:text-[#042C53]",
+
   // Mobile signed out buttons
-  mobileDoctorAdminButton: "w-full flex items-center justify-center gap-2 py-2.5 rounded-full border border-emerald-200 bg-white text-sm font-semibold hover:bg-emerald-50 transition-all",
+  mobileDoctorAdminButton: "w-full flex items-center justify-center gap-2 py-2.5 rounded-full border border-[#85B7EB] bg-white text-[#0C447C] text-sm font-semibold hover:bg-[#E6F1FB] transition-all",
   mobileLoginContainer: "w-full mt-3",
-  mobileLoginButton: "w-full cursor-default md:rounded-full flex items-center justify-center gap-2 bg-linear-to-r from-emerald-500 to-green-600 text-white py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all",
-  
-  // Animation styles (to be added via style tag)
+  mobileLoginButton: "w-full cursor-default md:rounded-full flex items-center justify-center gap-2 bg-[#185FA5] text-white py-2.5 rounded-lg font-semibold hover:bg-[#0C447C] hover:shadow-lg transition-all",
+
+  // Mobile signed in
+  mobileUserWrapper: "flex items-center justify-between px-2 pt-2",
+  mobileLogoutButton: "text-sm px-4 py-2 rounded-full bg-[#E6F1FB] border border-[#85B7EB] text-[#0C447C] font-semibold hover:bg-[#B5D4F4] transition-all",
+
+  // Animation styles
   animationStyles: `
     @keyframes borderFlow {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
     .navbar-border {
       height: 2px;
-      background: linear-gradient(90deg, #10b981, #34d399, #059669, #10b981);
+      background: linear-gradient(90deg, #185FA5, #378ADD, #85B7EB, #185FA5);
       background-size: 300% 100%;
       animation: borderFlow 6s ease infinite;
     }
@@ -654,8 +648,8 @@ export const navbarStyles = {
     }
     .nav-item.active {
       background: white !important;
-      color: #059669 !important;
-      box-shadow: 0 6px 18px rgba(5, 150, 105, 0.12);
+      color: #185FA5 !important;
+      box-shadow: 0 6px 18px rgba(24, 95, 165, 0.15);
     }
     .nav-item.active::after {
       content: "";
@@ -665,69 +659,41 @@ export const navbarStyles = {
       transform: translateX(-50%);
       width: 6px;
       height: 6px;
-      background: #10b981;
+      background: #378ADD;
       border-radius: 9999px;
       animation: pulse 2s infinite;
     }
     @keyframes pulse {
-      0%,
-      100% {
-        opacity: 1;
-        transform: translateX(-50%) scale(1);
-      }
-      50% {
-        opacity: 0.5;
-        transform: translateX(-50%) scale(1.25);
-      }
+      0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+      50% { opacity: 0.5; transform: translateX(-50%) scale(1.25); }
     }
     @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    
-    /* Add button styles */
     .btn-add {
-      background-image: linear-gradient(white, white), linear-gradient(90deg, #10b981, #34d399, #059669);
+      background-image: linear-gradient(white, white), linear-gradient(90deg, #185FA5, #378ADD, #85B7EB);
       background-origin: padding-box, border-box;
       background-clip: padding-box, border-box;
       border: 2px solid transparent;
       border-radius: 9999px;
-      box-shadow: 0 2px 8px rgba(16,185,129,0.06);
+      box-shadow: 0 2px 8px rgba(24, 95, 165, 0.08);
       transform: translateZ(0);
     }
     .btn-add:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(16,185,129,0.12);
+      box-shadow: 0 8px 24px rgba(24, 95, 165, 0.15);
     }
     .btn-login {
       animation: glow 2.2s ease-in-out infinite;
     }
     @keyframes glow {
-      0%,
-      100% {
-        box-shadow: 0 0 20px rgba(16, 185, 129, 0.22),
-          0 4px 12px rgba(16, 185, 129, 0.12);
-      }
-      50% {
-        box-shadow: 0 0 32px rgba(16, 185, 129, 0.36),
-          0 6px 22px rgba(16, 185, 129, 0.18);
-      }
+      0%, 100% { box-shadow: 0 0 20px rgba(24, 95, 165, 0.22), 0 4px 12px rgba(24, 95, 165, 0.12); }
+      50% { box-shadow: 0 0 32px rgba(24, 95, 165, 0.36), 0 6px 22px rgba(24, 95, 165, 0.18); }
     }
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        height: 0;
-      }
-      to {
-        opacity: 1;
-        height: auto;
-      }
+      from { opacity: 0; height: 0; }
+      to { opacity: 1; height: auto; }
     }
     .mobile-menu {
       animation: fadeIn 0.28s ease-out;
