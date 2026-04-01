@@ -18,7 +18,7 @@ import {
   DollarSign,
   CheckCircle,
   AlertCircle,
-  BadgeIndianRupee,
+  IndianRupee,
 } from "lucide-react";
 import { editProfilePageStyles, iconSize } from "../assets/dummyStyles";
 
@@ -526,7 +526,7 @@ export default function EditProfilePage({ apiBase }) {
 
                   {/* Fee */}
                   <div className={styles.feeStatItem}>
-                    <BadgeIndianRupee className={styles.statAmberIcon()} />
+                    <IndianRupee className={styles.statAmberIcon()} />
                     {!editing ? (
                       <span className={styles.statAmberValue}>{doc.fee}</span>
                     ) : (

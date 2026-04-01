@@ -6,7 +6,7 @@ import {
   EyeClosed,
   Star,
   Trash2,
-  BadgeIndianRupee,
+  IndianRupee,
 } from "lucide-react";
 
 //Helper function
@@ -350,7 +350,7 @@ function ListPage() {
 
                         <div className={doctorListStyles.feesLabel}>
                           <div className={doctorListStyles.feesValue}>
-                            <BadgeIndianRupee />
+                            <IndianRupee />
                             {doc.fee}
                           </div>
                         </div>

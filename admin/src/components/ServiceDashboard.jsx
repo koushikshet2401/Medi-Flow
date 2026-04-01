@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import { serviceDashboardStyles } from "../assets/dummyStyles";
 import SerDashboard from "../pages/SerDashboard";
 import {
-  BadgeIndianRupee,
+  IndianRupee,
   Calendar,
   CheckCircle,
   Clipboard,
@@ -301,7 +301,7 @@ function ServiceDashboard({ services: servicesProp = null }) {
           />
 
           <StatCard
-            icon={<BadgeIndianRupee size={18} />}
+            icon={<IndianRupee size={18} />}
             label="Total Earnings"
             value={formatCurrency(totals.totalEarning)}
           />
@@ -548,7 +548,7 @@ function ServiceDashboard({ services: servicesProp = null }) {
             "emerald"
           )}
         >
-          <BadgeIndianRupee size={14} />
+          <IndianRupee size={14} />
           <span className="leading-none">
             Total Earning : {formatCurrency(earning)}
           </span>

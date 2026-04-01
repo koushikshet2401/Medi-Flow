@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { dashboardStyles as s } from "../assets/dummyStyles.js";
 import {
-  BadgeIndianRupee,
+  IndianRupee,
   CalendarRange,
   CheckCircle,
   UserRoundCheck,
@@ -252,7 +252,7 @@ function DashboardPage() {
           />
 
           <StatCard
-            icon={<BadgeIndianRupee className="w-6 h-6" />}
+            icon={<IndianRupee className="w-6 h-6" />}
             label="Total Earnings"
             value={`₹ ${totals.totalEarnings.toLocaleString()}`}
           />

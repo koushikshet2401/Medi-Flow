@@ -6,7 +6,7 @@ import {
   XCircle,
   Users,
   Phone,
-  BadgeIndianRupee,
+  IndianRupee,
 } from "lucide-react";
 import { dashboardStyles } from "../assets/dummyStyles";
 
@@ -387,7 +387,7 @@ export default function DashboardPage({ apiBase }) {
           <StatCard
             title="Total Earnings"
             value={`₹ ${totalEarnings}`}
-            icon={<BadgeIndianRupee className="w-5 h-5" />}
+            icon={<IndianRupee className="w-5 h-5" />}
             accentTop={dashboardStyles.accentTopAmber}
             accentBottom={dashboardStyles.accentBottomAmber}
           />
