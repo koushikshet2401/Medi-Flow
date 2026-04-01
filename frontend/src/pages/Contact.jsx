@@ -6,9 +6,9 @@ import ContactPage from '../components/ContactPage'
 function Contact() {
   return (
     <div>
-      <Navbar/>
-<ContactPage/>
-      <Footer/>
+      <Navbar />
+      <ContactPage />
+      <Footer />
     </div>
   )
 }
