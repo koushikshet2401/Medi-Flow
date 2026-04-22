@@ -263,84 +263,84 @@ export const contactPageStyles = {
 
 export const doctorsPageStyles = {
   // Main container
-  mainContainer: "min-h-screen bg-linear-to-br from-emerald-50 to-teal-100 py-8 sm:py-10 px-3 sm:px-6 relative overflow-hidden",
-  
+  mainContainer: "min-h-screen bg-[#f0f6fd] py-8 sm:py-10 px-3 sm:px-6 relative overflow-hidden",
+
   // Background shapes
-  backgroundShape1: "absolute -top-40 -right-32 w-72 h-72 sm:w-96 sm:h-96 bg-emerald-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse",
-  backgroundShape2: "absolute -bottom-40 -left-32 w-72 h-72 sm:w-96 sm:h-96 bg-teal-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse animation-delay-2000",
-  
+  backgroundShape1: "absolute -top-40 -right-32 w-72 h-72 sm:w-96 sm:h-96 bg-[#B5D4F4] rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse",
+  backgroundShape2: "absolute -bottom-40 -left-32 w-72 h-72 sm:w-96 sm:h-96 bg-[#378ADD] rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-pulse",
+
   // Wrapper
   wrapper: "max-w-7xl mx-auto relative z-10 font-serif",
-  
+
   // Header
   headerContainer: "text-center mb-8 sm:mb-10 animate-fade-in",
-  headerTitle: "text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold bg-linear-to-r from-emerald-700 to-teal-600 bg-clip-text text-transparent mb-3 tracking-tight",
-  headerSubtitle: "text-sm sm:text-base text-emerald-700 font-light",
-  
+  headerTitle: "text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#185FA5] to-[#378ADD] bg-clip-text text-transparent mb-3 tracking-tight",
+  headerSubtitle: "text-sm sm:text-base text-[#0C447C] font-light",
+
   // Search bar
   searchContainer: "flex justify-center mb-8 sm:mb-12 animate-slide-up",
   searchWrapper: "relative w-full max-w-xl transition-all duration-500 px-2 sm:px-0",
-  searchInput: "w-full py-3 sm:py-4 pl-12 pr-10 text-sm sm:text-lg rounded-full border border-emerald-300 bg-white/90 text-emerald-800 placeholder-emerald-400 shadow-md sm:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-400/40 focus:shadow-xl transition-all duration-300 hover:shadow-2xl",
-  searchIcon: "absolute left-4 top-3 sm:top-4 text-emerald-600 w-5 h-5 sm:w-6 sm:h-6",
-  clearButton: "absolute right-3 top-3 sm:top-4 text-emerald-600 hover:text-emerald-800 transition",
-  
+  searchInput: "w-full py-3 sm:py-4 pl-12 pr-10 text-sm sm:text-lg rounded-full border border-[#85B7EB] bg-white text-[#042C53] placeholder-[#378ADD] shadow-md sm:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#378ADD]/40 focus:shadow-xl transition-all duration-300 hover:shadow-2xl",
+  searchIcon: "absolute left-4 top-3 sm:top-4 text-[#185FA5] w-5 h-5 sm:w-6 sm:h-6",
+  clearButton: "absolute right-3 top-3 sm:top-4 text-[#185FA5] hover:text-[#042C53] transition",
+
   // Error area
   errorContainer: "text-center mb-6",
   errorText: "text-sm text-rose-600 mb-2",
-  retryButton: "px-4 py-2 rounded-full bg-emerald-600 text-white",
-  
+  retryButton: "px-4 py-2 rounded-full bg-[#185FA5] text-white hover:bg-[#0C447C] transition",
+
   // Loading skeleton
   skeletonGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8",
-  skeletonCard: "animate-pulse bg-white/80 backdrop-blur-md rounded-3xl p-4 sm:p-5 md:p-6 text-center transition-all duration-300",
-  skeletonImage: "relative mx-auto mb-4 w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-36 lg:h-36 bg-emerald-100 rounded-full",
-  skeletonName: "h-5 bg-emerald-100 rounded w-3/4 mx-auto mb-2",
-  skeletonSpecialization: "h-4 bg-emerald-100 rounded w-1/2 mx-auto mb-3",
-  skeletonButton: "h-8 bg-emerald-100 rounded w-full mx-auto mt-4",
-  
+  skeletonCard: "animate-pulse bg-white rounded-3xl p-4 sm:p-5 md:p-6 text-center border border-[#B5D4F4]",
+  skeletonImage: "relative mx-auto mb-4 w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 bg-[#E6F1FB] rounded-full",
+  skeletonName: "h-5 bg-[#E6F1FB] rounded w-3/4 mx-auto mb-2",
+  skeletonSpecialization: "h-4 bg-[#E6F1FB] rounded w-1/2 mx-auto mb-3",
+  skeletonButton: "h-8 bg-[#E6F1FB] rounded w-full mx-auto mt-4",
+
   // Doctors grid
   doctorsGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 sm:gap-8 transition-all duration-300",
-  
+
   // Doctor card
-  doctorCard: "bg-white/80 backdrop-blur-md rounded-3xl p-4 sm:p-5 md:p-6 text-center transition-all duration-300 hover:shadow-xl animate-fade-in-up",
-  doctorCardUnavailable: "opacity-80",
-  
+  doctorCard: "bg-white rounded-3xl p-4 sm:p-5 md:p-6 text-center border border-[#B5D4F4] transition-all duration-300 hover:shadow-lg hover:shadow-[#85B7EB]/40 hover:-translate-y-1 animate-fade-in-up",
+  doctorCardUnavailable: "opacity-70",
+
   // Doctor image container
   imageContainer: "relative mx-auto mb-4 w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-36 lg:h-36",
   imageContainerUnavailable: "opacity-70 cursor-not-allowed",
-  doctorImage: "w-full h-full rounded-full object-cover border-4 border-emerald-200 shadow-lg transform transition-transform duration-300 group-hover:scale-105",
-  doctorImageUnavailable: "border-4 border-gray-300 shadow-md",
-  
+  doctorImage: "w-full h-full rounded-full object-cover border-4 border-[#B5D4F4] shadow-lg transform transition-transform duration-300 group-hover:scale-105",
+  doctorImageUnavailable: "w-full h-full rounded-full object-cover border-4 border-gray-200 shadow-md",
+
   // Doctor info
-  doctorName: "text-base sm:text-lg md:text-md whitespace-nowrap lg:text-lg font-bold text-emerald-900 mb-1",
-  doctorSpecialization: "text-sm sm:text-sm md:text-sm text-emerald-600 font-medium mb-3",
-  
+  doctorName: "text-base sm:text-lg md:text-md whitespace-nowrap lg:text-lg font-bold text-[#042C53] mb-1",
+  doctorSpecialization: "text-sm sm:text-sm md:text-sm text-[#185FA5] font-medium mb-3",
+
   // Experience badge
-  experienceBadge: "inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium mb-4 bg-emerald-50 border border-emerald-300 shadow-sm",
-  experienceIcon: "w-4 h-4",
-  
-  // Book button (available)
-  bookButton: "w-full inline-flex items-center justify-center gap-2 py-2 rounded-full font-medium transition-all duration-300 text-sm bg-linear-to-r from-emerald-300 to-teal-500 text-white hover:shadow-lg",
+  experienceBadge: "inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium mb-4 bg-[#E6F1FB] border border-[#85B7EB] shadow-sm text-[#0C447C]",
+  experienceIcon: "w-4 h-4 text-[#378ADD]",
+
+  // Book button
+  bookButton: "w-full inline-flex items-center justify-center gap-2 py-2 rounded-full font-medium transition-all duration-300 text-sm bg-[#185FA5] text-white hover:bg-[#0C447C] hover:shadow-lg",
   bookButtonIcon: "w-5 h-5",
-  
+
   // Not available button
-  notAvailableButton: "w-full inline-flex items-center justify-center gap-2 py-2 rounded-full font-medium bg-gray-300 text-gray-600 cursor-not-allowed text-sm",
+  notAvailableButton: "w-full inline-flex items-center justify-center gap-2 py-2 rounded-full font-medium bg-gray-200 text-gray-500 cursor-not-allowed text-sm",
   notAvailableIcon: "w-5 h-5",
-  
+
   // No results
-  noResults: "col-span-full text-center py-10 text-emerald-800 font-medium text-base animate-fade-in",
-  
+  noResults: "col-span-full text-center py-10 text-[#0C447C] font-medium text-base animate-fade-in",
+
   // Show more button
   showMoreContainer: "flex justify-center mt-8 sm:mt-10",
-  showMoreButton: "flex items-center cursor-pointer gap-2 px-5 py-2.5 bg-linear-to-r from-emerald-400 to-teal-500 text-white rounded-full text-md font-semibold shadow-md hover:shadow-lg transition-all duration-300",
+  showMoreButton: "flex items-center cursor-pointer gap-2 px-5 py-2.5 bg-[#185FA5] text-white rounded-full text-md font-semibold shadow-md hover:bg-[#0C447C] hover:shadow-lg transition-all duration-300",
   showMoreIcon: "w-5 h-5",
-  
+
   // Link focus styles
-  focusRing: "focus:outline-none focus:ring-2 focus:ring-emerald-300 rounded-full",
-  
-  // Animation styles
+  focusRing: "focus:outline-none focus:ring-2 focus:ring-[#378ADD] rounded-full",
+
+  // Animation classes
   animationFadeIn: "animate-fade-in",
   animationFadeInUp: "animate-fade-in-up",
-  animationSlideUp: "animate-slide-up"
+  animationSlideUp: "animate-slide-up",
 };
 
 
@@ -447,61 +447,58 @@ export const footerStyles = {
 
 export const homeDoctorsStyles = {
   // Section container
-  section: "py-10 bg-linear-to-br from-green-50 to-blue-50",
+  section: "py-10 bg-[#f0f6fd]",
   container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
-  
+
   // Header
   header: "text-center mb-10",
-  title: "text-4xl md:text-5xl font-serif italic text-gray-900",
-  titleSpan: "text-emerald-600 font-semibold",
-  subtitle: "mt-2 text-gray-600 max-w-2xl mx-auto",
-  
+  title: "text-4xl md:text-5xl font-serif italic text-[#042C53]",
+  titleSpan: "text-[#185FA5] font-semibold",
+  subtitle: "mt-2 text-[#0C447C] max-w-2xl mx-auto",
+
   // Error/Retry
   errorContainer: "text-center mb-6",
   errorText: "text-sm text-rose-600 mb-2",
-  retryButton: "px-4 py-2 rounded-full bg-emerald-600 text-white",
-  
+  retryButton: "px-4 py-2 rounded-full bg-[#185FA5] text-white hover:bg-[#0C447C] transition",
+
   // Loading skeleton
   skeletonGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8",
-  skeletonCard: "animate-pulse bg-white rounded-3xl shadow-md p-4 h-72",
-  skeletonImage: "bg-emerald-100 rounded-lg h-40 mb-4",
-  skeletonText1: "h-5 bg-emerald-100 rounded w-3/4 mb-2",
-  skeletonText2: "h-4 bg-emerald-100 rounded w-1/2 mb-3",
-  skeletonButton: "h-8 w-full bg-emerald-100 rounded",
-  
+  skeletonCard: "animate-pulse bg-white rounded-3xl border border-[#B5D4F4] p-4 h-72",
+  skeletonImage: "bg-[#E6F1FB] rounded-lg h-40 mb-4",
+  skeletonText1: "h-5 bg-[#E6F1FB] rounded w-3/4 mb-2",
+  skeletonText2: "h-4 bg-[#E6F1FB] rounded w-1/2 mb-3",
+  skeletonButton: "h-8 w-full bg-[#E6F1FB] rounded",
+
   // Doctors grid
   doctorsGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8",
-  
+
   // Doctor card
-  article: "group relative bg-white rounded-3xl shadow-md hover:shadow-2xl transition transform duration-300 overflow-hidden",
-  
+  article: "group relative bg-white rounded-3xl border border-[#B5D4F4] shadow-sm hover:shadow-lg hover:shadow-[#85B7EB]/30 transition-all duration-300 overflow-hidden hover:-translate-y-1",
+
   // Image containers
   imageContainerAvailable: "relative h-60 sm:h-44 md:h-48 lg:h-52 overflow-hidden rounded-t-3xl",
   imageContainerUnavailable: "relative h-60 sm:h-44 md:h-48 lg:h-52 overflow-hidden rounded-t-3xl opacity-80 cursor-not-allowed",
-  image: "w-full h-full object-cover object-center transform transition-transform duration-500",
-  unavailableBadge: "absolute top-3 left-3 bg-rose-50 text-rose-700 text-xs px-2 py-1 rounded-full shadow",
-  
+  image: "w-full h-full object-cover object-center transform transition-transform duration-500 group-hover:scale-105",
+  unavailableBadge: "absolute top-3 left-3 bg-white text-rose-600 text-xs px-2 py-1 rounded-full shadow border border-rose-100",
+
   // Card body
   cardBody: "p-3 sm:p-4 md:p-5 font-serif",
-  doctorName: "text-base sm:text-lg md:text-sm lg:text-md xl:text-xl font-semibold text-black",
-  specialization: "text-sm sm:text-sm md:text-sm text-emerald-600 font-medium mt-1",
-  
+  doctorName: "text-base sm:text-lg md:text-sm lg:text-md xl:text-xl font-semibold text-[#042C53]",
+  specialization: "text-sm sm:text-sm md:text-sm text-[#185FA5] font-medium mt-1",
+
   // Experience badge
-  experienceContainer: "mt-3 flex items-center justify-between text-sm text-gray-600",
-  experienceBadge: "flex items-center gap-2 border border-green-300 bg-green-100 px-2 py-1 rounded-full text-xs sm:text-sm",
-  
+  experienceContainer: "mt-3 flex items-center justify-between text-sm text-[#0C447C]",
+  experienceBadge: "flex items-center gap-2 border border-[#85B7EB] bg-[#E6F1FB] px-2 py-1 rounded-full text-xs sm:text-sm text-[#0C447C]",
+
   // Buttons
   buttonContainer: "mt-3",
-  buttonAvailable: "w-full inline-flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-full font-medium transition-all duration-300 text-sm bg-linear-to-br from-emerald-300 to-teal-500 text-white hover:shadow-lg",
-  buttonUnavailable: "w-full inline-flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-full font-medium bg-gray-300 text-gray-600 cursor-not-allowed text-sm",
-  
+  buttonAvailable: "w-full inline-flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-full font-medium transition-all duration-300 text-sm bg-[#185FA5] text-white hover:bg-[#0C447C] hover:shadow-lg",
+  buttonUnavailable: "w-full inline-flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-full font-medium bg-gray-200 text-gray-500 cursor-not-allowed text-sm",
+
   // Custom CSS
   customCSS: `
-    /* keep your shadow look consistent */
-    .shadow-md { box-shadow: 0 6px 18px rgba(14, 30, 37, 0.06); }
-    .shadow-2xl { box-shadow: 0 18px 50px rgba(14, 30, 37, 0.12); }
-
-    /* optional: slightly reduce spacing on very small devices for compactness */
+    .shadow-sm { box-shadow: 0 4px 14px rgba(24, 95, 165, 0.06); }
+    .shadow-lg { box-shadow: 0 14px 40px rgba(24, 95, 165, 0.12); }
     @media (max-width: 420px) {
       .max-w-7xl { padding-left: 12px; padding-right: 12px; }
     }
