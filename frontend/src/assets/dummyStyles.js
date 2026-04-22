@@ -196,56 +196,56 @@ export const certificationStyles = {
 
 export const contactPageStyles = {
   // Page container
-  pageContainer: "min-h-screen bg-linear-to-br from-emerald-100 via-white to-emerald-50 py-12 px-4 sm:px-6 md:px-8 lg:px-20 font-serif relative overflow-hidden",
-  
+  pageContainer: "min-h-screen bg-[#f0f6fd] py-12 px-4 sm:px-6 md:px-8 lg:px-20 font-serif relative overflow-hidden",
+
   // Background accents
-  bgAccent1: "hidden md:block absolute top-20 left-10 w-72 h-72 bg-emerald-300 rounded-full blur-3xl opacity-18 animate-pulse",
-  bgAccent2: "hidden lg:block absolute bottom-0 right-10 w-96 h-96 bg-emerald-500 rounded-full blur-3xl opacity-10 animate-spin-slow",
-  
+  bgAccent1: "hidden md:block absolute top-20 left-10 w-72 h-72 bg-[#B5D4F4] rounded-full blur-3xl opacity-20 animate-pulse",
+  bgAccent2: "hidden lg:block absolute bottom-0 right-10 w-96 h-96 bg-[#378ADD] rounded-full blur-3xl opacity-10 animate-spin-slow",
+
   // Grid and layout
   gridContainer: "max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-start",
-  
+
   // Form container
-  formContainer: "relative bg-white/60 backdrop-blur-sm shadow-2xl rounded-3xl border border-emerald-200 p-6 sm:p-8 md:p-10 transition-all",
-  
+  formContainer: "relative bg-white shadow-xl rounded-3xl border border-[#85B7EB] p-6 sm:p-8 md:p-10 transition-all",
+
   // Text styles
-  formTitle: "text-3xl sm:text-4xl font-extrabold text-emerald-800 mb-2",
-  formSubtitle: "text-sm sm:text-md text-emerald-700 mb-6 italic",
-  
+  formTitle: "text-3xl sm:text-4xl font-extrabold text-[#042C53] mb-2",
+  formSubtitle: "text-sm sm:text-md text-[#185FA5] mb-6 italic",
+
   // Form layout
   formGrid: "grid grid-cols-1 sm:grid-cols-2 gap-4",
   formSpace: "space-y-5",
-  
+
   // Labels
-  label: "text-emerald-800 text-sm font-semibold flex items-center gap-2",
-  
+  label: "text-[#0C447C] text-sm font-semibold flex items-center gap-2",
+
   // Inputs
-  input: "w-full px-4 py-2 mt-1 border border-emerald-300 bg-emerald-50/40 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-shadow text-sm sm:text-base",
-  textarea: "w-full px-4 py-2 mt-1 border border-emerald-300 bg-emerald-50/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-shadow text-sm sm:text-base",
-  
+  input: "w-full px-4 py-2 mt-1 border border-[#85B7EB] bg-[#E6F1FB]/40 rounded-full focus:outline-none focus:ring-2 focus:ring-[#378ADD] transition-shadow text-sm sm:text-base text-[#042C53]",
+  textarea: "w-full px-4 py-2 mt-1 border border-[#85B7EB] bg-[#E6F1FB]/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#378ADD] transition-shadow text-sm sm:text-base text-[#042C53]",
+
   // Error messages
   error: "text-xs text-rose-500 mt-1",
-  
+
   // Button container
   buttonContainer: "flex flex-col md:flex-row items-center gap-3",
-  button: "w-full md:w-auto flex items-center gap-2 justify-center bg-emerald-600 text-white px-5 py-2 rounded-full shadow-lg transition-transform active:scale-95",
-  sentMessage: "text-emerald-700 italic text-sm animate-pulse",
-  
+  button: "w-full md:w-auto flex items-center gap-2 justify-center bg-[#185FA5] hover:bg-[#0C447C] text-white px-5 py-2 rounded-full shadow-lg transition-transform active:scale-95",
+  sentMessage: "text-[#185FA5] italic text-sm animate-pulse",
+
   // Info container
   infoContainer: "space-y-6",
-  infoCard: "bg-white/70 backdrop-blur-sm rounded-3xl p-4 sm:p-6 shadow-xl border border-emerald-100",
-  infoTitle: "text-xl sm:text-2xl font-bold mb-2",
-  infoText: "text-sm sm:text-md",
-  infoItem: "mt-3 flex items-center gap-2 text-sm sm:text-md",
-  
+  infoCard: "bg-white rounded-3xl p-4 sm:p-6 shadow-xl border border-[#85B7EB]",
+  infoTitle: "text-xl sm:text-2xl font-bold text-[#042C53] mb-2",
+  infoText: "text-sm sm:text-md text-[#0C447C]",
+  infoItem: "mt-3 flex items-center gap-2 text-sm sm:text-md text-[#0C447C]",
+
   // Map
-  map: "w-full h-56 sm:h-64 md:h-72 lg:h-72 rounded-3xl shadow-2xl border-2 border-emerald-200 hover:shadow-emerald-400 transition-all duration-500",
-  
+  map: "w-full h-56 sm:h-64 md:h-72 lg:h-72 rounded-3xl shadow-2xl border-2 border-[#85B7EB] hover:shadow-[#378ADD]/30 transition-all duration-500",
+
   // Hours container
-  hoursContainer: "bg-linear-to-br from-emerald-200 to-emerald-100 rounded-2xl p-4 shadow-inner border border-emerald-300",
-  hoursTitle: "text-lg sm:text-xl font-semibold mb-1",
-  hoursText: "text-gray-700 text-sm sm:text-md",
-  
+  hoursContainer: "bg-[#E6F1FB] rounded-2xl p-4 shadow-inner border border-[#B5D4F4]",
+  hoursTitle: "text-lg sm:text-xl font-semibold text-[#042C53] mb-1",
+  hoursText: "text-[#0C447C] text-sm sm:text-md",
+
   // Animation keyframes
   animationKeyframes: `
     .animate-spin-slow {
