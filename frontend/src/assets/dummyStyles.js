@@ -3,31 +3,40 @@
 export const appointmentPageStyles = {
   pageContainer: "min-h-screen font-serif bg-[#f0f6fd] py-10 px-4",
   maxWidthContainer: "max-w-6xl mx-auto",
+
   doctorTitle: "text-2xl font-semibold text-[#042C53] text-center mb-6 tracking-tight",
   serviceTitle: "text-2xl font-semibold text-[#042C53] text-center mb-6 tracking-tight",
+
   loadingText: "text-center text-[#185FA5] py-4 text-sm",
   serviceLoadingText: "text-center text-[#185FA5] py-4 text-sm",
-  emptyStateText: "text-center text-[#185FA5] py-4 text-sm",
-  serviceEmptyStateText: "text-center text-[#185FA5] py-4 text-sm",
+  emptyStateText: "text-center text-[#378ADD] py-4 text-sm",
+  serviceEmptyStateText: "text-center text-[#378ADD] py-4 text-sm",
+
   doctorGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12",
   serviceGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6",
 };
 
 export const cardStyles = {
-  doctorCard: "bg-[#E6F1FB] border border-[#85B7EB] rounded-2xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col items-center gap-2",
-  serviceCard: "bg-[#E6F1FB] border border-[#85B7EB] rounded-2xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col items-center gap-2",
+  doctorCard: "bg-[#E6F1FB] border border-[#85B7EB] rounded-2xl p-5 shadow-sm hover:shadow-md hover:shadow-[#85B7EB]/30 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center gap-2",
+  serviceCard: "bg-[#E6F1FB] border border-[#85B7EB] rounded-2xl p-5 shadow-sm hover:shadow-md hover:shadow-[#85B7EB]/30 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center gap-2",
+
   doctorImageContainer: "w-20 h-20 rounded-full bg-[#185FA5] border-2 border-[#378ADD] flex items-center justify-center overflow-hidden",
   serviceImageContainer: "w-20 h-20 rounded-full bg-[#185FA5] border-2 border-[#378ADD] mx-auto flex items-center justify-center overflow-hidden",
+
   image: "w-full h-full object-cover",
+
   doctorName: "text-sm font-semibold text-[#042C53] text-center mt-1 leading-snug",
   serviceName: "text-sm font-semibold text-[#042C53] text-center mt-1 leading-snug",
   specialization: "text-xs text-[#185FA5] font-medium text-center",
   price: "text-sm font-semibold text-[#0C447C] text-center",
+
   dateContainer: "flex items-center gap-1.5 text-xs text-[#0C447C] bg-[#B5D4F4] border border-[#85B7EB] rounded-full px-3 py-1 w-full justify-center",
   serviceDateContainer: "flex items-center gap-1.5 text-xs text-[#0C447C] bg-[#B5D4F4] border border-[#85B7EB] rounded-full px-3 py-1 w-full justify-center",
   timeContainer: "flex items-center gap-1.5 text-xs text-[#0C447C] bg-[#B5D4F4] border border-[#85B7EB] rounded-full px-3 py-1 w-full justify-center",
   serviceTimeContainer: "flex items-center gap-1.5 text-xs text-[#0C447C] bg-[#B5D4F4] border border-[#85B7EB] rounded-full px-3 py-1 w-full justify-center",
+
   badgesContainer: "flex gap-2 flex-wrap justify-center mt-1",
+
   rescheduledText: "mt-2 text-center text-xs text-[#185FA5]",
   serviceRescheduledText: "mt-2 text-center text-xs text-[#185FA5]",
   rescheduledSpan: "font-semibold",
@@ -36,14 +45,14 @@ export const cardStyles = {
 export const badgeStyles = {
   paymentBadge: {
     online: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#E6F1FB] text-[#0C447C] border border-[#85B7EB] flex items-center gap-1",
-    cash: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#FAEEDA] text-[#633806] border border-[#FAC775] flex items-center gap-1",
+    cash: "px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1",
   },
   statusBadge: {
-    completed: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#F1EFE8] text-[#444441] border border-[#D3D1C7] flex items-center gap-1",
-    confirmed: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#EAF3DE] text-[#27500A] border border-[#C0DD97] flex items-center gap-1",
-    pending: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#FAEEDA] text-[#633806] border border-[#FAC775] flex items-center gap-1",
-    canceled: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#FCEBEB] text-[#791F1F] border border-[#F7C1C1] flex items-center gap-1",
-    default: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#E6F1FB] text-[#0C447C] border border-[#85B7EB] flex items-center gap-1",
+    completed: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#f0f6fd] text-[#0C447C] border border-[#B5D4F4] flex items-center gap-1",
+    confirmed: "px-2.5 py-1 rounded-full text-xs font-medium bg-[#E6F1FB] text-[#042C53] border border-[#85B7EB] flex items-center gap-1",
+    pending: "px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1",
+    canceled: "px-2.5 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-600 border border-rose-200 flex items-center gap-1",
+    default: "px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-50 text-indigo-600 border border-indigo-200 flex items-center gap-1",
   },
 };
 
@@ -263,84 +272,84 @@ export const contactPageStyles = {
 
 export const doctorsPageStyles = {
   // Main container
-  mainContainer: "min-h-screen bg-linear-to-br from-emerald-50 to-teal-100 py-8 sm:py-10 px-3 sm:px-6 relative overflow-hidden",
-  
+  mainContainer: "min-h-screen bg-[#f0f6fd] py-8 sm:py-10 px-3 sm:px-6 relative overflow-hidden",
+
   // Background shapes
-  backgroundShape1: "absolute -top-40 -right-32 w-72 h-72 sm:w-96 sm:h-96 bg-emerald-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse",
-  backgroundShape2: "absolute -bottom-40 -left-32 w-72 h-72 sm:w-96 sm:h-96 bg-teal-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse animation-delay-2000",
-  
+  backgroundShape1: "absolute -top-40 -right-32 w-72 h-72 sm:w-96 sm:h-96 bg-[#B5D4F4] rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse",
+  backgroundShape2: "absolute -bottom-40 -left-32 w-72 h-72 sm:w-96 sm:h-96 bg-[#378ADD] rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-pulse",
+
   // Wrapper
   wrapper: "max-w-7xl mx-auto relative z-10 font-serif",
-  
+
   // Header
   headerContainer: "text-center mb-8 sm:mb-10 animate-fade-in",
-  headerTitle: "text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold bg-linear-to-r from-emerald-700 to-teal-600 bg-clip-text text-transparent mb-3 tracking-tight",
-  headerSubtitle: "text-sm sm:text-base text-emerald-700 font-light",
-  
+  headerTitle: "text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#185FA5] to-[#378ADD] bg-clip-text text-transparent mb-3 tracking-tight",
+  headerSubtitle: "text-sm sm:text-base text-[#0C447C] font-light",
+
   // Search bar
   searchContainer: "flex justify-center mb-8 sm:mb-12 animate-slide-up",
   searchWrapper: "relative w-full max-w-xl transition-all duration-500 px-2 sm:px-0",
-  searchInput: "w-full py-3 sm:py-4 pl-12 pr-10 text-sm sm:text-lg rounded-full border border-emerald-300 bg-white/90 text-emerald-800 placeholder-emerald-400 shadow-md sm:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-400/40 focus:shadow-xl transition-all duration-300 hover:shadow-2xl",
-  searchIcon: "absolute left-4 top-3 sm:top-4 text-emerald-600 w-5 h-5 sm:w-6 sm:h-6",
-  clearButton: "absolute right-3 top-3 sm:top-4 text-emerald-600 hover:text-emerald-800 transition",
-  
+  searchInput: "w-full py-3 sm:py-4 pl-12 pr-10 text-sm sm:text-lg rounded-full border border-[#85B7EB] bg-white text-[#042C53] placeholder-[#378ADD] shadow-md sm:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#378ADD]/40 focus:shadow-xl transition-all duration-300 hover:shadow-2xl",
+  searchIcon: "absolute left-4 top-3 sm:top-4 text-[#185FA5] w-5 h-5 sm:w-6 sm:h-6",
+  clearButton: "absolute right-3 top-3 sm:top-4 text-[#185FA5] hover:text-[#042C53] transition",
+
   // Error area
   errorContainer: "text-center mb-6",
   errorText: "text-sm text-rose-600 mb-2",
-  retryButton: "px-4 py-2 rounded-full bg-emerald-600 text-white",
-  
+  retryButton: "px-4 py-2 rounded-full bg-[#185FA5] text-white hover:bg-[#0C447C] transition",
+
   // Loading skeleton
   skeletonGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8",
-  skeletonCard: "animate-pulse bg-white/80 backdrop-blur-md rounded-3xl p-4 sm:p-5 md:p-6 text-center transition-all duration-300",
-  skeletonImage: "relative mx-auto mb-4 w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-36 lg:h-36 bg-emerald-100 rounded-full",
-  skeletonName: "h-5 bg-emerald-100 rounded w-3/4 mx-auto mb-2",
-  skeletonSpecialization: "h-4 bg-emerald-100 rounded w-1/2 mx-auto mb-3",
-  skeletonButton: "h-8 bg-emerald-100 rounded w-full mx-auto mt-4",
-  
+  skeletonCard: "animate-pulse bg-white rounded-3xl p-4 sm:p-5 md:p-6 text-center border border-[#B5D4F4]",
+  skeletonImage: "relative mx-auto mb-4 w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 bg-[#E6F1FB] rounded-full",
+  skeletonName: "h-5 bg-[#E6F1FB] rounded w-3/4 mx-auto mb-2",
+  skeletonSpecialization: "h-4 bg-[#E6F1FB] rounded w-1/2 mx-auto mb-3",
+  skeletonButton: "h-8 bg-[#E6F1FB] rounded w-full mx-auto mt-4",
+
   // Doctors grid
   doctorsGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 sm:gap-8 transition-all duration-300",
-  
+
   // Doctor card
-  doctorCard: "bg-white/80 backdrop-blur-md rounded-3xl p-4 sm:p-5 md:p-6 text-center transition-all duration-300 hover:shadow-xl animate-fade-in-up",
-  doctorCardUnavailable: "opacity-80",
-  
+  doctorCard: "bg-white rounded-3xl p-4 sm:p-5 md:p-6 text-center border border-[#B5D4F4] transition-all duration-300 hover:shadow-lg hover:shadow-[#85B7EB]/40 hover:-translate-y-1 animate-fade-in-up",
+  doctorCardUnavailable: "opacity-70",
+
   // Doctor image container
   imageContainer: "relative mx-auto mb-4 w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-36 lg:h-36",
   imageContainerUnavailable: "opacity-70 cursor-not-allowed",
-  doctorImage: "w-full h-full rounded-full object-cover border-4 border-emerald-200 shadow-lg transform transition-transform duration-300 group-hover:scale-105",
-  doctorImageUnavailable: "border-4 border-gray-300 shadow-md",
-  
+  doctorImage: "w-full h-full rounded-full object-cover border-4 border-[#B5D4F4] shadow-lg transform transition-transform duration-300 group-hover:scale-105",
+  doctorImageUnavailable: "w-full h-full rounded-full object-cover border-4 border-gray-200 shadow-md",
+
   // Doctor info
-  doctorName: "text-base sm:text-lg md:text-md whitespace-nowrap lg:text-lg font-bold text-emerald-900 mb-1",
-  doctorSpecialization: "text-sm sm:text-sm md:text-sm text-emerald-600 font-medium mb-3",
-  
+  doctorName: "text-base sm:text-lg md:text-md whitespace-nowrap lg:text-lg font-bold text-[#042C53] mb-1",
+  doctorSpecialization: "text-sm sm:text-sm md:text-sm text-[#185FA5] font-medium mb-3",
+
   // Experience badge
-  experienceBadge: "inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium mb-4 bg-emerald-50 border border-emerald-300 shadow-sm",
-  experienceIcon: "w-4 h-4",
-  
-  // Book button (available)
-  bookButton: "w-full inline-flex items-center justify-center gap-2 py-2 rounded-full font-medium transition-all duration-300 text-sm bg-linear-to-r from-emerald-300 to-teal-500 text-white hover:shadow-lg",
+  experienceBadge: "inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium mb-4 bg-[#E6F1FB] border border-[#85B7EB] shadow-sm text-[#0C447C]",
+  experienceIcon: "w-4 h-4 text-[#378ADD]",
+
+  // Book button
+  bookButton: "w-full inline-flex items-center justify-center gap-2 py-2 rounded-full font-medium transition-all duration-300 text-sm bg-[#185FA5] text-white hover:bg-[#0C447C] hover:shadow-lg",
   bookButtonIcon: "w-5 h-5",
-  
+
   // Not available button
-  notAvailableButton: "w-full inline-flex items-center justify-center gap-2 py-2 rounded-full font-medium bg-gray-300 text-gray-600 cursor-not-allowed text-sm",
+  notAvailableButton: "w-full inline-flex items-center justify-center gap-2 py-2 rounded-full font-medium bg-gray-200 text-gray-500 cursor-not-allowed text-sm",
   notAvailableIcon: "w-5 h-5",
-  
+
   // No results
-  noResults: "col-span-full text-center py-10 text-emerald-800 font-medium text-base animate-fade-in",
-  
+  noResults: "col-span-full text-center py-10 text-[#0C447C] font-medium text-base animate-fade-in",
+
   // Show more button
   showMoreContainer: "flex justify-center mt-8 sm:mt-10",
-  showMoreButton: "flex items-center cursor-pointer gap-2 px-5 py-2.5 bg-linear-to-r from-emerald-400 to-teal-500 text-white rounded-full text-md font-semibold shadow-md hover:shadow-lg transition-all duration-300",
+  showMoreButton: "flex items-center cursor-pointer gap-2 px-5 py-2.5 bg-[#185FA5] text-white rounded-full text-md font-semibold shadow-md hover:bg-[#0C447C] hover:shadow-lg transition-all duration-300",
   showMoreIcon: "w-5 h-5",
-  
+
   // Link focus styles
-  focusRing: "focus:outline-none focus:ring-2 focus:ring-emerald-300 rounded-full",
-  
-  // Animation styles
+  focusRing: "focus:outline-none focus:ring-2 focus:ring-[#378ADD] rounded-full",
+
+  // Animation classes
   animationFadeIn: "animate-fade-in",
   animationFadeInUp: "animate-fade-in-up",
-  animationSlideUp: "animate-slide-up"
+  animationSlideUp: "animate-slide-up",
 };
 
 
@@ -447,61 +456,58 @@ export const footerStyles = {
 
 export const homeDoctorsStyles = {
   // Section container
-  section: "py-10 bg-linear-to-br from-green-50 to-blue-50",
+  section: "py-10 bg-[#f0f6fd]",
   container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
-  
+
   // Header
   header: "text-center mb-10",
-  title: "text-4xl md:text-5xl font-serif italic text-gray-900",
-  titleSpan: "text-emerald-600 font-semibold",
-  subtitle: "mt-2 text-gray-600 max-w-2xl mx-auto",
-  
+  title: "text-4xl md:text-5xl font-serif italic text-[#042C53]",
+  titleSpan: "text-[#185FA5] font-semibold",
+  subtitle: "mt-2 text-[#0C447C] max-w-2xl mx-auto",
+
   // Error/Retry
   errorContainer: "text-center mb-6",
   errorText: "text-sm text-rose-600 mb-2",
-  retryButton: "px-4 py-2 rounded-full bg-emerald-600 text-white",
-  
+  retryButton: "px-4 py-2 rounded-full bg-[#185FA5] text-white hover:bg-[#0C447C] transition",
+
   // Loading skeleton
   skeletonGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8",
-  skeletonCard: "animate-pulse bg-white rounded-3xl shadow-md p-4 h-72",
-  skeletonImage: "bg-emerald-100 rounded-lg h-40 mb-4",
-  skeletonText1: "h-5 bg-emerald-100 rounded w-3/4 mb-2",
-  skeletonText2: "h-4 bg-emerald-100 rounded w-1/2 mb-3",
-  skeletonButton: "h-8 w-full bg-emerald-100 rounded",
-  
+  skeletonCard: "animate-pulse bg-white rounded-3xl border border-[#B5D4F4] p-4 h-72",
+  skeletonImage: "bg-[#E6F1FB] rounded-lg h-40 mb-4",
+  skeletonText1: "h-5 bg-[#E6F1FB] rounded w-3/4 mb-2",
+  skeletonText2: "h-4 bg-[#E6F1FB] rounded w-1/2 mb-3",
+  skeletonButton: "h-8 w-full bg-[#E6F1FB] rounded",
+
   // Doctors grid
   doctorsGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8",
-  
+
   // Doctor card
-  article: "group relative bg-white rounded-3xl shadow-md hover:shadow-2xl transition transform duration-300 overflow-hidden",
-  
+  article: "group relative bg-white rounded-3xl border border-[#B5D4F4] shadow-sm hover:shadow-lg hover:shadow-[#85B7EB]/30 transition-all duration-300 overflow-hidden hover:-translate-y-1",
+
   // Image containers
   imageContainerAvailable: "relative h-60 sm:h-44 md:h-48 lg:h-52 overflow-hidden rounded-t-3xl",
   imageContainerUnavailable: "relative h-60 sm:h-44 md:h-48 lg:h-52 overflow-hidden rounded-t-3xl opacity-80 cursor-not-allowed",
-  image: "w-full h-full object-cover object-center transform transition-transform duration-500",
-  unavailableBadge: "absolute top-3 left-3 bg-rose-50 text-rose-700 text-xs px-2 py-1 rounded-full shadow",
-  
+  image: "w-full h-full object-cover object-center transform transition-transform duration-500 group-hover:scale-105",
+  unavailableBadge: "absolute top-3 left-3 bg-white text-rose-600 text-xs px-2 py-1 rounded-full shadow border border-rose-100",
+
   // Card body
   cardBody: "p-3 sm:p-4 md:p-5 font-serif",
-  doctorName: "text-base sm:text-lg md:text-sm lg:text-md xl:text-xl font-semibold text-black",
-  specialization: "text-sm sm:text-sm md:text-sm text-emerald-600 font-medium mt-1",
-  
+  doctorName: "text-base sm:text-lg md:text-sm lg:text-md xl:text-xl font-semibold text-[#042C53]",
+  specialization: "text-sm sm:text-sm md:text-sm text-[#185FA5] font-medium mt-1",
+
   // Experience badge
-  experienceContainer: "mt-3 flex items-center justify-between text-sm text-gray-600",
-  experienceBadge: "flex items-center gap-2 border border-green-300 bg-green-100 px-2 py-1 rounded-full text-xs sm:text-sm",
-  
+  experienceContainer: "mt-3 flex items-center justify-between text-sm text-[#0C447C]",
+  experienceBadge: "flex items-center gap-2 border border-[#85B7EB] bg-[#E6F1FB] px-2 py-1 rounded-full text-xs sm:text-sm text-[#0C447C]",
+
   // Buttons
   buttonContainer: "mt-3",
-  buttonAvailable: "w-full inline-flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-full font-medium transition-all duration-300 text-sm bg-linear-to-br from-emerald-300 to-teal-500 text-white hover:shadow-lg",
-  buttonUnavailable: "w-full inline-flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-full font-medium bg-gray-300 text-gray-600 cursor-not-allowed text-sm",
-  
+  buttonAvailable: "w-full inline-flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-full font-medium transition-all duration-300 text-sm bg-[#185FA5] text-white hover:bg-[#0C447C] hover:shadow-lg",
+  buttonUnavailable: "w-full inline-flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-full font-medium bg-gray-200 text-gray-500 cursor-not-allowed text-sm",
+
   // Custom CSS
   customCSS: `
-    /* keep your shadow look consistent */
-    .shadow-md { box-shadow: 0 6px 18px rgba(14, 30, 37, 0.06); }
-    .shadow-2xl { box-shadow: 0 18px 50px rgba(14, 30, 37, 0.12); }
-
-    /* optional: slightly reduce spacing on very small devices for compactness */
+    .shadow-sm { box-shadow: 0 4px 14px rgba(24, 95, 165, 0.06); }
+    .shadow-lg { box-shadow: 0 14px 40px rgba(24, 95, 165, 0.12); }
     @media (max-width: 420px) {
       .max-w-7xl { padding-left: 12px; padding-right: 12px; }
     }
@@ -512,57 +518,52 @@ export const homeDoctorsStyles = {
 
 export const loginPageStyles = {
   // Main container
-  mainContainer: "min-h-screen flex items-center justify-center bg-linear-to-br from-green-50 via-emerald-100 to-green-200 relative font-serif overflow-hidden",
-  
+  mainContainer: "min-h-screen flex items-center justify-center bg-[#f0f6fd] relative font-serif overflow-hidden",
+
   // Back button
-  backButton: "absolute top-6 left-6 cursor-pointer flex items-center gap-2 text-green-800 font-semibold hover:text-green-600 transition-all duration-300",
+  backButton: "absolute top-6 left-6 cursor-pointer flex items-center gap-2 text-[#185FA5] font-semibold hover:text-[#042C53] transition-all duration-300",
   backButtonIcon: "w-5 h-5",
-  
+
   // Login card
-  loginCard: "relative z-10 bg-white/60 backdrop-blur-xl shadow-2xl rounded-3xl p-8 w-[90%] max-w-md border border-green-200 transition-all duration-500 hover:shadow-green-300/50",
-  
+  loginCard: "relative z-10 bg-white shadow-2xl shadow-[#85B7EB]/20 rounded-3xl p-8 w-[90%] max-w-md border border-[#85B7EB] transition-all duration-500 hover:shadow-[#378ADD]/30",
+
   // Logo
   logoContainer: "flex justify-center mb-6",
   logo: "w-28 h-28 object-contain drop-shadow-lg",
-  
+
   // Header
-  title: "text-3xl font-bold text-center text-emerald-700 tracking-wide mb-2",
-  subtitle: "text-center text-green-600 mb-6 text-sm",
-  
+  title: "text-3xl font-bold text-center text-[#042C53] tracking-wide mb-2",
+  subtitle: "text-center text-[#185FA5] mb-6 text-sm",
+
   // Form
   form: "space-y-5",
-  
-  // Input fields
-  input: "w-full px-5 py-3 rounded-full border border-green-300 bg-white/80",
-  
-  // Submit button
-  submitButton: "w-full py-3 bg-linear-to-r from-emerald-400 to-green-600 text-white font-semibold rounded-full",
-  
-  // Toast styles (kept in component since they're inline)
-  // These remain in the component as they're JS objects, not CSS classes
-  
-  // Responsive adjustments
-  responsiveCard: "p-8 w-[90%] max-w-md"
-};
 
-// Add to dummyStyles.js if you want to extract toast styles too
+  // Input fields
+  input: "w-full px-5 py-3 rounded-full border border-[#85B7EB] bg-[#E6F1FB]/40 text-[#042C53] placeholder-[#378ADD] focus:outline-none focus:ring-2 focus:ring-[#378ADD] focus:border-[#378ADD] transition-all",
+
+  // Submit button
+  submitButton: "w-full py-3 bg-[#185FA5] hover:bg-[#0C447C] text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed",
+
+  // Responsive card
+  responsiveCard: "p-8 w-[90%] max-w-md",
+};
 
 export const toastStyles = {
   errorToast: {
     borderRadius: "12px",
     background: "#fff",
-    color: "#14532d",
-    border: "1px solid #86efac",
-    boxShadow: "0 4px 12px rgba(16,185,129,0.3)",
+    color: "#042C53",
+    border: "1px solid #85B7EB",
+    boxShadow: "0 4px 12px rgba(24, 95, 165, 0.15)",
   },
   successToast: {
     borderRadius: "12px",
-    background: "#ecfdf5",
-    color: "#065f46",
-    border: "1px solid #6ee7b7",
-    boxShadow: "0 4px 15px rgba(16,185,129,0.3)",
+    background: "#E6F1FB",
+    color: "#042C53",
+    border: "1px solid #378ADD",
+    boxShadow: "0 4px 15px rgba(24, 95, 165, 0.2)",
     fontWeight: "600",
-  }
+  },
 };
 
 
@@ -703,54 +704,54 @@ export const navbarStyles = {
 
 export const servicePageStyles = {
   // Page container
-  pageContainer: "min-h-screen py-12 px-6 lg:px-20 font-serif bg-linear-to-b from-emerald-50 to-white",
+  pageContainer: "min-h-screen py-12 px-6 lg:px-20 font-serif bg-[#f0f6fd]",
   maxWidthContainer: "max-w-6xl mx-auto",
-  
+
   // Header
   header: "mb-10 text-center",
-  title: "text-4xl font-bold text-emerald-900",
-  subtitle: "mt-2 text-emerald-800/80",
-  
+  title: "text-4xl font-bold text-[#042C53]",
+  subtitle: "mt-2 text-[#0C447C]/80",
+
   // Error/Retry
   errorContainer: "text-center mb-6",
   errorText: "text-sm text-rose-600 mb-2",
-  retryButton: "px-4 py-2 rounded-full bg-emerald-600 text-white",
-  
+  retryButton: "px-4 py-2 rounded-full bg-[#185FA5] text-white hover:bg-[#0C447C] transition",
+
   // Loading skeleton
   skeletonGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-8",
-  skeletonCard: "animate-pulse group rounded-2xl overflow-hidden bg-white shadow-xl p-4",
-  skeletonImage: "w-full h-48 bg-emerald-100 rounded mb-4",
-  skeletonText1: "h-5 bg-emerald-100 rounded w-3/4 mb-2",
-  skeletonText2: "h-4 bg-emerald-100 rounded w-1/2 mb-4",
-  skeletonButton: "h-10 bg-emerald-100 rounded w-full",
-  
+  skeletonCard: "animate-pulse group rounded-2xl overflow-hidden bg-white border border-[#B5D4F4] p-4",
+  skeletonImage: "w-full h-48 bg-[#E6F1FB] rounded mb-4",
+  skeletonText1: "h-5 bg-[#E6F1FB] rounded w-3/4 mb-2",
+  skeletonText2: "h-4 bg-[#E6F1FB] rounded w-1/2 mb-4",
+  skeletonButton: "h-10 bg-[#E6F1FB] rounded w-full",
+
   // Services grid
   servicesGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-8",
-  
+
   // Empty state
-  emptyState: "col-span-full text-center py-10 text-emerald-800 font-medium text-base",
+  emptyState: "col-span-full text-center py-10 text-[#0C447C] font-medium text-base",
 };
 
 export const serviceCardStyles = {
   // Card container
-  card: "group rounded-2xl overflow-hidden bg-white shadow-xl hover:-translate-y-2 transition-transform duration-500 border border-emerald-100",
-  
+  card: "group rounded-2xl overflow-hidden bg-white border border-[#B5D4F4] shadow-sm hover:-translate-y-2 hover:shadow-lg hover:shadow-[#85B7EB]/30 transition-all duration-500",
+
   // Image container
-  imageContainer: "w-full overflow-hidden bg-emerald-50/30 flex items-center justify-center",
-  
+  imageContainer: "w-full overflow-hidden bg-[#E6F1FB]/30 flex items-center justify-center",
+
   // Images
   picture: "w-full",
   responsiveImage: "w-full h-40 sm:h-48 md:h-56 lg:h-60 object-cover object-center transform group-hover:scale-105 transition-transform duration-500",
   fallbackImage: "w-full h-60 sm:h-48 md:h-56 lg:h-60 object-cover object-center transform transition-transform duration-500",
-  
+
   // Content
   content: "p-5 text-center",
-  serviceName: "text-lg md:text-sm whitespace-nowrap font-semibold font-serif text-emerald-900",
-  
+  serviceName: "text-lg md:text-sm whitespace-nowrap font-semibold font-serif text-[#042C53]",
+
   // Buttons
   buttonContainer: "mt-4",
-  buttonAvailable: "inline-flex items-center justify-center gap-2 px-5 py-2 w-full rounded-full bg-emerald-500 text-white font-medium",
-  buttonUnavailable: "px-5 py-2 w-full flex items-center justify-center gap-2 rounded-full bg-gray-200 text-gray-500 cursor-not-allowed border",
+  buttonAvailable: "inline-flex items-center justify-center gap-2 px-5 py-2 w-full rounded-full bg-[#185FA5] text-white font-medium hover:bg-[#0C447C] transition-all duration-300",
+  buttonUnavailable: "px-5 py-2 w-full flex items-center justify-center gap-2 rounded-full bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200",
 };
 
 
@@ -823,545 +824,448 @@ export const testimonialStyles = {
 };
 
 // Add to existing dummyStyles.js
-
 export const serviceDetailStyles = {
-  // Page container
-  pageContainer: "min-h-screen font-serif bg-linear-to-br from-emerald-50 via-white to-green-50 px-4 lg:px-12 pt-20 sm:pt-12 md:pt-8 lg:pt-0",
-  
-  // Navigation bar
+  pageContainer: "min-h-screen font-serif bg-[#f0f6fd] px-4 lg:px-12 pt-20 sm:pt-12 md:pt-8 lg:pt-0",
   navBar: "backdrop-blur-lg top-0 z-20",
   navContainer: "max-w-6xl mx-auto h-16 flex items-center justify-between px-4",
-  backButton: "inline-flex items-center gap-2 px-4 py-2 bg-white text-emerald-600 border border-emerald-200 rounded-full hover:bg-emerald-50",
-  
-  // Main grid layout
+  backButton: "inline-flex items-center gap-2 px-4 py-2 bg-white text-[#185FA5] border border-[#85B7EB] rounded-full hover:bg-[#E6F1FB]",
   mainGrid: "max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10 mt-6",
-  
-  // Left column
   leftColumn: "space-y-8",
-  
-  // Image
-  imageContainer: "w-full h-56 sm:h-72 md:h-96 lg:h-[65vh] xl:h-[70vh] rounded-3xl overflow-hidden shadow-2xl border border-white/50",
+  imageContainer: "w-full h-56 sm:h-72 md:h-96 lg:h-[65vh] xl:h-[70vh] rounded-3xl overflow-hidden shadow-2xl border border-[#B5D4F4]",
   image: "w-full h-full object-cover object-center transition-transform duration-500",
-  
-  // Details form
-  detailsContainer: "bg-white p-6 rounded-2xl shadow-xl border border-emerald-100",
-  detailsTitle: "text-lg font-semibold text-emerald-700 flex items-center gap-2 mb-4",
+  detailsContainer: "bg-white p-6 rounded-2xl shadow-xl border border-[#B5D4F4]",
+  detailsTitle: "text-lg font-semibold text-[#185FA5] flex items-center gap-2 mb-4",
   detailsGrid: "grid grid-cols-1 sm:grid-cols-2 gap-4",
-  
-  // Input fields
-  input: "px-4 py-3 rounded-full border border-emerald-200 focus:ring-2 focus:ring-emerald-300 w-full",
-  invalidInput: "px-4 py-3 rounded-full border border-rose-500 focus:ring-2 focus:ring-emerald-300 w-full",
-  emailInput: "px-4 py-3 rounded-full border border-emerald-200 focus:ring-2 focus:ring-emerald-300 w-full sm:col-span-2",
-  
-  // Payment method
-  paymentLabel: "font-semibold text-emerald-800 block mb-2",
+  input: "px-4 py-3 rounded-full border border-[#85B7EB] bg-[#E6F1FB]/40 text-[#042C53] focus:ring-2 focus:ring-[#378ADD] w-full",
+  invalidInput: "px-4 py-3 rounded-full border border-rose-500 focus:ring-2 focus:ring-[#378ADD] w-full",
+  emailInput: "px-4 py-3 rounded-full border border-[#85B7EB] bg-[#E6F1FB]/40 text-[#042C53] focus:ring-2 focus:ring-[#378ADD] w-full sm:col-span-2",
+  paymentLabel: "font-semibold text-[#0C447C] block mb-2",
   paymentOptions: "inline-flex gap-2",
-  paymentOption: (isSelected) => 
-    `px-3 py-1 rounded-full cursor-pointer border ${isSelected ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-emerald-700 border-emerald-100"}`,
+  paymentOption: (isSelected) =>
+    `px-3 py-1 rounded-full cursor-pointer border ${isSelected ? "bg-[#185FA5] text-white border-[#185FA5]" : "bg-white text-[#0C447C] border-[#85B7EB]"}`,
   paymentInput: "hidden",
-  
-  // Date selection
   dateSection: "mt-4",
-  dateTitle: "text-xl font-semibold text-emerald-900 mb-2",
+  dateTitle: "text-xl font-semibold text-[#042C53] mb-2",
   dateScrollContainer: "overflow-x-auto -mx-2 px-2",
   dateButtonsContainer: "inline-flex gap-3 sm:flex sm:flex-wrap",
-  dateButton: (isSelected) => 
-    `px-5 py-2 rounded-full cursor-pointer border transition whitespace-nowrap min-w-[140px] sm:min-w-0 ${isSelected ? "bg-emerald-600 border-emerald-600 text-white" : "bg-white border-emerald-300 text-emerald-700 hover:bg-emerald-100"}`,
-  
-  // Time selection
+  dateButton: (isSelected) =>
+    `px-5 py-2 rounded-full cursor-pointer border transition whitespace-nowrap min-w-[140px] sm:min-w-0 ${isSelected ? "bg-[#185FA5] border-[#185FA5] text-white" : "bg-white border-[#85B7EB] text-[#0C447C] hover:bg-[#E6F1FB]"}`,
   timeSection: "mt-4",
-  timeTitle: "text-xl font-semibold text-emerald-900 mb-2",
+  timeTitle: "text-xl font-semibold text-[#042C53] mb-2",
   timeScrollContainer: "overflow-x-auto -mx-2 px-2",
   timeButtonsContainer: "inline-flex gap-3 sm:flex sm:flex-wrap",
-  timeButton: (isSelected) => 
-    `px-5 py-2 rounded-full cursor-pointer border transition whitespace-nowrap min-w-[140px] sm:min-w-0 flex items-center gap-2 ${isSelected ? "bg-emerald-600 border-emerald-600 text-white" : "bg-white border-emerald-300 text-emerald-700 hover:bg-emerald-100"}`,
-  noSlotsMessage: "text-emerald-600/80 p-2",
-  
-  // Submit button
+  timeButton: (isSelected) =>
+    `px-5 py-2 rounded-full cursor-pointer border transition whitespace-nowrap min-w-[140px] sm:min-w-0 flex items-center gap-2 ${isSelected ? "bg-[#185FA5] border-[#185FA5] text-white" : "bg-white border-[#85B7EB] text-[#0C447C] hover:bg-[#E6F1FB]"}`,
+  noSlotsMessage: "text-[#378ADD]/80 p-2",
   errorMessage: "text-rose-600 mb-2",
-  successMessage: "text-emerald-700 mb-2",
-  submitButton: (isValid, isSubmitting) => 
-    `w-full py-4 md:mb-8 rounded-full cursor-pointer text-lg font-semibold flex items-center justify-center gap-3 transition ${isValid && !isSubmitting ? "bg-linear-to-br from-emerald-500 to-green-500 text-white shadow-lg hover:opacity-90" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`,
-  
-  // Right column
-  rightColumn: "bg-white/80 rounded-3xl shadow-xl p-6 sm:p-8 border border-white/50 h-fit",
-  serviceName: "text-2xl lg:text-3xl xl:text-3xl md:text-2xl sm:text-4xl font-bold bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent",
-  
-  // About section
-  aboutContainer: "mt-6 bg-emerald-50 p-5 rounded-xl border border-emerald-100",
-  aboutTitle: "flex items-center gap-3 text-md md:text-xl lg:text-xl xl:text-xl font-semibold text-emerald-900",
-  aboutText: "text-emerald-800 mt-2",
-  
-  // Price display
-  priceContainer: "mt-6 rounded-full flex items-center gap-3 bg-emerald-50 w-fit px-5 py-3 border border-emerald-100",
-  priceText: "font-bold text-xl text-emerald-900",
-  
-  // Instructions
+  successMessage: "text-[#185FA5] mb-2",
+  submitButton: (isValid, isSubmitting) =>
+    `w-full py-4 md:mb-8 rounded-full cursor-pointer text-lg font-semibold flex items-center justify-center gap-3 transition ${isValid && !isSubmitting ? "bg-[#185FA5] hover:bg-[#0C447C] text-white shadow-lg" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`,
+  rightColumn: "bg-white/80 rounded-3xl shadow-xl p-6 sm:p-8 border border-[#B5D4F4] h-fit",
+  serviceName: "text-2xl lg:text-3xl xl:text-3xl md:text-2xl sm:text-4xl font-bold bg-gradient-to-r from-[#185FA5] to-[#378ADD] bg-clip-text text-transparent",
+  aboutContainer: "mt-6 bg-[#E6F1FB] p-5 rounded-xl border border-[#B5D4F4]",
+  aboutTitle: "flex items-center gap-3 text-md md:text-xl lg:text-xl xl:text-xl font-semibold text-[#042C53]",
+  aboutText: "text-[#0C447C] mt-2",
+  priceContainer: "mt-6 rounded-full flex items-center gap-3 bg-[#E6F1FB] w-fit px-5 py-3 border border-[#B5D4F4]",
+  priceText: "font-bold text-xl text-[#042C53]",
   instructionsContainer: "mt-8",
-  instructionsTitle: "text-xl font-semibold text-emerald-900 mb-3",
-  instructionsList: "list-disc pl-6 text-emerald-700 space-y-1",
-  
-  // Booking summary
-  summaryContainer: "mt-8 bg-linear-to-r from-emerald-50 to-green-50 rounded-2xl p-5 border border-emerald-100",
-  summaryTitle: "text-lg font-semibold text-emerald-800 mb-4",
-  summaryContent: "space-y-2 text-emerald-700 text-sm sm:text-base",
+  instructionsTitle: "text-xl font-semibold text-[#042C53] mb-3",
+  instructionsList: "list-disc pl-6 text-[#0C447C] space-y-1",
+  summaryContainer: "mt-8 bg-gradient-to-r from-[#E6F1FB] to-[#f0f6fd] rounded-2xl p-5 border border-[#B5D4F4]",
+  summaryTitle: "text-lg font-semibold text-[#042C53] mb-4",
+  summaryContent: "space-y-2 text-[#0C447C] text-sm sm:text-base",
   summaryItem: "",
-  
-  // Loading and error states
   loadingContainer: "min-h-screen flex items-center justify-center p-8",
-  loadingCard: "bg-white p-8 rounded-xl shadow-lg text-center",
-  loadingTitle: "text-2xl font-semibold",
-  loadingText: "mt-2 text-gray-600",
-  backToServices: "inline-block mt-4 px-4 py-2 bg-emerald-600 text-white rounded-full",
+  loadingCard: "bg-white p-8 rounded-xl shadow-lg text-center border border-[#B5D4F4]",
+  loadingTitle: "text-2xl font-semibold text-[#042C53]",
+  loadingText: "mt-2 text-[#0C447C]",
+  backToServices: "inline-block mt-4 px-4 py-2 bg-[#185FA5] text-white rounded-full hover:bg-[#0C447C] transition",
 };
 
 
 
 // DoctorDetail styles
 export const doctorDetailStyles = {
-  // Main container
-  pageContainer: "min-h-screen font-serif bg-linear-to-br from-emerald-50 via-white to-green-50 relative overflow-hidden",
-  
-  // Loading/Error states
+  pageContainer: "min-h-screen font-serif bg-[#f0f6fd] relative overflow-hidden",
   loadingContainer: "min-h-screen flex items-center justify-center",
   errorContainer: "min-h-screen flex items-center justify-center",
   errorContent: "text-center",
   errorText: "text-red-600 mb-2",
   errorMessage: "text-gray-700",
-  backButton: "inline-flex items-center gap-2 mt-4 px-6 py-3 bg-emerald-500 text-white rounded-full hover:bg-emerald-600 transition-all",
+  backButton: "inline-flex items-center gap-2 mt-4 px-6 py-3 bg-[#185FA5] text-white rounded-full hover:bg-[#0C447C] transition-all",
   backButtonIcon: "size={20}",
-  
-  // Not found state
   notFoundContainer: "min-h-screen flex items-center justify-center",
   notFoundContent: "text-center",
   notFoundEmoji: "text-6xl mb-4",
   notFoundTitle: "text-2xl font-bold text-gray-700",
-  
-  // Header
-  headerContainer: "relative z-10 bg-white/80 backdrop-blur-lg border-b border-emerald-100 top-0",
+  headerContainer: "relative z-10 bg-white/80 backdrop-blur-lg border-b border-[#85B7EB] top-0",
   headerContent: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
   headerFlex: "flex items-center justify-between h-16",
-  headerBackButton: "inline-flex items-center gap-2 px-2 xl:px-4 lg:px-4 py-2 bg-white text-emerald-600 border border-emerald-200 rounded-full hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-300 shadow-sm hover:shadow-md",
+  headerBackButton: "inline-flex items-center gap-2 px-2 xl:px-4 lg:px-4 py-2 bg-white text-[#185FA5] border border-[#85B7EB] rounded-full hover:bg-[#E6F1FB] hover:border-[#378ADD] transition-all duration-300 shadow-sm hover:shadow-md",
   headerBackButtonIcon: "size={18}",
   headerBackButtonText: "font-medium",
-  headerTitle: "text-sm md:text-2xl lg:text-xl xl:text-2xl whitespace-nowrap font-bold bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent",
+  headerTitle: "text-sm md:text-2xl lg:text-xl xl:text-2xl whitespace-nowrap font-bold bg-gradient-to-r from-[#185FA5] to-[#378ADD] bg-clip-text text-transparent",
   headerRatingContainer: "flex items-center gap-2 px-2 py-2 bg-white rounded-full shadow-sm border border-amber-100",
   headerRatingIcon: "text-amber-400 fill-current",
   headerRatingText: "font-semibold text-amber-600",
-  
-  // Main content wrapper
   mainContent: "relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20 sm:pt-8 transition-all duration-700",
   visibleState: "opacity-100 translate-y-0",
   hiddenState: "opacity-0 translate-y-8",
-  
-  // Profile card
-  profileCard: "bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/50 overflow-hidden mb-8",
+  profileCard: "bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-[#B5D4F4] overflow-hidden mb-8",
   profileGrid: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-6 sm:p-8",
-  
-  // Left column (avatar)
   leftColumn: "lg:col-span-1 flex flex-col items-center space-y-6",
   avatarContainer: "relative",
-  avatarGlow: "absolute -inset-2 sm:-inset-3 md:-inset-6 bg-linear-to-br from-emerald-400 to-green-400 rounded-full blur-lg opacity-50 animate-pulse",
+  avatarGlow: "absolute -inset-2 sm:-inset-3 md:-inset-6 bg-gradient-to-br from-[#185FA5] to-[#378ADD] rounded-full blur-lg opacity-40 animate-pulse",
   avatarImage: "relative w-32 h-32 sm:w-40 sm:h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full object-cover border-4 sm:border-6 md:border-8 border-white shadow-2xl z-10 transition-transform duration-300",
   statsGrid: "grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 lg:grid-cols-2 gap-4 w-full max-w-lg px-2",
-  statBox: "text-center p-3 sm:p-4 bg-white rounded-2xl shadow-lg border border-emerald-50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1",
+  statBox: "text-center p-3 sm:p-4 bg-white rounded-2xl shadow-lg border border-[#B5D4F4] hover:shadow-xl transition-all duration-300 hover:-translate-y-1",
   statIcon: "w-5 h-5 mx-auto mb-2",
   heartIcon: "text-rose-500",
   awardIcon: "text-amber-500",
-  usersIcon: "text-emerald-500",
+  usersIcon: "text-[#185FA5]",
   statValue: "text-lg font-bold text-gray-800",
   statLabel: "text-xs text-gray-500",
-  
-  // Right column (doctor info)
   rightColumn: "lg:col-span-2 space-y-6",
-  doctorName: "text-2xl md:text-2xl lg:text-3xl xl:text-3xl sm:text-4xl font-bold bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent",
-  specializationBadge: "inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-emerald-400 to-green-500 text-white rounded-full text-sm font-semibold shadow-lg",
+  doctorName: "text-2xl md:text-2xl lg:text-3xl xl:text-3xl sm:text-4xl font-bold bg-gradient-to-r from-[#185FA5] to-[#378ADD] bg-clip-text text-transparent",
+  specializationBadge: "inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#185FA5] to-[#378ADD] text-white rounded-full text-sm font-semibold shadow-lg",
   badgeIcon: "w-4 h-4",
-  
-  // Info grid
   infoGrid: "grid grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-4",
-  infoItem: "flex items-start gap-3 md:p-3 p-4 bg-white rounded-full shadow-sm border border-emerald-50",
-  infoIcon: "w-5 h-5 text-emerald-500 mt-1",
-  infoLabel: "text-sm font-semibold text-emerald-600",
+  infoItem: "flex items-start gap-3 md:p-3 p-4 bg-white rounded-full shadow-sm border border-[#B5D4F4]",
+  infoIcon: "w-5 h-5 text-[#185FA5] mt-1",
+  infoLabel: "text-sm font-semibold text-[#185FA5]",
   infoValue: "text-gray-700 font-medium",
   feeValue: "text-lg font-bold text-rose-600",
-  
-  // About section
-  aboutContainer: "p-6 bg-white rounded-2xl shadow-sm border border-emerald-50",
+  aboutContainer: "p-6 bg-white rounded-2xl shadow-sm border border-[#B5D4F4]",
   aboutHeader: "flex items-center gap-2 mb-4",
-  aboutIcon: "w-5 h-5 text-emerald-500",
-  aboutTitle: "text-lg font-semibold text-emerald-700",
+  aboutIcon: "w-5 h-5 text-[#185FA5]",
+  aboutTitle: "text-lg font-semibold text-[#185FA5]",
   aboutText: "text-gray-600 leading-relaxed",
-  
-  // Appointment section
-  appointmentContainer: "bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/50 overflow-hidden",
+  appointmentContainer: "bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-[#B5D4F4] overflow-hidden",
   appointmentContent: "p-6 sm:p-8",
   appointmentHeader: "flex items-center gap-3 mb-6",
-  appointmentIcon: "w-6 h-6 text-emerald-500",
-  appointmentTitle: "text-md md:text-2xl font-bold bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent",
-  
-  // Appointment grid
+  appointmentIcon: "w-6 h-6 text-[#185FA5]",
+  appointmentTitle: "text-md md:text-2xl font-bold bg-gradient-to-r from-[#185FA5] to-[#378ADD] bg-clip-text text-transparent",
   appointmentGrid: "grid grid-cols-1 lg:grid-cols-2 gap-6",
-  
-  // Date selection
   dateSection: "space-y-6",
-  dateTitle: "text-lg md:text-xl font-semibold text-emerald-700 flex items-center gap-2",
+  dateTitle: "text-lg md:text-xl font-semibold text-[#185FA5] flex items-center gap-2",
   dateTitleIcon: "w-5 h-5",
   dateScrollContainer: "overflow-x-auto -mx-2 px-2",
   dateButtonsContainer: "inline-grid grid-flow-col auto-cols-max gap-3 sm:grid sm:grid-flow-row sm:auto-cols-auto sm:grid-cols-3 md:grid-cols-7 lg:grid-cols-5 xl:grid-cols-6",
   dateButton: "p-2 sm:p-3 rounded-full cursor-pointer border-2 transition-all whitespace-nowrap",
-  dateButtonSelected: "bg-linear-to-br from-emerald-500 to-green-500 text-white border-emerald-500 shadow-lg",
-  dateButtonUnselected: "bg-white text-gray-700 border-emerald-100",
+  dateButtonSelected: "bg-[#185FA5] text-white border-[#185FA5] shadow-lg",
+  dateButtonUnselected: "bg-white text-gray-700 border-[#B5D4F4] hover:border-[#85B7EB]",
   dateContent: "text-center",
   dateWeekday: "text-xs sm:text-sm opacity-80",
   dateDay: "text-xl sm:text-2xl font-bold",
   dateMonth: "text-xs opacity-80",
-  
-  // Patient form
-  patientForm: "bg-white rounded-2xl p-6 border border-emerald-100 shadow-sm",
-  patientFormTitle: "text-lg font-semibold text-emerald-700 mb-4",
+  patientForm: "bg-white rounded-2xl p-6 border border-[#B5D4F4] shadow-sm",
+  patientFormTitle: "text-lg font-semibold text-[#185FA5] mb-4",
   patientFormGrid: "grid grid-cols-1 md:grid-cols-2 gap-4",
-  formInput: "p-3 rounded-full border border-emerald-200 w-full",
-  emailInput: "p-3 rounded-full border border-emerald-200 w-full md:col-span-2",
-  formSelect: "p-3 rounded-full border border-emerald-200 w-full",
-  
-  // Time slots
+  formInput: "p-3 rounded-full border border-[#85B7EB] bg-[#E6F1FB]/40 text-[#042C53] w-full focus:outline-none focus:ring-2 focus:ring-[#378ADD]",
+  emailInput: "p-3 rounded-full border border-[#85B7EB] bg-[#E6F1FB]/40 text-[#042C53] w-full md:col-span-2 focus:outline-none focus:ring-2 focus:ring-[#378ADD]",
+  formSelect: "p-3 rounded-full border border-[#85B7EB] bg-[#E6F1FB]/40 text-[#042C53] w-full focus:outline-none focus:ring-2 focus:ring-[#378ADD]",
   timeSlotsSection: "space-y-6",
-  timeSlotsTitle: "text-lg font-semibold text-emerald-700 flex items-center gap-2",
+  timeSlotsTitle: "text-lg font-semibold text-[#185FA5] flex items-center gap-2",
   timeSlotsIcon: "w-5 h-5",
   timeSlotsContainer: "flex gap-3 overflow-x-auto sm:grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3",
   noSlotsMessage: "text-gray-500",
   timeSlotButton: "min-w-[140px] p-2 rounded-full border-2",
-  timeSlotButtonSelected: "bg-linear-to-br from-emerald-500 to-green-500 text-white border-emerald-500",
-  timeSlotButtonUnselected: "bg-white text-gray-700 border-emerald-100",
+  timeSlotButtonSelected: "bg-[#185FA5] text-white border-[#185FA5]",
+  timeSlotButtonUnselected: "bg-white text-gray-700 border-[#B5D4F4] hover:border-[#85B7EB]",
   timeSlotContent: "flex items-center justify-center gap-2",
   timeSlotIcon: "w-4 h-4",
-  
-  // Summary section
-  summaryContainer: "bg-linear-to-r from-emerald-50 to-green-50 p-4 sm:p-6 rounded-2xl border border-emerald-100",
+  summaryContainer: "bg-gradient-to-r from-[#E6F1FB] to-[#f0f6fd] p-4 sm:p-6 rounded-2xl border border-[#B5D4F4]",
   summaryItem: "space-y-3 mb-4 sm:mb-6",
   summaryRow: "flex justify-between",
   summaryLabel: "text-md text-gray-600",
-  summaryValue: "font-semibold text-emerald-700 text-sm sm:text-base",
+  summaryValue: "font-semibold text-[#185FA5] text-sm sm:text-base",
   feeDisplay: "font-bold text-rose-600",
-  
-  // Payment method
   paymentContainer: "mb-3 flex items-center gap-3",
-  paymentLabel: "text-sm font-medium text-emerald-700",
+  paymentLabel: "text-sm font-medium text-[#0C447C]",
   paymentOptions: "inline-flex gap-2",
   paymentOption: "px-3 py-1 rounded-full cursor-pointer border",
-  paymentOptionSelected: "bg-emerald-600 text-white border-emerald-600",
-  paymentOptionUnselected: "bg-white text-emerald-700 border-emerald-100",
+  paymentOptionSelected: "bg-[#185FA5] text-white border-[#185FA5]",
+  paymentOptionUnselected: "bg-white text-[#0C447C] border-[#85B7EB]",
   paymentRadio: "hidden",
-  
-  // Booking button
   bookingButton: "w-full py-3 sm:py-4 px-4 rounded-full font-semibold text-sm cursor-pointer transition-all",
-  bookingButtonEnabled: "bg-linear-to-r from-emerald-500 to-green-500 text-white",
+  bookingButtonEnabled: "bg-[#185FA5] hover:bg-[#0C447C] text-white",
   bookingButtonDisabled: "bg-gray-300 text-gray-500",
   bookingButtonContent: "flex items-center justify-center gap-3",
   bookingIcon: "w-5 h-5",
-  
-  // Toast container
-  toastContainer: "ToastContainer"
+  toastContainer: "ToastContainer",
+  skeletonButton: "h-8 bg-[#E6F1FB] rounded w-full mx-auto mt-4",
 };
 
 
 
 export const navbarStylesDr = {
   // Main navbar
-  navContainer: "fixed top-8 left-1/2 -translate-x-1/2 z-50 w-full md:max-w-2xl lg:max-w-4xl px-4 py-0 rounded-full bg-white/80 backdrop-blur-md border border-emerald-100 shadow-2xl flex items-center justify-between gap-3 font-serif transition-all duration-300 hover:shadow-emerald-200/80 hover:-translate-y-0.5",
-  
+  navContainer: "fixed top-8 left-1/2 -translate-x-1/2 z-50 w-full md:max-w-2xl lg:max-w-4xl px-4 py-0 rounded-full bg-white/90 backdrop-blur-md border border-[#85B7EB] shadow-lg shadow-[#85B7EB]/20 flex items-center justify-between gap-3 font-serif transition-all duration-300 hover:shadow-[#378ADD]/30 hover:-translate-y-0.5",
+
   // Left brand section
   leftBrand: "flex items-center gap-3",
   logoContainer: "w-20 h-20 flex items-center justify-center rounded-full transform transition-all duration-300 hover:rotate-1 overflow-hidden",
   logoImage: "w-full h-full object-contain p-1",
   brandTextContainer: "md:block",
-  brandTitle: "text-3xl text-emerald-700 font-semibold tracking-wide",
-  brandSubtitle: "text-xs text-emerald-600",
-  
+  brandTitle: "text-3xl text-[#185FA5] font-semibold tracking-wide",
+  brandSubtitle: "text-xs text-[#378ADD]",
+
   // Desktop menu
   desktopMenu: "hidden lg:flex flex-1 justify-center",
   desktopMenuItems: "flex items-center gap-2 px-2",
-  
+
   // Link styles
   baseLink: "relative flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 transform",
-  activeLink: "bg-emerald-600 text-white shadow-lg scale-105 ring-2 ring-emerald-200",
-  inactiveLink: "text-emerald-700 hover:bg-emerald-50 hover:text-emerald-900 hover:-translate-y-0.5 hover:shadow",
-  
+  activeLink: "bg-[#185FA5] text-white shadow-lg shadow-[#185FA5]/30 scale-105 ring-2 ring-[#B5D4F4]",
+  inactiveLink: "text-[#0C447C] hover:bg-[#E6F1FB] hover:text-[#042C53] hover:-translate-y-0.5 hover:shadow-sm",
+
   // Link content
   linkContent: "relative flex items-center gap-2",
   linkIcon: "opacity-90",
   linkText: "text-[13px]",
-  
+
   // Right side actions
   rightActions: "flex items-center gap-3",
-  
+
   // Logout button (desktop)
-  logoutButtonDesktop: "hidden lg:flex items-center gap-2 px-4 py-2 rounded-full bg-white text-emerald-700 border border-emerald-200 shadow-sm text-sm font-semibold transition-all duration-200 transform hover:scale-105 hover:-translate-y-0.5",
-  
+  logoutButtonDesktop: "hidden lg:flex items-center gap-2 px-4 py-2 rounded-full bg-white text-[#185FA5] border border-[#85B7EB] shadow-sm text-sm font-semibold transition-all duration-200 transform hover:scale-105 hover:-translate-y-0.5 hover:bg-[#E6F1FB]",
+
   // Hamburger menu buttons
-  hamburgerButtonMd: "md:hidden p-2 rounded-md hover:bg-emerald-50 transition-colors",
-  hamburgerButtonLg: "hidden md:flex lg:hidden p-2 rounded-md hover:bg-emerald-50 transition-colors",
-  
+  hamburgerButtonMd: "md:hidden p-2 rounded-md hover:bg-[#E6F1FB] transition-colors",
+  hamburgerButtonLg: "hidden md:flex lg:hidden p-2 rounded-md hover:bg-[#E6F1FB] transition-colors",
+
   // Mobile/tablet menu
-  mobileMenuContainer: (isOpen) => 
-    `lg:hidden fixed top-30 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md bg-white/95 backdrop-blur-md border border-emerald-100 rounded-2xl shadow-lg transform origin-top transition-all duration-200 ${isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-95 opacity-0 -translate-y-2 pointer-events-none"}`,
-  
+  mobileMenuContainer: (isOpen) =>
+    `lg:hidden fixed top-30 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md bg-white/95 backdrop-blur-md border border-[#85B7EB] rounded-2xl shadow-lg shadow-[#85B7EB]/20 transform origin-top transition-all duration-200 ${isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-95 opacity-0 -translate-y-2 pointer-events-none"}`,
+
   mobileMenuContent: "flex flex-col p-3 gap-2",
-  
+
   // Mobile nav links
   mobileBaseLink: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150",
-  mobileActiveLink: "bg-emerald-50 text-emerald-900",
-  mobileInactiveLink: "text-emerald-800 hover:bg-emerald-50",
-  
+  mobileActiveLink: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#E6F1FB] text-[#042C53]",
+  mobileInactiveLink: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-[#0C447C] hover:bg-[#E6F1FB]",
+
   // Mobile logout button
-  mobileLogoutButton: "mt-2 px-4 py-2 rounded-full text-center bg-emerald-500 text-white font-semibold text-sm shadow-sm transition-transform duration-150 hover:scale-105 w-full",
+  mobileLogoutButton: "mt-2 px-4 py-2 rounded-full text-center bg-[#185FA5] hover:bg-[#0C447C] text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-105 w-full",
   mobileLogoutContent: "flex items-center justify-center gap-2",
-  
+
   // Spacer
   spacer: "h-20 lg:h-20",
-  
+
   // Icon sizes
   iconSmall: "size={16}",
   iconMedium: "size={18}",
-  iconLarge: "size={20}"
+  iconLarge: "size={20}",
 };
 
 
 
 // ListPage styles
 export const listPageStyles = {
-  // Main container
-  pageContainer: "min-h-screen pt-20 md:pt-25 lg:pt-25 font-serif p-4 sm:p-6 bg-linear-to-br from-emerald-50 to-white",
-  
-  // Content wrapper
+  pageContainer: "min-h-screen pt-20 md:pt-25 lg:pt-25 font-serif p-4 sm:p-6 bg-[#f0f6fd]",
   contentWrapper: "max-w-7xl mx-auto",
-  
-  // Header section
   headerContainer: "mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4",
-  headerTitle: "text-xl sm:text-xl pt-5 md:pt-0 lg:pt-0 xl:pt-0 font-extrabold text-emerald-900",
-  headerSubtitle: "text-xs sm:text-sm text-emerald-700",
-  
-  // Search and filter section
+  headerTitle: "text-xl sm:text-xl pt-5 md:pt-0 lg:pt-0 xl:pt-0 font-extrabold text-[#042C53]",
+  headerSubtitle: "text-xs sm:text-sm text-[#0C447C]",
   searchFilterContainer: "flex flex-col pt-10 md:pt-0 sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto",
   searchContainer: "relative w-full sm:w-auto",
-  searchIconContainer: "absolute inset-y-0 left-3 flex items-center pointer-events-none text-emerald-400",
+  searchIconContainer: "absolute inset-y-0 left-3 flex items-center pointer-events-none text-[#378ADD]",
   searchIcon: "w-4 h-4",
-  searchInput: "pl-10 pr-10 w-full sm:w-64 md:w-80 lg:w-96 py-2 rounded-full border border-emerald-200 bg-white text-emerald-800 focus:ring-2 focus:ring-emerald-200 outline-none",
-  clearSearchButton: "absolute right-2 top-1/2 -translate-y-1/2 text-emerald-600 hover:text-emerald-900 p-1 rounded-full",
+  searchInput: "pl-10 pr-10 w-full sm:w-64 md:w-80 lg:w-96 py-2 rounded-full border border-[#85B7EB] bg-white text-[#042C53] focus:ring-2 focus:ring-[#378ADD] outline-none",
+  clearSearchButton: "absolute right-2 top-1/2 -translate-y-1/2 text-[#185FA5] hover:text-[#042C53] p-1 rounded-full",
   clearSearchIcon: "w-4 h-4",
-  statusFilter: "text-sm px-3 py-2 rounded-full border border-emerald-200 bg-white w-full sm:w-auto",
-  
-  // Loading and error states
-  loadingContainer: "text-center py-8 text-emerald-600",
+  statusFilter: "text-sm px-3 py-2 rounded-full border border-[#85B7EB] bg-white text-[#042C53] w-full sm:w-auto",
+  loadingContainer: "text-center py-8 text-[#185FA5]",
   errorContainer: "text-center py-8 text-rose-600",
-  
-  // Appointments grid
   appointmentsGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start",
-  
-  // Appointment card
-  appointmentCard: "rounded-2xl p-4 bg-white shadow-sm border border-emerald-100 hover:shadow-md transition flex flex-col justify-between self-start",
-  
-  // Card header
+  appointmentCard: "rounded-2xl p-4 bg-white shadow-sm border border-[#B5D4F4] hover:shadow-md hover:shadow-[#85B7EB]/20 transition flex flex-col justify-between self-start",
   cardHeader: "flex flex-col sm:flex-row items-start sm:items-center gap-3",
-  cardAvatar: "w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-emerald-50 border border-emerald-100 flex items-center justify-center",
+  cardAvatar: "w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-[#E6F1FB] border border-[#B5D4F4] flex items-center justify-center",
   cardAvatarImage: "w-full h-full object-cover",
-  cardAvatarFallback: "text-emerald-700 font-bold",
+  cardAvatarFallback: "text-[#185FA5] font-bold",
   cardContent: "flex-1 min-w-0",
-  cardPatientName: "text-sm md:text-lg font-bold text-emerald-900 truncate",
-  cardPatientInfo: "text-xs md:text-sm text-emerald-700 mt-1",
-  cardDoctorInfo: "mt-2 text-sm text-emerald-700 truncate",
-  cardDoctorName: "font-semibold text-emerald-900",
-  cardSpeciality: "text-sm text-emerald-800 font-medium truncate",
-  
-  // Date and time section
+  cardPatientName: "text-sm md:text-lg font-bold text-[#042C53] truncate",
+  cardPatientInfo: "text-xs md:text-sm text-[#0C447C] mt-1",
+  cardDoctorInfo: "mt-2 text-sm text-[#0C447C] truncate",
+  cardDoctorName: "font-semibold text-[#042C53]",
+  cardSpeciality: "text-sm text-[#185FA5] font-medium truncate",
   dateTimeSection: "mt-4 flex flex-col items-start gap-3",
-  dateTimeContainer: "text-md md:text-lg text-emerald-800 font-bold flex items-center gap-2 w-full",
+  dateTimeContainer: "text-md md:text-lg text-[#042C53] font-bold flex items-center gap-2 w-full",
   calendarIcon: "w-4 h-4",
   dateText: "whitespace-nowrap truncate",
-  feeText: "text-sm text-emerald-800 font-semibold",
-  
-  // Contact and status section
+  feeText: "text-sm text-[#0C447C] font-semibold",
   contactStatusSection: "mt-4 flex flex-col items-start gap-3",
-  phoneContainer: "text-sm text-emerald-700 flex items-center gap-2",
+  phoneContainer: "text-sm text-[#0C447C] flex items-center gap-2",
   phoneIcon: "w-4 h-4",
   phoneNumber: "truncate",
   statusContainer: "flex items-center gap-2 w-full mt-2 justify-start",
-  
-  // Status badge
   statusBadgeBase: "px-3 py-1 rounded-full text-xs font-semibold",
-  statusBadgeComplete: "bg-emerald-100 text-emerald-800 border border-emerald-200",
+  statusBadgeComplete: "bg-[#E6F1FB] text-[#0C447C] border border-[#85B7EB]",
   statusBadgeCancelled: "bg-rose-100 text-rose-800 border border-rose-200",
-  statusBadgeConfirmed: "bg-emerald-200 text-emerald-900 border border-emerald-300",
+  statusBadgeConfirmed: "bg-[#B5D4F4] text-[#042C53] border border-[#85B7EB]",
   statusBadgeRescheduled: "bg-indigo-100 text-indigo-900 border border-indigo-200",
-  statusBadgePending: "bg-yellow-100 text-amber-800 border border-amber-200 animate-pulse",
-  
-  // Status select
+  statusBadgePending: "bg-amber-50 text-amber-800 border border-amber-200 animate-pulse",
   statusSelect: "text-sm px-3 py-1 rounded-full border focus:outline-none transition",
-  statusSelectEnabled: "bg-white text-emerald-800 border-emerald-200 hover:shadow-sm",
+  statusSelectEnabled: "bg-white text-[#042C53] border-[#85B7EB] hover:shadow-sm focus:ring-2 focus:ring-[#378ADD]",
   statusSelectDisabled: "bg-gray-50 text-gray-400 cursor-not-allowed border-gray-200",
-  
-  // Reschedule button container
   rescheduleContainer: "mt-4",
   rescheduleButton: "text-sm px-3 py-1 rounded-full border transition",
-  rescheduleButtonEnabled: "bg-white text-emerald-800 border-emerald-200 hover:shadow-sm",
+  rescheduleButtonEnabled: "bg-white text-[#185FA5] border-[#85B7EB] hover:bg-[#E6F1FB]",
   rescheduleButtonDisabled: "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed",
-  
-  // Reschedule form
   rescheduleForm: "flex flex-col md:flex-col items-end gap-2 w-full",
-  dateInput: "text-sm px-3 py-2 rounded-full border border-emerald-200 bg-white w-full md:w-40",
-  timeInput: "text-sm px-3 py-2 rounded-full border border-emerald-200 bg-white w-full md:w-36",
+  dateInput: "text-sm px-3 py-2 rounded-full border border-[#85B7EB] bg-white text-[#042C53] w-full md:w-40",
+  timeInput: "text-sm px-3 py-2 rounded-full border border-[#85B7EB] bg-white text-[#042C53] w-full md:w-36",
   rescheduleButtons: "flex gap-2",
-  saveButton: "text-sm px-3 py-2 rounded-full bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition",
-  cancelButton: "text-sm px-3 py-2 rounded-full border border-emerald-200 bg-white text-emerald-800 hover:shadow-sm transition"
+  saveButton: "text-sm px-3 py-2 rounded-full bg-[#185FA5] text-white font-semibold hover:bg-[#0C447C] transition",
+  cancelButton: "text-sm px-3 py-2 rounded-full border border-[#85B7EB] bg-white text-[#185FA5] hover:bg-[#E6F1FB] transition",
 };
 
 // Add to existing dummyStyles.js
 
 export const editProfilePageStyles = {
   // Page container
-  pageContainer: "min-h-screen font-serif bg-linear-to-br from-emerald-50 via-white to-emerald-50/30 p-4 sm:p-5 md:p-6",
+  pageContainer: "min-h-screen font-serif bg-[#f0f6fd] p-4 sm:p-5 md:p-6",
   maxWidthContainer: "max-w-6xl pt-8 md:pt-10 mx-auto relative",
-  
+
   // Loading states
   loadingContainer: "min-h-screen flex items-center justify-center",
-  loadingSpinner: "w-12 h-12 border-4 border-gray-300 border-t-transparent rounded-full animate-spin mx-auto mb-4",
-  loadingText: "text-gray-600",
+  loadingSpinner: "w-12 h-12 border-4 border-[#B5D4F4] border-t-[#185FA5] rounded-full animate-spin mx-auto mb-4",
+  loadingText: "text-[#0C447C]",
   errorText: "text-red-600",
-  
+
   // Toast notifications
   toastContainer: "fixed top-3 right-2 sm:right-4 z-50 space-y-3 max-w-xs sm:max-w-sm",
   toastBase: "transform transition-all duration-300 ease-out rounded-r-lg shadow-lg p-3 sm:p-4 flex items-start gap-3 animate-slideIn",
-  toastSuccess: "bg-linear-to-r from-emerald-50 to-emerald-100 border-l-4 border-emerald-500",
-  toastError: "bg-linear-to-r from-rose-50 to-rose-100 border-l-4 border-rose-500",
-  toastInfo: "bg-linear-to-r from-blue-50 to-blue-100 border-l-4 border-blue-500",
+  toastSuccess: "bg-gradient-to-r from-[#E6F1FB] to-[#B5D4F4] border-l-4 border-[#185FA5]",
+  toastError: "bg-gradient-to-r from-rose-50 to-rose-100 border-l-4 border-rose-500",
+  toastInfo: "bg-gradient-to-r from-[#f0f6fd] to-[#E6F1FB] border-l-4 border-[#378ADD]",
   toastIcon: "w-5 h-5 mt-0.5",
-  toastSuccessIcon: "text-emerald-600",
+  toastSuccessIcon: "text-[#185FA5]",
   toastErrorIcon: "text-rose-600",
-  toastText: "text-sm font-medium text-gray-800",
-  
+  toastText: "text-sm font-medium text-[#042C53]",
+
   // Main card
-  mainCard: "bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border border-emerald-100/50",
-  headerBackground: "relative h-24 sm:h-28 md:h-32 bg-linear-to-r from-emerald-400 to-emerald-600",
-  
+  mainCard: "bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl shadow-[#85B7EB]/10 overflow-hidden border border-[#B5D4F4]",
+  headerBackground: "relative h-24 sm:h-28 md:h-32 bg-gradient-to-r from-[#185FA5] to-[#378ADD]",
+
   // Profile image
   imageContainer: "absolute -bottom-16 left-1/2 transform -translate-x-1/2 md:left-8 md:transform-none",
   imageWrapper: "relative group",
   profileImage: "relative w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 md:ml-23 rounded-full object-cover border-4 border-white shadow-2xl",
   imageEditButton: (editing) => `absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-lg cursor-pointer transition-transform ${!editing && "cursor-not-allowed"}`,
-  imageEditIcon: (editing) => `w-5 h-5 ${editing ? "text-emerald-600" : "text-gray-400"}`,
+  imageEditIcon: (editing) => `w-5 h-5 ${editing ? "text-[#185FA5]" : "text-gray-400"}`,
   imageInput: "hidden",
-  
+
   // Profile content
   profileContent: "pt-20 pb-8 px-4 sm:px-6 md:px-8",
   profileHeader: "flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8",
   profileInfo: "flex-1 min-w-0",
-  profileName: "text-2xl sm:text-3xl md:text-4xl font-bold bg-linear-to-r from-emerald-700 to-emerald-900 bg-clip-text text-transparent truncate",
-  profileSubtitle: "text-sm sm:text-lg text-emerald-700 mt-2 flex items-center gap-2",
+  profileName: "text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#185FA5] to-[#0C447C] bg-clip-text text-transparent truncate",
+  profileSubtitle: "text-sm sm:text-lg text-[#378ADD] mt-2 flex items-center gap-2",
   subtitleIcon: "w-4 h-4",
-  
+
   // Stats container
   statsContainer: "mt-4 flex flex-wrap items-center gap-3",
-  statItem: "flex items-center gap-3 bg-white px-3 py-2 rounded-full border border-emerald-100 shadow-sm text-sm sm:text-base",
-  ratingStatItem: "flex items-center gap-3 bg-linear-to-r from-amber-50 to-amber-100 px-3 py-2 rounded-full border border-amber-200 text-sm sm:text-base",
-  feeStatItem: "flex items-center gap-1 bg-linear-to-r from-amber-50 to-amber-100 px-3 py-2 rounded-full border border-amber-200",
+  statItem: "flex items-center gap-3 bg-white px-3 py-2 rounded-full border border-[#B5D4F4] shadow-sm text-sm sm:text-base",
+  ratingStatItem: "flex items-center gap-3 bg-gradient-to-r from-amber-50 to-amber-100 px-3 py-2 rounded-full border border-amber-200 text-sm sm:text-base",
+  feeStatItem: "flex items-center gap-1 bg-gradient-to-r from-amber-50 to-amber-100 px-3 py-2 rounded-full border border-amber-200",
   statIcon: "w-4 h-4",
-  statEmeraldIcon: "text-emerald-600",
+  statEmeraldIcon: "text-[#185FA5]",
   statAmberIcon: (field) => {
-    if (field === 'star') return "w-5 h-5 text-amber-500 fill-amber-500";
+    if (field === "star") return "w-5 h-5 text-amber-500 fill-amber-500";
     return "w-4 h-4 text-amber-600";
   },
-  statLabel: "text-xs text-emerald-600 font-medium",
+  statLabel: "text-xs text-[#185FA5] font-medium",
   statAmberLabel: "text-xs text-amber-700 font-medium",
-  statValue: "text-sm font-semibold text-emerald-900 truncate",
+  statValue: "text-sm font-semibold text-[#042C53] truncate",
   statAmberValue: "text-sm font-bold text-amber-800",
-  statInput: "w-20 rounded-full border px-2 py-1 text-sm focus:outline-none",
-  statPatientsInput: "w-24 rounded-full border px-2 py-1 text-sm focus:outline-none",
-  
+  statInput: "w-20 rounded-full border border-[#85B7EB] px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#378ADD]",
+  statPatientsInput: "w-24 rounded-full border border-[#85B7EB] px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#378ADD]",
+
   // Action buttons
   actionButtons: "flex flex-col sm:flex-row items-center gap-3",
-  availabilityToggle: (isAvailable) => `flex items-center gap-3 px-4 sm:px-5 py-2 rounded-full cursor-pointer border-2 shadow-sm transition-all duration-300 ${isAvailable ? "bg-linear-to-r from-emerald-50 to-emerald-100 border-emerald-300 hover:shadow-emerald-200" : "bg-linear-to-r from-gray-50 to-gray-100 border-gray-300 hover:shadow-gray-200"} hover:shadow-lg w-full sm:w-auto`,
-  toggleTrack: (isAvailable) => `relative w-10 h-5 rounded-full transition-colors ${isAvailable ? "bg-emerald-500" : "bg-gray-400"}`,
+  availabilityToggle: (isAvailable) => `flex items-center gap-3 px-4 sm:px-5 py-2 rounded-full cursor-pointer border-2 shadow-sm transition-all duration-300 ${isAvailable ? "bg-gradient-to-r from-[#E6F1FB] to-[#B5D4F4] border-[#85B7EB] hover:shadow-[#85B7EB]/30" : "bg-gradient-to-r from-gray-50 to-gray-100 border-gray-300 hover:shadow-gray-200"} hover:shadow-lg w-full sm:w-auto`,
+  toggleTrack: (isAvailable) => `relative w-10 h-5 rounded-full transition-colors ${isAvailable ? "bg-[#185FA5]" : "bg-gray-400"}`,
   toggleThumb: (isAvailable) => `absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${isAvailable ? "left-6" : "left-0.5"}`,
-  toggleText: (isAvailable) => `font-medium ${isAvailable ? "text-emerald-700" : "text-gray-600"}`,
-  
-  editButton: "group relative overflow-hidden bg-linear-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-5 py-2 rounded-full cursor-pointer shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] w-full sm:w-auto",
+  toggleText: (isAvailable) => `font-medium ${isAvailable ? "text-[#0C447C]" : "text-gray-600"}`,
+
+  editButton: "group relative overflow-hidden bg-gradient-to-r from-[#185FA5] to-[#0C447C] hover:from-[#0C447C] hover:to-[#042C53] text-white px-5 py-2 rounded-full cursor-pointer shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] w-full sm:w-auto",
   editButtonContent: "relative flex items-center gap-2",
-  
+
   // Form sections
   formSection: "mb-8",
-  sectionTitle: "text-xl sm:text-2xl font-bold text-emerald-900 mb-6 flex items-center gap-2",
-  sectionIconContainer: "w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center",
-  sectionIcon: "w-4 h-4 text-emerald-600",
-  
+  sectionTitle: "text-xl sm:text-2xl font-bold text-[#042C53] mb-6 flex items-center gap-2",
+  sectionIconContainer: "w-8 h-8 rounded-full bg-[#E6F1FB] flex items-center justify-center",
+  sectionIcon: "w-4 h-4 text-[#185FA5]",
+
   // Field grid
   fieldGrid: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6",
   fieldGroup: "group",
   fieldHeader: "flex items-center gap-3 mb-2",
-  fieldIconContainer: (editing) => `p-2 rounded-full ${editing ? "bg-emerald-100 text-emerald-600" : "bg-gray-100 text-gray-500"}`,
+  fieldIconContainer: (editing) => `p-2 rounded-full ${editing ? "bg-[#E6F1FB] text-[#185FA5]" : "bg-gray-100 text-gray-500"}`,
   fieldIcon: "w-4 h-4",
-  fieldLabel: "text-sm font-semibold text-emerald-800",
-  
+  fieldLabel: "text-sm font-semibold text-[#0C447C]",
+
   // Input fields
-  inputBase: (editing) => `w-full rounded-full border-2 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base transition-all duration-200 ${editing ? "border-emerald-200 bg-emerald-50/50 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200 focus:bg-white" : "border-gray-200 bg-gray-50/50 text-gray-600 cursor-not-allowed"}`,
-  
+  inputBase: (editing) => `w-full rounded-full border-2 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base transition-all duration-200 ${editing ? "border-[#85B7EB] bg-[#E6F1FB]/50 focus:border-[#378ADD] focus:ring-2 focus:ring-[#B5D4F4] focus:bg-white text-[#042C53]" : "border-gray-200 bg-gray-50/50 text-gray-600 cursor-not-allowed"}`,
+
   // About textarea
-  aboutTextarea: (editing) => `w-full rounded-xl border-2 px-4 py-3 text-sm sm:text-base transition-all duration-200 ${editing ? "border-emerald-200 bg-emerald-50/50 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200 focus:bg-white" : "border-gray-200 bg-gray-50/50 text-gray-600 cursor-not-allowed"}`,
-  aboutCharCount: "absolute bottom-3 right-3 text-xs text-gray-400",
-  
+  aboutTextarea: (editing) => `w-full rounded-xl border-2 px-4 py-3 text-sm sm:text-base transition-all duration-200 ${editing ? "border-[#85B7EB] bg-[#E6F1FB]/50 focus:border-[#378ADD] focus:ring-2 focus:ring-[#B5D4F4] focus:bg-white text-[#042C53]" : "border-gray-200 bg-gray-50/50 text-gray-600 cursor-not-allowed"}`,
+  aboutCharCount: "absolute bottom-3 right-3 text-xs text-[#378ADD]",
+
   // Schedule section
   scheduleHeader: "flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6",
-  emptySchedule: "text-center py-10 rounded-2xl border-2 border-dashed border-emerald-200 bg-emerald-50/50",
-  emptyScheduleIcon: "w-12 h-12 text-emerald-400 mx-auto mb-3",
-  emptyScheduleText: "text-emerald-700 font-medium",
-  emptyScheduleSubtext: "text-sm text-emerald-600 mt-1",
-  
+  emptySchedule: "text-center py-10 rounded-2xl border-2 border-dashed border-[#B5D4F4] bg-[#E6F1FB]/30",
+  emptyScheduleIcon: "w-12 h-12 text-[#378ADD] mx-auto mb-3",
+  emptyScheduleText: "text-[#0C447C] font-medium",
+  emptyScheduleSubtext: "text-sm text-[#378ADD] mt-1",
+
   // Schedule grid
   scheduleGrid: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5",
-  
+
   // Date card
-  dateCard: "group relative bg-linear-to-br from-white to-emerald-50 p-4 sm:p-5 rounded-2xl border border-emerald-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1",
-  dateHeader: "flex items-center justify-between mb-3 pb-3 border-b border-emerald-100",
-  dateIconContainer: "p-2 rounded-full bg-emerald-100",
-  dateIcon: "w-5 h-5 text-emerald-600",
-  dateTitle: "font-bold text-base sm:text-lg text-emerald-900",
-  dateSubtitle: "text-xs sm:text-sm text-emerald-600",
-  dateSlotCount: "text-xs font-medium px-3 py-1 rounded-full bg-emerald-100 text-emerald-700",
+  dateCard: "group relative bg-gradient-to-br from-white to-[#E6F1FB] p-4 sm:p-5 rounded-2xl border border-[#B5D4F4] shadow-sm hover:shadow-lg hover:shadow-[#85B7EB]/20 transition-all duration-300 hover:-translate-y-1",
+  dateHeader: "flex items-center justify-between mb-3 pb-3 border-b border-[#B5D4F4]",
+  dateIconContainer: "p-2 rounded-full bg-[#E6F1FB]",
+  dateIcon: "w-5 h-5 text-[#185FA5]",
+  dateTitle: "font-bold text-base sm:text-lg text-[#042C53]",
+  dateSubtitle: "text-xs sm:text-sm text-[#378ADD]",
+  dateSlotCount: "text-xs font-medium px-3 py-1 rounded-full bg-[#E6F1FB] text-[#0C447C] border border-[#85B7EB]",
   dateDeleteButton: (editing) => `p-2 rounded-full cursor-pointer transition-colors ${editing ? "hover:bg-rose-50 text-rose-500 hover:text-rose-600" : "text-gray-400 cursor-not-allowed"}`,
   dateDeleteIcon: "w-4 h-4",
-  
+
   // Time slots
   timeSlotContainer: "space-y-3",
-  timeSlotItem: "flex items-center justify-between bg-white px-3 py-2 rounded-full border border-emerald-100 hover:border-emerald-200 transition-colors",
-  timeSlotIcon: "w-4 h-4 text-emerald-600",
-  timeSlotText: "font-medium text-emerald-900 text-sm sm:text-base",
+  timeSlotItem: "flex items-center justify-between bg-white px-3 py-2 rounded-full border border-[#B5D4F4] hover:border-[#85B7EB] transition-colors",
+  timeSlotIcon: "w-4 h-4 text-[#185FA5]",
+  timeSlotText: "font-medium text-[#042C53] text-sm sm:text-base",
   timeSlotDeleteButton: (editing) => `p-1.5 rounded-full cursor-pointer transition-colors ${editing ? "hover:bg-rose-50 text-rose-500 hover:text-rose-600" : "text-gray-400 cursor-not-allowed"}`,
   timeSlotDeleteIcon: "w-4 h-4",
-  
+
   // Add time slot
-  addSlotContainer: "pt-3 border-t border-emerald-100",
-  addSlotInput: "flex-1 rounded-full px-3 py-2 text-sm border border-emerald-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-200",
-  addSlotButton: "p-2 rounded-full cursor-pointer bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors",
+  addSlotContainer: "pt-3 border-t border-[#B5D4F4]",
+  addSlotInput: "flex-1 rounded-full px-3 py-2 text-sm border border-[#85B7EB] bg-white text-[#042C53] focus:outline-none focus:ring-2 focus:ring-[#378ADD]",
+  addSlotButton: "p-2 rounded-full cursor-pointer bg-[#E6F1FB] text-[#185FA5] hover:bg-[#B5D4F4] transition-colors",
   addSlotIcon: "w-4 h-4",
-  
+
   // Save message
-  saveMessage: (type) => `px-4 py-2 rounded-lg ${type === "saving" ? "bg-blue-50 text-blue-700 border border-blue-200" : "bg-emerald-50 text-emerald-700 border border-emerald-200"}`,
-  
+  saveMessage: (type) => `px-4 py-2 rounded-lg ${type === "saving" ? "bg-[#E6F1FB] text-[#185FA5] border border-[#85B7EB]" : "bg-[#E6F1FB] text-[#0C447C] border border-[#B5D4F4]"}`,
+
   // Actions section
-  actionsSection: "flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-emerald-100",
-  actionsText: "text-sm text-gray-500",
+  actionsSection: "flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-[#B5D4F4]",
+  actionsText: "text-sm text-[#378ADD]",
   actionsButtons: "flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto",
-  resetButton: "px-6 py-3 rounded-full cursor-pointer border-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 font-medium w-full sm:w-auto text-center",
-  saveButton: "group relative overflow-hidden bg-linear-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-6 py-3 rounded-full cursor-pointer shadow-lg transition-all duration-300 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed w-full sm:w-auto text-center",
+  resetButton: "px-6 py-3 rounded-full cursor-pointer border-2 border-[#85B7EB] text-[#185FA5] hover:bg-[#E6F1FB] hover:border-[#378ADD] transition-all duration-200 font-medium w-full sm:w-auto text-center",
+  saveButton: "group relative overflow-hidden bg-gradient-to-r from-[#185FA5] to-[#0C447C] hover:from-[#0C447C] hover:to-[#042C53] text-white px-6 py-3 rounded-full cursor-pointer shadow-lg transition-all duration-300 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed w-full sm:w-auto text-center",
   saveButtonContent: "relative flex items-center gap-2 justify-center",
   saveSpinner: "w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin",
-  
-  // AddDate component styles
+
+  // AddDate component
   addDateContainer: "flex items-center gap-2",
-  addDateInput: "rounded-xl px-3 py-2 border-2 border-emerald-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 text-sm sm:text-base",
-  addDateButton: "flex items-center gap-2 bg-linear-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-4 py-2 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-sm sm:text-base",
+  addDateInput: "rounded-xl px-3 py-2 border-2 border-[#85B7EB] bg-white text-[#042C53] focus:outline-none focus:ring-2 focus:ring-[#378ADD] focus:border-[#378ADD] text-sm sm:text-base",
+  addDateButton: "flex items-center gap-2 bg-gradient-to-r from-[#185FA5] to-[#378ADD] hover:from-[#0C447C] hover:to-[#185FA5] text-white px-4 py-2 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-sm sm:text-base",
   addDateIcon: "w-4 h-4",
-  
+
   // Custom animations
   customCSS: `
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -1373,101 +1277,101 @@ export const editProfilePageStyles = {
 // DashboardPage styles
 export const dashboardStyles = {
   // Main container
-  pageContainer: "min-h-screen font-serif pt-16 lg:pt-20 md:pt-15 p-4 sm:p-6 bg-linear-to-br from-emerald-50 to-white",
-  
+  pageContainer: "min-h-screen font-serif pt-16 lg:pt-20 md:pt-15 p-4 sm:p-6 bg-[#f0f6fd]",
+
   // Content wrapper
   contentWrapper: "max-w-7xl mx-auto",
-  
+
   // Header section
   headerContainer: "mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4",
-  headerTitle: "text-2xl pt-10 xl:pt-0 uppercase lg:pt-0 sm:text-3xl font-extrabold tracking-tight text-emerald-900",
-  headerSubtitle: "text-sm sm:text-base text-emerald-700/70",
-  headerInfo: "text-sm text-slate-600",
-  refreshButton: "text-sm px-3 py-1 rounded-full bg-white text-emerald-600 border border-emerald-200 hover:shadow-sm",
-  
+  headerTitle: "text-2xl pt-10 xl:pt-0 uppercase lg:pt-0 sm:text-3xl font-extrabold tracking-tight text-[#042C53]",
+  headerSubtitle: "text-sm sm:text-base text-[#0C447C]/70",
+  headerInfo: "text-sm text-[#185FA5]",
+  refreshButton: "text-sm px-3 py-1 rounded-full bg-white text-[#185FA5] border border-[#85B7EB] hover:bg-[#E6F1FB] transition",
+
   // Stats grid
   statsGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8",
-  
+
   // Stat card
-  statCard: "rounded-full p-4 bg-white/60 backdrop-blur-sm border border-emerald-300 shadow-sm hover:shadow-md transition-all",
+  statCard: "rounded-full p-4 bg-white border border-[#B5D4F4] shadow-sm hover:shadow-md hover:shadow-[#85B7EB]/20 transition-all",
   statContent: "flex items-center justify-between gap-4",
   statTextContainer: "flex-1",
-  statTitle: "text-sm font-medium text-emerald-800/80",
-  statValue: "mt-2 text-xl sm:text-2xl font-extrabold text-emerald-900 tracking-tight",
-  statIconContainer: "p-3 rounded-full bg-linear-to-br border shadow-md",
-  statIcon: "w-6 h-6 text-emerald-900",
-  
+  statTitle: "text-sm font-medium text-[#0C447C]/80",
+  statValue: "mt-2 text-xl sm:text-2xl font-extrabold text-[#042C53] tracking-tight",
+  statIconContainer: "p-3 rounded-full bg-gradient-to-br border shadow-md",
+  statIcon: "w-6 h-6 text-[#042C53]",
+
   // Stat card accent colors
-  accentTopEmerald: "from-emerald-200 to-emerald-300",
+  accentTopEmerald: "from-[#B5D4F4] to-[#85B7EB]",
   accentTopAmber: "from-amber-100 to-amber-200",
-  accentTopEmeraldLight: "from-emerald-100 to-emerald-200",
+  accentTopEmeraldLight: "from-[#E6F1FB] to-[#B5D4F4]",
   accentTopRose: "from-rose-100 to-rose-200",
-  accentBottomEmerald: "border-emerald-200",
+  accentBottomEmerald: "border-[#85B7EB]",
   accentBottomAmber: "border-amber-200",
   accentBottomRose: "border-rose-200",
-  
+
   // Appointments container
-  appointmentsContainer: "bg-white/60 backdrop-blur-sm rounded-2xl p-4 border border-emerald-100 shadow-sm",
+  appointmentsContainer: "bg-white rounded-2xl p-4 border border-[#B5D4F4] shadow-sm",
   appointmentsHeader: "flex items-center justify-between mb-4",
-  appointmentsTitle: "text-lg sm:text-xl font-semibold text-emerald-900",
-  appointmentsTotal: "text-sm sm:text-base text-emerald-700 flex items-center gap-2",
+  appointmentsTitle: "text-lg sm:text-xl font-semibold text-[#042C53]",
+  appointmentsTotal: "text-sm sm:text-base text-[#185FA5] flex items-center gap-2",
   totalIcon: "w-4 h-4",
-  
+
   // Cards grid
   cardsGrid: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-start",
-  
+
   // Appointment card
-  appointmentCard: "rounded-xl p-4 bg-white shadow-sm border border-emerald-100 flex flex-col justify-between gap-4 hover:shadow-md transition self-start",
+  appointmentCard: "rounded-xl p-4 bg-[#f0f6fd] border border-[#B5D4F4] flex flex-col justify-between gap-4 hover:shadow-md hover:shadow-[#85B7EB]/20 transition self-start",
   cardHeader: "flex items-start gap-3",
-  cardAvatar: "w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-emerald-50 border border-emerald-100 flex items-center justify-center",
+  cardAvatar: "w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-[#E6F1FB] border border-[#B5D4F4] flex items-center justify-center",
   cardAvatarImage: "w-full h-full object-cover",
-  cardAvatarFallback: "text-emerald-700 font-bold",
+  cardAvatarFallback: "text-[#185FA5] font-bold",
   cardContent: "flex-1",
-  cardPatientName: "text-base sm:text-lg font-bold text-emerald-900",
-  cardPatientInfo: "text-xs sm:text-sm text-emerald-700 mt-1",
-  cardDoctorInfo: "mt-2 text-sm sm:text-sm text-emerald-700",
-  cardDoctorName: "font-semibold text-emerald-900",
-  cardSpeciality: "text-xs sm:text-sm text-emerald-800 font-medium",
-  cardPhoneContainer: "mt-2 text-xs sm:text-sm text-emerald-600 flex items-center gap-2",
+  cardPatientName: "text-base sm:text-lg font-bold text-[#042C53]",
+  cardPatientInfo: "text-xs sm:text-sm text-[#0C447C] mt-1",
+  cardDoctorInfo: "mt-2 text-sm sm:text-sm text-[#0C447C]",
+  cardDoctorName: "font-semibold text-[#042C53]",
+  cardSpeciality: "text-xs sm:text-sm text-[#185FA5] font-medium",
+  cardPhoneContainer: "mt-2 text-xs sm:text-sm text-[#378ADD] flex items-center gap-2",
   cardPhoneIcon: "w-4 h-4",
-  
+
   // Date and time section
   dateTimeContainer: "flex items-center justify-between",
-  dateText: "text-sm sm:text-lg font-bold text-emerald-800",
-  timeText: "text-sm sm:text-base font-semibold text-emerald-900",
-  
+  dateText: "text-sm sm:text-lg font-bold text-[#042C53]",
+  timeText: "text-sm sm:text-base font-semibold text-[#185FA5]",
+
   // Card footer
   cardFooter: "flex flex-col items-end gap-2",
-  feeText: "text-sm sm:text-base text-emerald-800 font-medium",
+  feeText: "text-sm sm:text-base text-[#0C447C] font-medium",
   statusContainer: "flex items-center gap-2",
-  
+
   // Show more button
   showMoreContainer: "mt-4 flex justify-center",
-  showMoreButton: "px-4 py-2 rounded-full bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition",
-  
-  // Status badge (reusing listPageStyles but adding here for completeness)
+  showMoreButton: "px-4 py-2 rounded-full bg-[#185FA5] text-white text-sm font-semibold hover:bg-[#0C447C] transition",
+
+  // Status badge
   statusBadgeBase: "px-3 py-1 rounded-full text-xs font-semibold",
-  statusBadgeComplete: "bg-emerald-100 text-emerald-800 border border-emerald-200",
+  statusBadgeComplete: "bg-[#E6F1FB] text-[#0C447C] border border-[#85B7EB]",
   statusBadgeCancelled: "bg-rose-100 text-rose-800 border border-rose-200",
-  statusBadgeConfirmed: "bg-emerald-200 text-emerald-900 border border-emerald-300",
+  statusBadgeConfirmed: "bg-[#B5D4F4] text-[#042C53] border border-[#85B7EB]",
   statusBadgeRescheduled: "bg-indigo-100 text-indigo-900 border border-indigo-200",
-  statusBadgePending: "bg-yellow-100 text-amber-800 border border-amber-200 animate-pulse",
-  
+  statusBadgePending: "bg-amber-50 text-amber-800 border border-amber-200 animate-pulse",
+
   // Status select
   statusSelect: "text-xs sm:text-sm px-3 py-1 rounded-full border focus:outline-none transition",
-  statusSelectEnabled: "bg-white text-emerald-800 border-emerald-200 hover:shadow-sm",
+  statusSelectEnabled: "bg-white text-[#042C53] border-[#85B7EB] hover:shadow-sm focus:ring-2 focus:ring-[#378ADD]",
   statusSelectDisabled: "bg-gray-50 text-gray-400 cursor-not-allowed border-gray-200",
-  
+
   // Reschedule button
   rescheduleButton: "text-xs px-3 py-1 rounded-full border transition",
-  rescheduleButtonEnabled: "bg-white text-emerald-800 border-emerald-200 hover:shadow-sm",
+  rescheduleButtonEnabled: "bg-white text-[#185FA5] border-[#85B7EB] hover:bg-[#E6F1FB]",
   rescheduleButtonDisabled: "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed",
-  
+
   // Reschedule form
   rescheduleForm: "flex flex-col items-end gap-2 w-full",
-  rescheduleDateInput: "text-xs px-3 py-2 rounded-full border border-emerald-200 bg-white w-full md:w-48 lg:w-56",
-  rescheduleTimeInput: "text-xs px-3 py-2 rounded-full border border-emerald-200 bg-white w-full md:w-48 lg:w-56",
+  rescheduleDateInput: "text-xs px-3 py-2 rounded-full border border-[#85B7EB] bg-white text-[#042C53] w-full md:w-48 lg:w-56 focus:outline-none focus:ring-2 focus:ring-[#378ADD]",
+  rescheduleTimeInput: "text-xs px-3 py-2 rounded-full border border-[#85B7EB] bg-white text-[#042C53] w-full md:w-48 lg:w-56 focus:outline-none focus:ring-2 focus:ring-[#378ADD]",
   rescheduleButtons: "flex gap-2",
-  saveButton: "text-xs px-3 py-2 rounded-full bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition",
-  cancelButton: "text-xs px-3 py-2 rounded-full border border-emerald-200 bg-white text-emerald-800 hover:shadow-sm transition"
+  saveButton: "text-xs px-3 py-2 rounded-full bg-[#185FA5] text-white font-semibold hover:bg-[#0C447C] transition",
+  cancelButton: "text-xs px-3 py-2 rounded-full border border-[#85B7EB] bg-white text-[#185FA5] hover:bg-[#E6F1FB] transition",
 };
