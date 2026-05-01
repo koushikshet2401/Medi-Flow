@@ -3,7 +3,7 @@ import { addServiceStyles } from '../assets/dummyStyles'
 import { AlertTriangle, CheckCircle, Clock, Plus, XCircle, Image, Trash2, Calendar } from 'lucide-react';
 
 function AddService({ serviceId }) {
-    const API_BASE = "http://localhost:4000";
+    const API_BASE = "https://medi-flow-backend.onrender.com";
     const fileRef = useRef(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [imageFile, setImageFile] = useState(null);

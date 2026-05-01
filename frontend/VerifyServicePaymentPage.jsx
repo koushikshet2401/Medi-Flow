@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { replace, useLocation, useNavigate } from "react-router-dom";
 
-const API_BASE = "http://localhost:4000";
+const API_BASE = "https://medi-flow-backend.onrender.com";
 
 function VerifyServicePaymentPage() {
   const location = useLocation();
