@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Home from "./pages/Home";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Doctors from "./pages/Doctors";
 import DoctorDetail from "./pages/DoctorDetail";
@@ -98,6 +98,7 @@ function App() {
             path="/service-appointment/cancel"
             element={<VerifyServicePaymentPage />}
           />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
       <ScrollButton />

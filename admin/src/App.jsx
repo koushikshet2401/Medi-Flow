@@ -1,4 +1,4 @@
-import { Route, Routes, Link } from "react-router-dom";
+import { Route, Routes, Link, Navigate } from "react-router-dom";
 import Hero from "./pages/Hero";
 import { useUser, useClerk } from "@clerk/clerk-react";
 import Home from "./pages/Home";
@@ -139,6 +139,7 @@ export default function App() {
   }
 />
 
+<Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
