@@ -12,8 +12,8 @@ const app = express();
 const port = 4000;
 
 const allowedOrigins = [
-    "http://localhost:5173",  // frontend
-    "http://localhost:5174",  // admin
+    "https://medi-flow-frontend.onrender.com",  // frontend
+    "https://medi-flow-admin.onrender.com",  // admin
     "http://localhost:5175",  // extra ports just in case
     "http://localhost:5176",
     "http://localhost:3000",
