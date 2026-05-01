@@ -250,9 +250,9 @@ function ListPage() {
           </button>
 
           <button
-            onClick={() => applyStatusFilter("Unavailable")}
+            onClick={() => applyStatusFilter("unavailable")}
             className={doctorListStyles.filterButton(
-              filterStatus === "Unavailable",
+              filterStatus === "unavailable",
               "red",
             )}
           >

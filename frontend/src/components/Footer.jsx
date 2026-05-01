@@ -41,31 +41,31 @@ function Footer() {
       Icon: Facebook,
       color: footerStyles.facebookColor,
       name: "Facebook",
-      href: "https://www.facebook.com/people/Hexagon-Digital-Services/61567156598660/",
+      href: "#",
     },
     {
       Icon: Twitter,
       color: footerStyles.twitterColor,
       name: "Twitter",
-      href: "https://www.linkedin.com/company/hexagondigtial-services/",
+      href: "#",
     },
     {
       Icon: Instagram,
       color: footerStyles.instagramColor,
       name: "Instagram",
-      href: "http://instagram.com/hexagondigitalservices?igsh=MWp2NG1oNTlibWVnZA%3D%3D",
+      href: "#",
     },
     {
       Icon: Linkedin,
       color: footerStyles.linkedinColor,
       name: "LinkedIn",
-      href: "https://www.linkedin.com/company/hexagondigtial-services/",
+      href: "#",
     },
     {
       Icon: Youtube,
       color: footerStyles.youtubeColor,
       name: "YouTube",
-      href: "https://youtube.com/@hexagondigitalservices?si=lxEFYNCP42t6AoDJ",
+      href: "#",
     },
   ];
 
