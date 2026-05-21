@@ -594,8 +594,8 @@ export const navbarStyles = {
 
   // Desktop navigation
   desktopNav: "hidden lg:-mx-5 lg:flex items-center gap-2",
-  navItemsContainer: "flex gap-1 bg-[#E6F1FB] border border-[#85B7EB] p-1 rounded-full shadow-sm",
-  navItem: "nav-item px-5 md:px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300",
+  navItemsContainer: "flex gap-1 bg-[#E6F1FB] border border-[#85B7EB] p-1 rounded-2xl shadow-sm",
+  navItem: "nav-item px-5 md:px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300",
   navItemActive: "active",
   navItemInactive: "text-[#0C447C] hover:text-[#042C53] hover:bg-[#B5D4F4]",
 
@@ -603,10 +603,10 @@ export const navbarStyles = {
   rightContainer: "flex items-center gap-3",
 
   // Signed out buttons
-  doctorAdminButton: "btn-add hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold transition-transform duration-200 text-[#0C447C]",
+  doctorAdminButton: "btn-add hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-transform duration-200 text-[#0C447C]",
   doctorAdminIcon: "w-4 h-4",
   doctorAdminText: "hidden lg:text-xs lg:whitespace-nowrap sm:inline-block",
-  loginButton: "btn-login hidden lg:flex lg:text-sm items-center gap-2 bg-[#185FA5] text-white px-6 py-2.5 rounded-full font-semibold hover:bg-[#0C447C] hover:shadow-xl transition-all duration-300 cursor-default",
+  loginButton: "btn-login hidden lg:flex lg:text-sm items-center gap-2 bg-[#185FA5] text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-[#0C447C] hover:shadow-xl transition-all duration-300 cursor-default",
   loginIcon: "w-4 h-4",
 
   // Mobile toggle
@@ -620,9 +620,9 @@ export const navbarStyles = {
   mobileMenuItemInactive: "text-[#0C447C] hover:bg-[#E6F1FB] hover:text-[#042C53]",
 
   // Mobile signed out buttons
-  mobileDoctorAdminButton: "w-full flex items-center justify-center gap-2 py-2.5 rounded-full border border-[#85B7EB] bg-white text-[#0C447C] text-sm font-semibold hover:bg-[#E6F1FB] transition-all",
+  mobileDoctorAdminButton: "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-[#85B7EB] bg-white text-[#0C447C] text-sm font-semibold hover:bg-[#E6F1FB] transition-all",
   mobileLoginContainer: "w-full mt-3",
-  mobileLoginButton: "w-full cursor-default md:rounded-full flex items-center justify-center gap-2 bg-[#185FA5] text-white py-2.5 rounded-lg font-semibold hover:bg-[#0C447C] hover:shadow-lg transition-all",
+  mobileLoginButton: "w-full cursor-default flex items-center justify-center gap-2 bg-[#185FA5] text-white py-2.5 rounded-lg font-semibold hover:bg-[#0C447C] hover:shadow-lg transition-all",
 
   // Mobile signed in
   mobileUserWrapper: "flex items-center justify-between px-2 pt-2",
@@ -1000,7 +1000,7 @@ export const doctorDetailStyles = {
 
 export const navbarStylesDr = {
   // Main navbar
-  navContainer: "fixed top-8 left-1/2 -translate-x-1/2 z-50 w-full md:max-w-2xl lg:max-w-4xl px-4 py-0 rounded-full bg-white/90 backdrop-blur-md border border-[#85B7EB] shadow-lg shadow-[#85B7EB]/20 flex items-center justify-between gap-3 font-serif transition-all duration-300 hover:shadow-[#378ADD]/30 hover:-translate-y-0.5",
+  navContainer: "fixed top-8 left-1/2 -translate-x-1/2 z-50 w-full md:max-w-2xl lg:max-w-4xl px-4 py-0 rounded-2xl bg-white/90 backdrop-blur-md border border-[#85B7EB] shadow-lg shadow-[#85B7EB]/20 flex items-center justify-between gap-3 font-serif transition-all duration-300 hover:shadow-[#378ADD]/30 hover:-translate-y-0.5",
 
   // Left brand section
   leftBrand: "flex items-center gap-3",
@@ -1015,7 +1015,7 @@ export const navbarStylesDr = {
   desktopMenuItems: "flex items-center gap-2 px-2",
 
   // Link styles
-  baseLink: "relative flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 transform",
+  baseLink: "relative flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform",
   activeLink: "bg-[#185FA5] text-white shadow-lg shadow-[#185FA5]/30 scale-105 ring-2 ring-[#B5D4F4]",
   inactiveLink: "text-[#0C447C] hover:bg-[#E6F1FB] hover:text-[#042C53] hover:-translate-y-0.5 hover:shadow-sm",
 
@@ -1028,7 +1028,7 @@ export const navbarStylesDr = {
   rightActions: "flex items-center gap-3",
 
   // Logout button (desktop)
-  logoutButtonDesktop: "hidden lg:flex items-center gap-2 px-4 py-2 rounded-full bg-white text-[#185FA5] border border-[#85B7EB] shadow-sm text-sm font-semibold transition-all duration-200 transform hover:scale-105 hover:-translate-y-0.5 hover:bg-[#E6F1FB]",
+  logoutButtonDesktop: "hidden lg:flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#185FA5] border border-[#85B7EB] shadow-sm text-sm font-semibold transition-all duration-200 transform hover:scale-105 hover:-translate-y-0.5 hover:bg-[#E6F1FB]",
 
   // Hamburger menu buttons
   hamburgerButtonMd: "md:hidden p-2 rounded-md hover:bg-[#E6F1FB] transition-colors",
@@ -1046,7 +1046,7 @@ export const navbarStylesDr = {
   mobileInactiveLink: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-[#0C447C] hover:bg-[#E6F1FB]",
 
   // Mobile logout button
-  mobileLogoutButton: "mt-2 px-4 py-2 rounded-full text-center bg-[#185FA5] hover:bg-[#0C447C] text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-105 w-full",
+  mobileLogoutButton: "mt-2 px-4 py-2 rounded-lg text-center bg-[#185FA5] hover:bg-[#0C447C] text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-105 w-full",
   mobileLogoutContent: "flex items-center justify-center gap-2",
 
   // Spacer

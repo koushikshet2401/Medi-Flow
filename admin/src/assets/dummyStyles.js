@@ -504,20 +504,20 @@ export const navbarStyles = {
   centerNavContainer: "hidden lg:flex items-center justify-center relative",
   glowEffect: "glow relative rounded-3xl p-1 bg-linear-to-r from-sky-100 via-blue-200 to-sky-100",
   centerNavInner: "relative flex items-center",
-  centerNavScrollContainer: "center-inner relative whitespace-nowrap rounded-3xl bg-white/95 lg:px-2 px-4 py-2 flex items-center gap-2 shadow-lg border border-gray-100 overflow-x-auto",
+  centerNavScrollContainer: "center-inner relative whitespace-nowrap rounded-xl bg-white/95 lg:px-2 px-4 py-2 flex items-center gap-2 shadow-lg border border-gray-100 overflow-x-auto",
   
   // Center nav items
-  centerNavItemBase: "relative flex flex-col lg:text-xs lg:-mx-2 xl:text-md items-center gap-1 px-3 py-2 rounded-lg transition-all text-sm",
+  centerNavItemBase: "relative flex flex-col lg:text-xs lg:-mx-2 xl:text-md items-center gap-1 px-3 py-2 rounded-md transition-all text-sm",
   centerNavItemActive: "text-sky-400 font-semibold",
   centerNavItemInactive: "text-gray-700 hover:text-sky-600",
   
   // Right section styles
   rightContainer: "flex items-center gap-3",
-  signOutButton: "hidden lg:mx-1 lg:text-xs whitespace-nowrap xl:mx-1 lg:-mr-6 xl:mr-5 lg:flex px-4 py-2 cursor-pointer rounded-full bg-amber-500 text-white text-sm items-center gap-2 shadow-sm",
-  loginButton: "px-3 py-2 cursor-pointer rounded-full border bg-white text-sky-600 text-sm shadow-sm",
+  signOutButton: "hidden lg:mx-1 lg:text-xs whitespace-nowrap xl:mx-1 lg:-mr-6 xl:mr-5 lg:flex px-4 py-2 cursor-pointer rounded-lg bg-amber-500 text-white text-sm items-center gap-2 shadow-sm",
+  loginButton: "px-3 py-2 cursor-pointer rounded-lg border bg-white text-sky-600 text-sm shadow-sm",
   
   // Mobile menu button
-  mobileMenuButton: "lg:hidden p-2 rounded-full bg-white shadow",
+  mobileMenuButton: "lg:hidden p-2 rounded-lg bg-white shadow",
   
   // Mobile menu overlay
   mobileOverlay: "fixed inset-0 z-10 lg:hidden",
@@ -533,8 +533,8 @@ export const navbarStyles = {
   
   // Mobile auth section
   mobileAuthContainer: "pt-2 border-t mt-2",
-  mobileSignOutButton: "w-full py-2 rounded-full border bg-amber-500 text-white font-medium",
-  mobileLoginButton: "w-full cursor-pointer py-2 rounded-full border bg-white text-sky-600 font-medium",
+  mobileSignOutButton: "w-full py-2 rounded-lg border bg-amber-500 text-white font-medium",
+  mobileLoginButton: "w-full cursor-pointer py-2 rounded-lg border bg-white text-sky-600 font-medium",
   
   // Indicator (for active navigation)
   indicator: "absolute bottom-0 left-0 h-0.5 bg-sky-400 transition-all duration-300 ease-out rounded-full",
