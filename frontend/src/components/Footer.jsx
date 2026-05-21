@@ -97,7 +97,7 @@ function Footer() {
               </div>
 
               <div>
-                <h2 className={footerStyles.companyName}>MediCare</h2>
+                <h2 className={footerStyles.companyName}>MediFlow</h2>
                 <p className={footerStyles.companyTagline}>
                   HealthCare Solutions
                 </p>
@@ -125,7 +125,7 @@ function Footer() {
                 </div>
 
                 <span className={footerStyles.contactText}>
-                  MedicareService@gmail.com
+                  MediFlowService@gmail.com
                 </span>
               </div>
 
@@ -231,7 +231,7 @@ function Footer() {
 
         <div className={footerStyles.bottomSection}>
           <div className={footerStyles.copyright}>
-            <span>&copy;{currentYear} Medicare HealthCare.</span>
+            <span>&copy;{currentYear} MediFlow HealthCare.</span>
           </div>
 
 

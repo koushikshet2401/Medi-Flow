@@ -290,7 +290,7 @@ function ContactPage() {
               <Phone size={16} /> 9380439747
             </p>
             <p className={contactPageStyles.infoItem}>
-              <Mail size={16} /> Medicare@clinic.com
+              <Mail size={16} /> MediFlow@clinic.com
             </p>
           </div>
 

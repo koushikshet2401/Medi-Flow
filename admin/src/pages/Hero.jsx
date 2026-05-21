@@ -23,7 +23,7 @@ const Hero = ({ role = "admin", userName = "Doctor" }) => {
               <h1 className={heroStyles.heading}>
                 {isDoctor
                   ? `Welcome, Dr ${userName}`
-                  : "WELCOME TO MEDICARE ADMIN PANEL"}
+                  : "WELCOME TO MEDIFLOW ADMIN PANEL"}
               </h1>
               <p className={heroStyles.description}>
                 {isDoctor
