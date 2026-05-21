@@ -571,7 +571,7 @@ const ListPage = () => {
                                         <div className={listPageStyles.statusContainer}>
                                             <StatusBadge status={a.status} />
                                             <StatusSelect 
-                                            appointment={e}
+                                            appointment={a}
                                             onChange={(s)=> updateStatus(a.id,s)}
                                             />
                                         </div>
