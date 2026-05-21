@@ -26,7 +26,7 @@ function Banner() {
                             <div className={bannerStyles.titleContainer}>
                                 <h1 className={bannerStyles.title}>
                                     Medi
-                                    <span className={bannerStyles.titleGradient}>Care+</span>
+                                    <span className={bannerStyles.titleGradient}>Flow+</span>
                                 </h1>
                                 {/* stars */}
                                 <div className={bannerStyles.starsContainer}>

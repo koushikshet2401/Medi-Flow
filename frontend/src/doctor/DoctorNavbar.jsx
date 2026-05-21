@@ -38,7 +38,7 @@ const DoctorNavbar = () => {
         </div>
 
         <div className={navbarStylesDr.brandTextContainer}>
-          <div className={navbarStylesDr.brandTitle}>MedTek</div>
+          <div className={navbarStylesDr.brandTitle}>MediFlow</div>
           <div className={navbarStylesDr.brandSubtitle}>
             Healthcare solutions
           </div>
