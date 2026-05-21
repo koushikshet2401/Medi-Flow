@@ -1,15 +1,13 @@
-import React from 'react'
-import Navbar from '../components/Navbar'
-import DashboardPage from '../components/DashboardPage'
+import React from 'react';
+import AdminLayout from '../components/AdminLayout';
+import DashboardPage from '../components/DashboardPage';
 
 function Home() {
   return (
-    <div>
-      <Navbar/>
-      <DashboardPage/>
-      
-    </div>
-  )
+    <AdminLayout>
+      <DashboardPage />
+    </AdminLayout>
+  );
 }
 
-export default Home
+export default Home;

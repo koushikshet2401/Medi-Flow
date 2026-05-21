@@ -1,14 +1,13 @@
-import React from 'react'
-import Navbar from '../components/Navbar'
-import ListServicePage from '../components/ListServicePage'
+import React from 'react';
+import AdminLayout from '../components/AdminLayout';
+import ListServicePage from '../components/ListServicePage';
 
 function ListService() {
   return (
-    <div>
-      <Navbar/>
-      <ListServicePage/>
-    </div>
-  )
+    <AdminLayout>
+      <ListServicePage />
+    </AdminLayout>
+  );
 }
 
-export default ListService
+export default ListService;

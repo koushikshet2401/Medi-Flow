@@ -1,15 +1,13 @@
-import React from 'react'
-import Navbar from "../components/Navbar";
-import AddService  from '../components/AddService';
+import React from 'react';
+import AdminLayout from '../components/AdminLayout';
+import AddService from '../components/AddService';
 
 function AddSer() {
   return (
-    <div>
-        <Navbar/>
-        <AddService/>
-    </div>
-  )
+    <AdminLayout>
+      <AddService />
+    </AdminLayout>
+  );
 }
 
-export default AddSer
-
+export default AddSer;

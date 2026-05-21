@@ -967,3 +967,42 @@ export const serviceDashboardStyles = {
     value: "text-lg font-semibold text-slate-800"
   }
 };
+
+// Sidebar styles (tablet+ left sidebar)
+export const sidebarStyles = {
+  // Sidebar container — hidden on mobile, flex column on md+
+  sidebar: "hidden md:flex flex-col fixed left-0 top-0 h-full w-60 bg-white border-r border-[#85B7EB] shadow-md z-40 font-serif",
+
+  // Logo / brand section
+  logoSection: "flex items-center gap-3 px-4 py-5 border-b border-[#E6F1FB] hover:bg-[#f7fbff] transition-colors duration-200",
+  logoImage: "w-11 h-11 object-contain flex-shrink-0",
+  logoTextContainer: "flex flex-col",
+  logoTitle: "text-base font-bold text-[#042C53] leading-tight",
+  logoSubtitle: "text-[10px] text-[#378ADD] leading-tight",
+
+  // Scrollable nav area
+  navSection: "flex-1 overflow-y-auto py-3 px-2 space-y-0.5",
+
+  // Section divider label (e.g. "DOCTORS", "SERVICES")
+  groupLabel: "pt-4 pb-1 px-3",
+  groupLabelText: "text-[10px] font-bold text-[#85B7EB] tracking-widest uppercase",
+
+  // Individual nav link
+  navItemBase: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 w-full",
+  navItemActive: "bg-[#185FA5] text-white shadow-md",
+  navItemInactive: "text-[#0C447C] hover:bg-[#E6F1FB] hover:text-[#042C53]",
+
+  // Sign out section pinned at bottom
+  signOutSection: "p-3 border-t border-[#E6F1FB]",
+  signOutButton: "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-rose-600 hover:bg-rose-50 transition-all duration-200 cursor-pointer",
+};
+
+// AdminLayout wrapper styles
+export const adminLayoutStyles = {
+  // Outer wrapper
+  wrapper: "min-h-screen bg-sky-50",
+  // Mobile navbar wrapper — visible only on mobile
+  mobileNavWrapper: "md:hidden",
+  // Main content — pushed right on md+ to account for sidebar
+  contentWrapper: "md:ml-60",
+};

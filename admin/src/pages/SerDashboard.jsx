@@ -1,16 +1,13 @@
-import React from 'react'
-import ServiceDashboard from '../components/ServiceDashboard'
-import Navbar from '../components/Navbar'
-
+import React from 'react';
+import AdminLayout from '../components/AdminLayout';
+import ServiceDashboard from '../components/ServiceDashboard';
 
 function SerDashboard() {
   return (
-    <div>
-
-      <Navbar />
+    <AdminLayout>
       <ServiceDashboard />
-    </div>
-  )
+    </AdminLayout>
+  );
 }
 
-export default SerDashboard
+export default SerDashboard;

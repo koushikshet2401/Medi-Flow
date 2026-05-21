@@ -1,14 +1,13 @@
 import React from "react";
-import Navbar from "../components/Navbar";
+import AdminLayout from "../components/AdminLayout";
 import AddPage from "../components/AddPage";
 
 const Add = () => {
-    return (
-        <div>
-            <Navbar/>
-            <AddPage />
-        </div>
-    );
-};  
+  return (
+    <AdminLayout>
+      <AddPage />
+    </AdminLayout>
+  );
+};
 
 export default Add;

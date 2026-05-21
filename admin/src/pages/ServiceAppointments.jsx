@@ -1,15 +1,13 @@
-import React from 'react'
-import Navbar from '../components/Navbar'
-import ServiceAppointmentsPage from '../components/ServiceAppointmentsPage'
+import React from 'react';
+import AdminLayout from '../components/AdminLayout';
+import ServiceAppointmentsPage from '../components/ServiceAppointmentsPage';
 
 function ServiceAppointments() {
   return (
-    <div>
-      <Navbar/>
-      <ServiceAppointmentsPage/>
-      
-    </div>
-  )
+    <AdminLayout>
+      <ServiceAppointmentsPage />
+    </AdminLayout>
+  );
 }
 
-export default ServiceAppointments
+export default ServiceAppointments;
