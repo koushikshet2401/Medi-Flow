@@ -570,63 +570,63 @@ export const toastStyles = {
 
 // Navbar styles
 export const navbarStyles = {
-  // Main container
-  navbarWrapper: "sticky top-0 z-50",
-  navbarContainer: "bg-white/95 backdrop-blur-md border-b border-[#85B7EB] transition-transform duration-500",
-  navbarHidden: "-translate-y-full",
-  navbarVisible: "translate-y-0",
+  // Main container — floating glassmorphism bar
+  navbarWrapper: "fixed top-0 left-0 right-0 z-50 px-3 sm:px-4 lg:px-6 pt-3",
+  navbarContainer: "mx-auto max-w-7xl bg-white/80 backdrop-blur-xl border border-[#B5D4F4]/60 rounded-2xl shadow-[0_8px_32px_rgba(24,95,165,0.10)] transition-all duration-500",
+  navbarHidden: "-translate-y-[calc(100%+1.5rem)] opacity-0",
+  navbarVisible: "translate-y-0 opacity-100",
 
-  // Border animation
+  // Border animation — gradient shimmer on top
   navbarBorder: "navbar-border",
 
   // Content wrapper
-  contentWrapper: "max-w-7xl font-[pacifico] md:px-2 mx-auto px-4 sm:px-6 lg:px-8",
-  flexContainer: "flex items-center justify-between h-20",
+  contentWrapper: "px-4 sm:px-5 lg:px-6",
+  flexContainer: "flex items-center justify-between h-16 sm:h-[4.5rem]",
 
   // Logo section
-  logoLink: "flex items-center gap-3 -ml-3 sm:-ml-4",
-  logoContainer: "relative group w-20 h-20 sm:w-24 sm:h-24 lg:w-15 lg:h-15 xl:w-32 xl:h-32",
-  logoImageWrapper: "relative flex items-center justify-center overflow-hidden p-2 mx-1 h-full w-full",
-  logoImage: "w-14 h-14 sm:w-18 sm:h-18 lg:w-15 lg:h-15 xl:w-24 xl:h-24 md:w-20 md:h-20 object-contain",
-  logoTextContainer: "block sm:block",
-  logoTitle: "text-2xl md:text-2xl lg:text-2xl xl:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#185FA5] to-[#378ADD] tracking-tight",
-  logoSubtitle: "text-xs lg:text-xs text-[#378ADD]",
+  logoLink: "flex items-center gap-2.5 group",
+  logoContainer: "relative w-11 h-11 sm:w-12 sm:h-12",
+  logoImageWrapper: "relative flex items-center justify-center overflow-hidden h-full w-full rounded-xl bg-gradient-to-br from-[#E6F1FB] to-[#B5D4F4] p-1.5 ring-1 ring-[#85B7EB]/40 group-hover:ring-[#378ADD]/60 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-[#378ADD]/15",
+  logoImage: "w-full h-full object-contain",
+  logoTextContainer: "hidden sm:block",
+  logoTitle: "text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#0C447C] via-[#185FA5] to-[#378ADD] tracking-tight leading-tight",
+  logoSubtitle: "text-[10px] font-medium text-[#378ADD]/80 tracking-widest uppercase",
 
   // Desktop navigation
-  desktopNav: "hidden lg:-mx-5 lg:flex items-center gap-2",
-  navItemsContainer: "flex gap-1 bg-[#E6F1FB] border border-[#85B7EB] p-1 rounded-2xl shadow-sm",
-  navItem: "nav-item px-5 md:px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300",
+  desktopNav: "hidden lg:flex items-center",
+  navItemsContainer: "flex items-center gap-0.5 bg-[#f0f6fd]/80 border border-[#B5D4F4]/50 p-1 rounded-xl backdrop-blur-sm",
+  navItem: "nav-item relative px-4 py-2 rounded-lg text-[13px] font-semibold tracking-wide transition-all duration-300 cursor-pointer",
   navItemActive: "active",
-  navItemInactive: "text-[#0C447C] hover:text-[#042C53] hover:bg-[#B5D4F4]",
+  navItemInactive: "text-[#0C447C]/80 hover:text-[#042C53] hover:bg-white/70",
 
   // Right side
-  rightContainer: "flex items-center gap-3",
+  rightContainer: "flex items-center gap-2 sm:gap-3",
 
   // Signed out buttons
-  doctorAdminButton: "btn-add hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-transform duration-200 text-[#0C447C]",
-  doctorAdminIcon: "w-4 h-4",
-  doctorAdminText: "hidden lg:text-xs lg:whitespace-nowrap sm:inline-block",
-  loginButton: "btn-login hidden lg:flex lg:text-sm items-center gap-2 bg-[#185FA5] text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-[#0C447C] hover:shadow-xl transition-all duration-300 cursor-default",
-  loginIcon: "w-4 h-4",
+  doctorAdminButton: "btn-add hidden lg:inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 text-[#0C447C] hover:text-[#042C53]",
+  doctorAdminIcon: "w-3.5 h-3.5",
+  doctorAdminText: "hidden sm:inline-block whitespace-nowrap",
+  loginButton: "btn-login hidden lg:flex text-xs items-center gap-2 bg-gradient-to-r from-[#185FA5] to-[#0C447C] text-white px-5 py-2.5 rounded-full font-semibold hover:from-[#0C447C] hover:to-[#042C53] transition-all duration-300 cursor-pointer shadow-lg shadow-[#185FA5]/20",
+  loginIcon: "w-3.5 h-3.5",
 
   // Mobile toggle
-  mobileToggle: "lg:hidden p-2.5 rounded-lg hover:bg-[#E6F1FB] transition-colors",
-  toggleIcon: "w-6 h-6 text-[#185FA5]",
+  mobileToggle: "lg:hidden p-2 rounded-xl hover:bg-[#E6F1FB] active:scale-95 transition-all duration-200",
+  toggleIcon: "w-5 h-5 text-[#185FA5]",
 
   // Mobile menu
-  mobileMenu: "mobile-menu lg:hidden pb-4 space-y-2 border-t border-[#85B7EB] pt-4 px-4",
-  mobileMenuItem: "block px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300",
-  mobileMenuItemActive: "bg-[#185FA5] text-white",
-  mobileMenuItemInactive: "text-[#0C447C] hover:bg-[#E6F1FB] hover:text-[#042C53]",
+  mobileMenu: "mobile-menu lg:hidden pb-5 space-y-1.5 border-t border-[#B5D4F4]/50 pt-4 px-3",
+  mobileMenuItem: "mobile-menu-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300",
+  mobileMenuItemActive: "bg-gradient-to-r from-[#185FA5] to-[#378ADD] text-white shadow-md shadow-[#185FA5]/20",
+  mobileMenuItemInactive: "text-[#0C447C] hover:bg-[#E6F1FB] hover:text-[#042C53] active:scale-[0.98]",
 
   // Mobile signed out buttons
-  mobileDoctorAdminButton: "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-[#85B7EB] bg-white text-[#0C447C] text-sm font-semibold hover:bg-[#E6F1FB] transition-all",
+  mobileDoctorAdminButton: "w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-[#85B7EB]/60 bg-white/60 text-[#0C447C] text-sm font-semibold hover:bg-[#E6F1FB] transition-all duration-300 mt-2",
   mobileLoginContainer: "w-full mt-3",
-  mobileLoginButton: "w-full cursor-default flex items-center justify-center gap-2 bg-[#185FA5] text-white py-2.5 rounded-lg font-semibold hover:bg-[#0C447C] hover:shadow-lg transition-all",
+  mobileLoginButton: "w-full cursor-pointer flex items-center justify-center gap-2 bg-gradient-to-r from-[#185FA5] to-[#0C447C] text-white py-3 rounded-xl font-semibold hover:from-[#0C447C] hover:to-[#042C53] shadow-lg shadow-[#185FA5]/20 transition-all duration-300 mt-2",
 
   // Mobile signed in
-  mobileUserWrapper: "flex items-center justify-between px-2 pt-2",
-  mobileLogoutButton: "text-sm px-4 py-2 rounded-full bg-[#E6F1FB] border border-[#85B7EB] text-[#0C447C] font-semibold hover:bg-[#B5D4F4] transition-all",
+  mobileUserWrapper: "flex items-center justify-between px-3 pt-3 mt-2 border-t border-[#B5D4F4]/40",
+  mobileLogoutButton: "text-sm px-5 py-2 rounded-full bg-[#E6F1FB] border border-[#85B7EB]/60 text-[#0C447C] font-semibold hover:bg-[#B5D4F4] transition-all duration-300",
 
   // Animation styles
   animationStyles: `
@@ -636,66 +636,92 @@ export const navbarStyles = {
       100% { background-position: 0% 50%; }
     }
     .navbar-border {
-      height: 2px;
-      background: linear-gradient(90deg, #185FA5, #378ADD, #85B7EB, #185FA5);
-      background-size: 300% 100%;
-      animation: borderFlow 6s ease infinite;
+      height: 0;
     }
+
+    /* Nav item base */
     .nav-item {
-      animation: slideIn 0.45s ease-out forwards;
       position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .nav-item:hover {
+      transform: translateY(-1px);
+    }
+
+    /* Active nav item — elevated white pill with blue accent */
     .nav-item.active {
       background: white !important;
       color: #185FA5 !important;
-      box-shadow: 0 6px 18px rgba(24, 95, 165, 0.15);
+      box-shadow: 0 4px 16px rgba(24, 95, 165, 0.12), 0 1px 3px rgba(24, 95, 165, 0.08);
     }
-    .nav-item.active::after {
+    .nav-item.active::before {
       content: "";
       position: absolute;
-      bottom: -8px;
+      top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 6px;
-      height: 6px;
-      background: #378ADD;
-      border-radius: 9999px;
-      animation: pulse 2s infinite;
+      width: 24px;
+      height: 3px;
+      background: linear-gradient(90deg, #378ADD, #185FA5);
+      border-radius: 0 0 999px 999px;
+      animation: navAccentIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
-      50% { opacity: 0.5; transform: translateX(-50%) scale(1.25); }
+    @keyframes navAccentIn {
+      from { width: 0; opacity: 0; }
+      to { width: 24px; opacity: 1; }
     }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+
+    /* Doctor Admin gradient-border button */
     .btn-add {
-      background-image: linear-gradient(white, white), linear-gradient(90deg, #185FA5, #378ADD, #85B7EB);
+      background-image: linear-gradient(white, white), linear-gradient(135deg, #185FA5, #378ADD, #85B7EB);
       background-origin: padding-box, border-box;
       background-clip: padding-box, border-box;
       border: 2px solid transparent;
       border-radius: 9999px;
-      box-shadow: 0 2px 8px rgba(24, 95, 165, 0.08);
-      transform: translateZ(0);
+      box-shadow: 0 2px 8px rgba(24, 95, 165, 0.06);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .btn-add:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(24, 95, 165, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(24, 95, 165, 0.12);
     }
+
+    /* Login button subtle glow */
     .btn-login {
-      animation: glow 2.2s ease-in-out infinite;
+      animation: loginGlow 3s ease-in-out infinite;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    @keyframes glow {
-      0%, 100% { box-shadow: 0 0 20px rgba(24, 95, 165, 0.22), 0 4px 12px rgba(24, 95, 165, 0.12); }
-      50% { box-shadow: 0 0 32px rgba(24, 95, 165, 0.36), 0 6px 22px rgba(24, 95, 165, 0.18); }
+    .btn-login:hover {
+      transform: translateY(-2px);
     }
-    @keyframes fadeIn {
-      from { opacity: 0; height: 0; }
-      to { opacity: 1; height: auto; }
+    @keyframes loginGlow {
+      0%, 100% { box-shadow: 0 4px 16px rgba(24, 95, 165, 0.20); }
+      50% { box-shadow: 0 6px 28px rgba(24, 95, 165, 0.30); }
     }
+
+    /* Mobile menu staggered fade-in */
     .mobile-menu {
-      animation: fadeIn 0.28s ease-out;
+      animation: menuSlideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes menuSlideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .mobile-menu-item {
+      animation: menuItemFade 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      opacity: 0;
+    }
+    .mobile-menu-item:nth-child(1) { animation-delay: 0.03s; }
+    .mobile-menu-item:nth-child(2) { animation-delay: 0.06s; }
+    .mobile-menu-item:nth-child(3) { animation-delay: 0.09s; }
+    .mobile-menu-item:nth-child(4) { animation-delay: 0.12s; }
+    .mobile-menu-item:nth-child(5) { animation-delay: 0.15s; }
+    .mobile-menu-item:nth-child(6) { animation-delay: 0.18s; }
+    .mobile-menu-item:nth-child(7) { animation-delay: 0.21s; }
+    .mobile-menu-item:nth-child(8) { animation-delay: 0.24s; }
+    @keyframes menuItemFade {
+      from { opacity: 0; transform: translateX(-12px); }
+      to { opacity: 1; transform: translateX(0); }
     }
   `
 };
@@ -1000,22 +1026,22 @@ export const doctorDetailStyles = {
 
 export const navbarStylesDr = {
   // Main navbar
-  navContainer: "fixed top-8 left-1/2 -translate-x-1/2 z-50 w-full md:max-w-2xl lg:max-w-4xl px-4 py-0 rounded-2xl bg-white/90 backdrop-blur-md border border-[#85B7EB] shadow-lg shadow-[#85B7EB]/20 flex items-center justify-between gap-3 font-serif transition-all duration-300 hover:shadow-[#378ADD]/30 hover:-translate-y-0.5",
+  navContainer: "fixed top-8 left-1/2 -translate-x-1/2 z-50 w-full md:max-w-2xl px-4 py-0 rounded-2xl bg-white/90 backdrop-blur-md border border-[#85B7EB] shadow-lg shadow-[#85B7EB]/20 flex items-center justify-between gap-3 font-serif transition-all duration-300 hover:shadow-[#378ADD]/30 hover:-translate-y-0.5 lg:fixed lg:top-0 lg:left-0 lg:right-auto lg:translate-x-0 lg:h-screen lg:w-64 lg:rounded-none lg:border-r lg:border-t-0 lg:border-l-0 lg:border-b-0 lg:flex-col lg:justify-start lg:py-8 lg:px-4 lg:gap-8 lg:hover:translate-y-0",
 
   // Left brand section
-  leftBrand: "flex items-center gap-3",
-  logoContainer: "w-20 h-20 flex items-center justify-center rounded-full transform transition-all duration-300 hover:rotate-1 overflow-hidden",
+  leftBrand: "flex lg:flex-col items-center gap-3 lg:gap-2 lg:w-full lg:text-center",
+  logoContainer: "w-20 h-20 flex items-center justify-center rounded-full transform transition-all duration-300 hover:rotate-1 overflow-hidden lg:mx-auto",
   logoImage: "w-full h-full object-contain p-1",
-  brandTextContainer: "md:block",
+  brandTextContainer: "md:block lg:text-center",
   brandTitle: "text-3xl text-[#185FA5] font-semibold tracking-wide",
   brandSubtitle: "text-xs text-[#378ADD]",
 
   // Desktop menu
-  desktopMenu: "hidden lg:flex flex-1 justify-center",
-  desktopMenuItems: "flex items-center gap-2 px-2",
+  desktopMenu: "hidden lg:flex flex-1 lg:flex-none justify-center lg:w-full lg:flex-col lg:items-stretch lg:justify-start",
+  desktopMenuItems: "flex items-center gap-2 px-2 lg:flex-col lg:w-full lg:gap-3 lg:px-0",
 
   // Link styles
-  baseLink: "relative flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform",
+  baseLink: "relative flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform lg:w-full lg:px-4 lg:py-3 lg:justify-start",
   activeLink: "bg-[#185FA5] text-white shadow-lg shadow-[#185FA5]/30 scale-105 ring-2 ring-[#B5D4F4]",
   inactiveLink: "text-[#0C447C] hover:bg-[#E6F1FB] hover:text-[#042C53] hover:-translate-y-0.5 hover:shadow-sm",
 
@@ -1025,10 +1051,10 @@ export const navbarStylesDr = {
   linkText: "text-[13px]",
 
   // Right side actions
-  rightActions: "flex items-center gap-3",
+  rightActions: "flex items-center gap-3 lg:flex-col lg:w-full lg:mt-auto lg:gap-4",
 
   // Logout button (desktop)
-  logoutButtonDesktop: "hidden lg:flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#185FA5] border border-[#85B7EB] shadow-sm text-sm font-semibold transition-all duration-200 transform hover:scale-105 hover:-translate-y-0.5 hover:bg-[#E6F1FB]",
+  logoutButtonDesktop: "hidden lg:flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#185FA5] border border-[#85B7EB] shadow-sm text-sm font-semibold transition-all duration-200 transform hover:scale-105 hover:-translate-y-0.5 hover:bg-[#E6F1FB] lg:w-full lg:justify-center lg:py-3 lg:px-4",
 
   // Hamburger menu buttons
   hamburgerButtonMd: "md:hidden p-2 rounded-md hover:bg-[#E6F1FB] transition-colors",
@@ -1050,7 +1076,7 @@ export const navbarStylesDr = {
   mobileLogoutContent: "flex items-center justify-center gap-2",
 
   // Spacer
-  spacer: "h-20 lg:h-20",
+  spacer: "h-20 lg:h-0",
 
   // Icon sizes
   iconSmall: "size={16}",
@@ -1062,7 +1088,7 @@ export const navbarStylesDr = {
 
 // ListPage styles
 export const listPageStyles = {
-  pageContainer: "min-h-screen pt-20 md:pt-25 lg:pt-25 font-serif p-4 sm:p-6 bg-[#f0f6fd]",
+  pageContainer: "min-h-screen pt-20 md:pt-25 lg:pt-25 lg:pl-72 font-serif p-4 sm:p-6 bg-[#f0f6fd]",
   contentWrapper: "max-w-7xl mx-auto",
   headerContainer: "mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4",
   headerTitle: "text-xl sm:text-xl pt-5 md:pt-0 lg:pt-0 xl:pt-0 font-extrabold text-[#042C53]",
@@ -1124,7 +1150,7 @@ export const listPageStyles = {
 
 export const editProfilePageStyles = {
   // Page container
-  pageContainer: "min-h-screen font-serif bg-[#f0f6fd] p-4 sm:p-5 md:p-6",
+  pageContainer: "min-h-screen font-serif lg:pl-72 bg-[#f0f6fd] p-4 sm:p-5 md:p-6",
   maxWidthContainer: "max-w-6xl pt-8 md:pt-10 mx-auto relative",
 
   // Loading states
@@ -1277,7 +1303,7 @@ export const editProfilePageStyles = {
 // DashboardPage styles
 export const dashboardStyles = {
   // Main container
-  pageContainer: "min-h-screen font-serif pt-16 lg:pt-20 md:pt-15 p-4 sm:p-6 bg-[#f0f6fd]",
+  pageContainer: "min-h-screen font-serif pt-16 lg:pt-20 lg:pl-72 md:pt-15 p-4 sm:p-6 bg-[#f0f6fd]",
 
   // Content wrapper
   contentWrapper: "max-w-7xl mx-auto",
