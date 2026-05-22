@@ -8,7 +8,17 @@ import {
   useClerk,
   UserButton,
 } from "@clerk/clerk-react";
-import { User, Menu, X, LogIn } from "lucide-react";
+import {
+  User,
+  Menu,
+  X,
+  LogIn,
+  Home,
+  Stethoscope,
+  Briefcase,
+  CalendarCheck,
+  MessageSquare,
+} from "lucide-react";
 import logo from "../assets/logo.png";
 
 const STORAGE_KEY = "doctorToken_v1";
@@ -92,159 +102,168 @@ function Navbar() {
   }, [location.pathname]);
 
   const navItems = [
-    { label: "Home", href: "/" },
-    { label: "Doctors", href: "/doctors" },
-    { label: "Services", href: "/services" },
-    { label: "Appointments", href: "/appointments" },
-    { label: "Contact", href: "/contact" },
+    { label: "Home", href: "/", icon: Home },
+    { label: "Doctors", href: "/doctors", icon: Stethoscope },
+    { label: "Services", href: "/services", icon: Briefcase },
+    { label: "Appointments", href: "/appointments", icon: CalendarCheck },
+    { label: "Contact", href: "/contact", icon: MessageSquare },
   ];
 
   return (
-    <div className={navbarStyles.navbarWrapper}>
-      <div className={navbarStyles.navbarBorder} />
-      <nav
-        ref={navRef}
-        className={`${navbarStyles.navbarContainer} ${
-          showNavbar
-            ? navbarStyles.navbarVisible
-            : navbarStyles.navbarHidden
-        }`}
-      >
-        <div className={navbarStyles.contentWrapper}>
-          <div className={navbarStyles.flexContainer}>
+    <>
+      {/* Spacer to account for fixed navbar */}
+      <div className="h-[4.75rem] sm:h-[5.25rem]" />
 
-            {/* Logo Section */}
-            <Link to="/" className={navbarStyles.logoLink}>
-              <div className={navbarStyles.logoContainer}>
-                <div className={navbarStyles.logoImageWrapper}>
-                  <img src={logo} alt="logo" className={navbarStyles.logoImage} />
+      <div className={navbarStyles.navbarWrapper}>
+        <div className={navbarStyles.navbarBorder} />
+        <nav
+          ref={navRef}
+          className={`${navbarStyles.navbarContainer} ${
+            showNavbar
+              ? navbarStyles.navbarVisible
+              : navbarStyles.navbarHidden
+          }`}
+        >
+          <div className={navbarStyles.contentWrapper}>
+            <div className={navbarStyles.flexContainer}>
+
+              {/* Logo Section */}
+              <Link to="/" className={navbarStyles.logoLink}>
+                <div className={navbarStyles.logoContainer}>
+                  <div className={navbarStyles.logoImageWrapper}>
+                    <img src={logo} alt="logo" className={navbarStyles.logoImage} />
+                  </div>
+                </div>
+
+                <div className={navbarStyles.logoTextContainer}>
+                  <h1 className={navbarStyles.logoTitle}>Medi-Flow</h1>
+                  <p className={navbarStyles.logoSubtitle}>HealthCare Solution</p>
+                </div>
+              </Link>
+
+              {/* Desktop Navigation */}
+              <div className={navbarStyles.desktopNav}>
+                <div className={navbarStyles.navItemsContainer}>
+                  {navItems.map((item) => {
+                    const isActive = location.pathname === item.href;
+
+                    return (
+                      <Link
+                        key={item.href}
+                        to={item.href}
+                        className={`${navbarStyles.navItem} ${
+                          isActive
+                            ? navbarStyles.navItemActive
+                            : navbarStyles.navItemInactive
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className={navbarStyles.logoTextContainer}>
-                <h1 className={navbarStyles.logoTitle}>Medi-Flow</h1>
-                <p className={navbarStyles.logoSubtitle}>HealthCare Solution</p>
-              </div>
-            </Link>
+              {/* Right Side Actions */}
+              <div className={navbarStyles.rightContainer}>
+                <SignedOut>
+                  <Link
+                    to="/doctor-admin/login"
+                    className={navbarStyles.doctorAdminButton}
+                  >
+                    <User className={navbarStyles.doctorAdminIcon} />
+                    <span className={navbarStyles.doctorAdminText}>
+                      Doctor Admin
+                    </span>
+                  </Link>
 
-            {/* Desktop Navigation */}
-            <div className={navbarStyles.desktopNav}>
-              <div className={navbarStyles.navItemsContainer}>
-                {navItems.map((item) => {
-                  const isActive = location.pathname === item.href;
+                  <button
+                    onClick={() => clerk.openSignIn()}
+                    className={navbarStyles.loginButton}
+                  >
+                    <LogIn className={navbarStyles.loginIcon} />
+                    Log-in
+                  </button>
+                </SignedOut>
 
-                  return (
-                    <Link
-                      key={item.href}
-                      to={item.href}
-                      className={`${navbarStyles.navItem} ${
-                        isActive
-                          ? navbarStyles.navItemActive
-                          : navbarStyles.navItemInactive
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  );
-                })}
+                <SignedIn>
+                  <UserButton afterSignOutUrl="/" />
+                </SignedIn>
+
+                {/* Mobile Toggle Button */}
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  className={navbarStyles.mobileToggle}
+                >
+                  {isOpen ? (
+                    <X className={navbarStyles.toggleIcon} />
+                  ) : (
+                    <Menu className={navbarStyles.toggleIcon} />
+                  )}
+                </button>
               </div>
             </div>
+          </div>
 
-            {/* Right Side Actions */}
-            <div className={navbarStyles.rightContainer}>
+          {/* Mobile Navigation Menu */}
+          {isOpen && (
+            <div className={navbarStyles.mobileMenu}>
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.href;
+                const Icon = item.icon;
+
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`${navbarStyles.mobileMenuItem} ${
+                      isActive
+                        ? navbarStyles.mobileMenuItemActive
+                        : navbarStyles.mobileMenuItemInactive
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+
               <SignedOut>
                 <Link
                   to="/doctor-admin/login"
-                  className={navbarStyles.doctorAdminButton}
+                  className={navbarStyles.mobileDoctorAdminButton}
                 >
-                  <User className={navbarStyles.doctorAdminIcon} />
-                  <span className={navbarStyles.doctorAdminText}>
-                    Doctor Admin
-                  </span>
+                  <User className="w-4 h-4" />
+                  Doctor Admin
                 </Link>
 
                 <button
                   onClick={() => clerk.openSignIn()}
-                  className={navbarStyles.loginButton}
+                  className={navbarStyles.mobileLoginButton}
                 >
-                  <LogIn className={navbarStyles.loginIcon} />
+                  <LogIn className="w-4 h-4" />
                   Log-in
                 </button>
               </SignedOut>
 
               <SignedIn>
-                <UserButton afterSignOutUrl="/" />
+                <div className={navbarStyles.mobileUserWrapper}>
+                  <UserButton afterSignOutUrl="/" />
+                  <SignOutButton>
+                    <button className={navbarStyles.mobileLogoutButton}>
+                      Log-out
+                    </button>
+                  </SignOutButton>
+                </div>
               </SignedIn>
-
-              {/* Mobile Toggle Button */}
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className={navbarStyles.mobileToggle}
-              >
-                {isOpen ? (
-                  <X className={navbarStyles.toggleIcon} />
-                ) : (
-                  <Menu className={navbarStyles.toggleIcon} />
-                )}
-              </button>
             </div>
-          </div>
-        </div>
+          )}
 
-        {/* Mobile Navigation Menu */}
-        {isOpen && (
-          <div className={navbarStyles.mobileMenu}>
-            {navItems.map((item) => {
-              const isActive = location.pathname === item.href;
-
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`${navbarStyles.mobileMenuItem} ${
-                    isActive
-                      ? navbarStyles.mobileMenuItemActive
-                      : navbarStyles.mobileMenuItemInactive
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-
-            <SignedOut>
-              <Link
-                to="/doctor-admin/login"
-                className={navbarStyles.mobileDoctorAdminButton}
-              >
-                Doctor Admin
-              </Link>
-
-              <button
-                onClick={() => clerk.openSignIn()}
-                className={navbarStyles.mobileLoginButton}
-              >
-                Log-in
-              </button>
-            </SignedOut>
-
-            <SignedIn>
-              <div className={navbarStyles.mobileUserWrapper}>
-                <UserButton afterSignOutUrl="/" />
-                <SignOutButton>
-                  <button className={navbarStyles.mobileLogoutButton}>
-                    Log-out
-                  </button>
-                </SignOutButton>
-              </div>
-            </SignedIn>
-          </div>
-        )}
-
-        <style>{navbarStyles.animationStyles}</style>
-      </nav>
-    </div>
+          <style>{navbarStyles.animationStyles}</style>
+        </nav>
+      </div>
+    </>
   );
 }
 
