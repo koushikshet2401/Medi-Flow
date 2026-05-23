@@ -516,20 +516,6 @@ const ListPage = () => {
                             filtered.map((a) => (
                                 <article key={a.id} className={listPageStyles.appointmentCard}>
                                     <header className={listPageStyles.cardHeader}>
-                                        <div className={listPageStyles.cardAvatar}>
-                                            {a.doctorImage ? (
-                                                <img src={a.doctorImage} alt={a.doctorName}
-                                                    className={listPageStyles.cardAvatarImage}
-                                                    onError={(e) => { e.currentTarget.style.display = "none" }
-                                                    } />
-                                            ) : (
-                                                <div className={listPageStyles.cardAvatarFallback}>
-                                                    {(a.doctorName || "D").charAt(0)}
-                                                </div>
-                                            )
-                                            }
-                                        </div>
-
                                         <div className={listPageStyles.cardContent}>
                                             <div className={listPageStyles.cardPatientName}>
                                                 {a.patient}
