@@ -427,22 +427,6 @@ export default function DashboardPage({ apiBase }) {
             {top8.map((a) => (
               <div key={a.id} className={dashboardStyles.appointmentCard}>
                 <div className={dashboardStyles.cardHeader}>
-                  <div className={dashboardStyles.cardAvatar}>
-                    {a.doctorImage ? (
-                      <img
-                        src={a.doctorImage}
-                        alt={a.doctorName}
-                        onError={(e) =>
-                          (e.currentTarget.style.display = "none")
-                        }
-                        className={dashboardStyles.cardAvatarImage}
-                      />
-                    ) : (
-                      <div className={dashboardStyles.cardAvatarFallback}>
-                        {(a.doctorName || "D").charAt(0)}
-                      </div>
-                    )}
-                  </div>
 
                   <div className={dashboardStyles.cardContent}>
                     <div className={dashboardStyles.cardPatientName}>
