@@ -107,7 +107,7 @@ export default function DoctorDetail() {
     email: "",
   });
 
-  const [paymentMethod, setPaymentMethod] = useState("Cash");
+  const [paymentMethod, setPaymentMethod] = useState("Online");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Clerk hooks
@@ -733,48 +733,14 @@ export default function DoctorDetail() {
                         ₹{fee}
                       </span>
                     </div>
-                  </div>
 
-                  {/* PAYMENT METHOD SELECTOR */}
-                  <div className={doctorDetailStyles.paymentContainer}>
-                    <label className={doctorDetailStyles.paymentLabel}>
-                      Payment:
-                    </label>
-                    <div className={doctorDetailStyles.paymentOptions}>
-                      <label
-                        className={`${doctorDetailStyles.paymentOption} ${
-                          paymentMethod === "Cash"
-                            ? doctorDetailStyles.paymentOptionSelected
-                            : doctorDetailStyles.paymentOptionUnselected
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="payment"
-                          value="Cash"
-                          checked={paymentMethod === "Cash"}
-                          onChange={() => setPaymentMethod("Cash")}
-                          className={doctorDetailStyles.paymentRadio}
-                        />
-                        Cash
-                      </label>
-                      <label
-                        className={`${doctorDetailStyles.paymentOption} ${
-                          paymentMethod === "Online"
-                            ? doctorDetailStyles.paymentOptionSelected
-                            : doctorDetailStyles.paymentOptionUnselected
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="payment"
-                          value="Online"
-                          checked={paymentMethod === "Online"}
-                          onChange={() => setPaymentMethod("Online")}
-                          className={doctorDetailStyles.paymentRadio}
-                        />
+                    <div className={doctorDetailStyles.summaryRow}>
+                      <span className={doctorDetailStyles.summaryLabel}>
+                        Payment:
+                      </span>
+                      <span className={doctorDetailStyles.summaryValue}>
                         Online
-                      </label>
+                      </span>
                     </div>
                   </div>
 
