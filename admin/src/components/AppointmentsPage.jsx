@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { pageStyles, statusClasses, keyframesStyles } from '../assets/dummyStyles'
-import { Calendar, Search, IndianRupee } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { adminApptStyles, keyframesStyles } from '../assets/dummyStyles';
+import { Calendar, Search, IndianRupee, Clock, Edit2, Check, X } from 'lucide-react';
 
 const API_BASE = "https://medi-flow-backend.onrender.com";
 
-//HELPER FUNCTIONS
-//  this function returns date as 26 feb 2026
+// HELPER FUNCTIONS
 function formatDateISO(iso) {
   try {
     const d = new Date(iso + "T00:00:00");
@@ -19,8 +18,6 @@ function formatDateISO(iso) {
   }
 }
 
-
-// this function takes slot with date time and returns a dateobj
 function dateTimeFromSlot(slot) {
   try {
     const [y, m, d] = slot.date.split("-");
@@ -37,10 +34,7 @@ function dateTimeFromSlot(slot) {
   }
 }
 
-
 const AppointmentsPage = () => {
-  const isAdmin = true; //as the admin is logged in and is Major Admin for response send him.
-
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -48,68 +42,73 @@ const AppointmentsPage = () => {
   const [query, setQuery] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [filterSpeciality, setFilterSpeciality] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("all");
   const [showAll, setShowAll] = useState(false);
 
+  // Track currently saving items (for visual indicators)
+  const [savingIds, setSavingIds] = useState(new Set());
+
+  // Track reschedule panel state per appointment card
+  const [rescheduleData, setRescheduleData] = useState({});
+
   // fetch list from server
-  useEffect(() => {
-    async function load() {
-      setLoading(true);
-      setError(null);
-      try {
-        const q = query.trim();
-        const url = `${API_BASE}/api/appointments?limit=200${q ? `&search=${encodeURIComponent(q)}` : ""
-          }`;
-        const res = await fetch(url);
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(body?.message || `Failed to fetch (${res.status})`);
-        }
-        const data = await res.json();
-        const items = (data?.appointments || []).map((a) => {
-          const doctorName =
-            (a.doctorId && a.doctorId.name) || a.doctorName || "";
-          const speciality =
-            (a.doctorId && a.doctorId.specialization) ||
-            a.speciality ||
-            a.specialization ||
-            "General";
-          const fee = typeof a.fees === "number" ? a.fees : a.fee || 0;
-          return {
-            id: a._id || a.id,
-            patientName: a.patientName || "",
-            age: a.age || "",
-            gender: a.gender || "",
-            mobile: a.mobile || "",
-            doctorName,
-            speciality,
-            fee,
-            slot: {
-              date: a.date || (a.slot && a.slot.date) || "",
-              time: a.time || (a.slot && a.slot.time) || "00:00 AM",
-            },
-            status: a.status || (a.payment && a.payment.status) || "Pending",
-            raw: a, // keep original in case we need it
-          };
-        });
-        setAppointments(items); //fetch all the details present on the DB
-      } catch (err) {
-        console.error("Load appointments error:", err);
-        setError(err.message || "Failed to load appointments");
-      } finally {
-        setLoading(false);
+  const loadAppointments = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const q = query.trim();
+      const url = `${API_BASE}/api/appointments?limit=200${q ? `&search=${encodeURIComponent(q)}` : ""}`;
+      const res = await fetch(url);
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.message || `Failed to fetch (${res.status})`);
       }
+      const data = await res.json();
+      const items = (data?.appointments || []).map((a) => {
+        const doctorName = (a.doctorId && a.doctorId.name) || a.doctorName || "";
+        const speciality =
+          (a.doctorId && a.doctorId.specialization) ||
+          a.speciality ||
+          a.specialization ||
+          "General";
+        const fee = typeof a.fees === "number" ? a.fees : a.fee || 0;
+        return {
+          id: a._id || a.id,
+          patientName: a.patientName || "",
+          age: a.age || "",
+          gender: a.gender || "",
+          mobile: a.mobile || "",
+          doctorName,
+          speciality,
+          fee,
+          slot: {
+            date: a.date || (a.slot && a.slot.date) || "",
+            time: a.time || (a.slot && a.slot.time) || "00:00 AM",
+          },
+          status: a.status || (a.payment && a.payment.status) || "Pending",
+          raw: a,
+        };
+      });
+      setAppointments(items);
+    } catch (err) {
+      console.error("Load appointments error:", err);
+      setError(err.message || "Failed to load appointments");
+    } finally {
+      setLoading(false);
     }
-    load();
+  };
+
+  useEffect(() => {
+    loadAppointments();
   }, []);
 
-
-  // compute available specialities from fetched appointments.
+  // Compute available specialities
   const specialities = useMemo(() => {
     const set = new Set(appointments.map((a) => a.speciality || "General"));
     return ["all", ...Array.from(set)];
   }, [appointments]);
 
-  // filter by specility, date and query;
+  // filter by speciality, date, query, and status
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return appointments.filter((a) => {
@@ -119,6 +118,11 @@ const AppointmentsPage = () => {
       )
         return false;
       if (filterDate && a.slot?.date !== filterDate) return false;
+      if (
+        filterStatus !== "all" &&
+        (a.status || "").toLowerCase() !== filterStatus.toLowerCase()
+      )
+        return false;
       if (!q) return true;
       return (
         (a.doctorName || "").toLowerCase().includes(q) ||
@@ -127,10 +131,9 @@ const AppointmentsPage = () => {
         (a.mobile || "").toLowerCase().includes(q)
       );
     });
-  }, [appointments, query, filterDate, filterSpeciality]);
+  }, [appointments, query, filterDate, filterSpeciality, filterStatus]);
 
-
-  // sort filtered by datetime in descending order.
+  // sort filtered by datetime in descending order
   const sortedFiltered = useMemo(() => {
     return filtered.slice().sort((a, b) => {
       const da = dateTimeFromSlot(a.slot).getTime();
@@ -139,275 +142,359 @@ const AppointmentsPage = () => {
     });
   }, [filtered]);
 
-  // display all the appt or the filtered onse 
   const displayed = useMemo(
     () => (showAll ? sortedFiltered : sortedFiltered.slice(0, 8)),
     [sortedFiltered, showAll]
   );
 
-  // if admin wants to cancel
-  async function adminCancelAppointment(id) {
-    const appt = appointments.find((x) => x.id === id);
-    if (!appt) return;
-
-    const statusLower = (appt.status || "").toLowerCase();
-    const isCancelled =
-      statusLower === "canceled" || statusLower === "cancelled";
-    const isCompleted = statusLower === "completed";
-
-    // dont allow cancel or complete to be overdone
-    if (isCancelled || isCompleted) return;
-
-    const ok = window.confirm(
-      `As admin, mark appointment for ${appt.patientName} with ${appt.doctorName
-      } on ${formatDateISO(appt.slot.date)} at ${appt.slot.time} as CANCELLED?`
-    );
-    if (!ok) return;
+  // Status Change API Call
+  const handleStatusChange = async (id, newStatus) => {
+    setSavingIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
 
     try {
-      setAppointments((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, status: "Canceled" } : p))
-      );
-      setShowAll(true);
-
-      const res = await fetch(`${API_BASE}/api/appointments/${id}/cancel`, {
-        method: "POST",
+      const res = await fetch(`${API_BASE}/api/appointments/${id}?adminOverride=true`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
       });
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body?.message || `Cancel failed (${res.status})`);
+        throw new Error(body?.message || `Failed to update status (${res.status})`);
       }
-      const data = await res.json();
-      const updated = data?.appointment || data?.appointments || null;
-      if (updated) {
-        setAppointments((prev) =>
-          prev.map((p) =>
-            p.id === id
-              ? {
-                ...p,
-                status: updated.status || "Canceled",
-                slot: {
-                  date: updated.date || p.slot.date,
-                  time: updated.time || p.slot.time,
-                },
-                raw: updated,
-              }
-              : p,
-          ),
-        );
-      }
+
+      // Update local state
+      setAppointments((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
+      );
     } catch (err) {
-      console.error("Cancel error:", err);
-      setError(err.message || "Failed to cancel appointment");
-      try {
-        const reload = await fetch(`${API_BASE}/api/appointments?limit=200`);
-        if (reload.ok) {
-          const body = await reload.json();
-          const items = (body?.appointments || []).map((a) => ({
-            id: a._id || a.id,
-            patientName: a.patientName || "",
-            age: a.age || "",
-            gender: a.gender || "",
-            mobile: a.mobile || "",
-            doctorName: (a.doctorId && a.doctorId.name) || a.doctorName || "",
-            speciality:
-              (a.doctorId && a.doctorId.specialization) ||
-              a.speciality ||
-              a.specialization ||
-              "General",
-            fee: typeof a.fees === "number" ? a.fees : a.fee || 0,
-            slot: {
-              date: a.date || (a.slot && a.slot.date) || "",
-              time: a.time || (a.slot && a.slot.time) || "00:00 AM",
-            },
-            status: a.status || (a.payment && a.payment.status) || "Pending",
-            raw: a,
-          }));
-          setAppointments(items);
-        }
-      } catch (e) {
-        // ignore any error if occur
-      }
+      console.error("Status update error:", err);
+      alert(err.message || "Failed to update appointment status");
+    } finally {
+      setSavingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     }
-  }
+  };
+
+  // Reschedule API Call
+  const handleRescheduleSubmit = async (id) => {
+    const data = rescheduleData[id];
+    if (!data?.date || !data?.time) {
+      alert("Please select both Date and Time to reschedule");
+      return;
+    }
+
+    setSavingIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+
+    try {
+      const res = await fetch(`${API_BASE}/api/appointments/${id}?adminOverride=true`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: data.date, time: data.time }),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.message || `Failed to reschedule (${res.status})`);
+      }
+
+      // Update local state
+      setAppointments((prev) =>
+        prev.map((p) =>
+          p.id === id
+            ? {
+                ...p,
+                status: "Rescheduled",
+                slot: { date: data.date, time: data.time },
+              }
+            : p
+        )
+      );
+
+      // Close panel
+      setRescheduleData((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
+    } catch (err) {
+      console.error("Reschedule error:", err);
+      alert(err.message || "Failed to reschedule appointment");
+    } finally {
+      setSavingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
+  };
+
+  const toggleReschedulePanel = (id, currentSlot) => {
+    setRescheduleData((prev) => {
+      if (prev[id]) {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      } else {
+        return {
+          ...prev,
+          [id]: {
+            date: currentSlot.date,
+            time: currentSlot.time,
+          },
+        };
+      }
+    });
+  };
+
+  const updateRescheduleField = (id, field, value) => {
+    setRescheduleData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        [field]: value,
+      },
+    }));
+  };
+
+  const s = adminApptStyles;
 
   return (
-    <div className={pageStyles.container}>
+    <div className={s.page}>
       <style>{keyframesStyles}</style>
-      <div className={pageStyles.maxWidthContainer}>
-        <header className={pageStyles.headerContainer}>
-          <div className={pageStyles.headerTitleSection}>
-            <h1 className={pageStyles.headerTitle}>Appointments</h1>
-            <p className={pageStyles.headerSubtitle}>
-              Manage and search upcoming patient appointments
+      <div className={s.inner}>
+        
+        {/* Header */}
+        <header className={s.header}>
+          <div className={s.headerLeft}>
+            <h1 className={s.headerTitle}>Appointments</h1>
+            <p className={s.headerSub}>
+              Manage, reschedule, and update patient appointments
             </p>
           </div>
 
-          <div className={pageStyles.headerControlsSection}>
-            <div className="flex flex-col md:flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-              <div className={pageStyles.searchContainer}>
-                <Search size={16} className={pageStyles.searchIcon} />
-                <input className={pageStyles.searchInput}
-                  placeholder='Search doctor, patient , speciality or mobile'
-                  value={query} onChange={(e) => setQuery(e.target.value)}
-                />
-              </div>
-
-               <div className={pageStyles.filterContainer}>
-                <div className={pageStyles.dateFilter}>
-                  <Calendar size={14} className={pageStyles.dateFilterIcon} />
-                  <input type="date" className={pageStyles.dateInput} value={filterDate}
-                    onChange={(e) => setFilterDate(e.target.value)} />
-                </div>
-
-                <select
-                  className={pageStyles.selectFilter}
-                  value={filterSpeciality}
-                  onChange={(e) => setFilterSpeciality(e.target.value)}
-                >
-                  {
-                    specialities.map((s)=>(
-                      <option value={s} key={s}>
-                        {s === "all" ? "All specialties" :s}
-                      </option>
-                    ))
-                  }
-                </select>
-                <button
-                onClick={() => {
-                  setQuery("");
-                  setFilterDate("");
-                  setFilterSpeciality("all");
-                  setShowAll(false);
-                  setError(null);
-                }}
-                className={pageStyles.clearButton}
-                >
-                  Clear
-                </button>
-              </div> 
+          <div className={s.controls}>
+            <div className={s.searchWrap}>
+              <Search size={16} className={s.searchIcon} />
+              <input
+                className={s.searchInput}
+                placeholder="Search patient, doctor, speciality, mobile"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
             </div>
+
+            <div className={s.dateWrap}>
+              <Calendar size={14} className={s.searchIcon} />
+              <input
+                type="date"
+                className={s.dateInput}
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+              />
+            </div>
+
+            <select
+              className={s.specialitySelect}
+              value={filterSpeciality}
+              onChange={(e) => setFilterSpeciality(e.target.value)}
+            >
+              {specialities.map((sp) => (
+                <option value={sp} key={sp}>
+                  {sp === "all" ? "All specialties" : sp}
+                </option>
+              ))}
+            </select>
+
+            <button
+              onClick={() => {
+                setQuery("");
+                setFilterDate("");
+                setFilterSpeciality("all");
+                setFilterStatus("all");
+                setShowAll(false);
+                setError(null);
+              }}
+              className={s.clearBtn}
+            >
+              Clear
+            </button>
           </div>
         </header>
-        {
-          loading ? (
-            <div className={pageStyles.loadingErrorContainer}>Loading...</div>
-          ) : error ? (
-            <div className={pageStyles.errorContainer} >{error}</div>
-          ) : sortedFiltered.length === 0 ? (
-            <div className={pageStyles.noResultsContainer}>
-              No appointments found.
-            </div>
-          ) : (
-            <main className={pageStyles.gridContainer}>
-              {displayed.map((a,idx)=>{
-                const statusLower = (a.status || "").toLowerCase();
-                const isCancelled = 
-                statusLower === "canceled" || statusLower === "cancelled";
-                const isCompleted = statusLower === "completed";
-                const isDisabled = isCancelled || isCompleted;
 
-                return(
-                   <div
+        {/* Status Filter Tabs */}
+        <div className={s.statusTabsWrap}>
+          {["all", "Pending", "Confirmed", "Completed", "Canceled", "Rescheduled"].map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilterStatus(status)}
+              className={s.statusTab(filterStatus === status)}
+            >
+              {status === "all" ? "All Statuses" : status}
+            </button>
+          ))}
+        </div>
+
+        {/* List Content */}
+        {loading ? (
+          <div className={s.loadingBox}>Loading appointments...</div>
+        ) : error ? (
+          <div className={s.errorBox}>{error}</div>
+        ) : sortedFiltered.length === 0 ? (
+          <div className={s.emptyBox}>No appointments found.</div>
+        ) : (
+          <main className={s.grid}>
+            {displayed.map((a, idx) => {
+              const isSaving = savingIds.has(a.id);
+              const isRescheduling = !!rescheduleData[a.id];
+
+              return (
+                <div
                   key={a.id}
                   style={{
                     animation: `fadeUp 420ms cubic-bezier(.2,.9,.2,1) forwards`,
-                    animationDelay: `${idx * 70}ms`,
+                    animationDelay: `${idx * 50}ms`,
                     opacity: 0,
                   }}
-                  className={pageStyles.card}
+                  className={s.card(isSaving)}
                 >
-                  <div className={pageStyles.cardHeader}>
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className={pageStyles.cardTitle}>
-                          {a.patientName}
-                        </h3>
-
-                        <div className={pageStyles.patientInfo}>
-                          <span>{a.age ? `${a.age} yrs` : ""}</span>
-                          <span> {a.age ? ":" : ""} </span>
-                          <span>{a.gender}</span>
-                          <span className="hidden md:inline"> : </span>
-                          <span className=" max-w-30">{a.mobile}</span>
-                        </div>
+                  {/* Card Top / Patient & Doctor details */}
+                  <div className={s.cardTop}>
+                    <div className={s.cardPatient}>
+                      <h3 className={s.cardName}>{a.patientName}</h3>
+                      <div className={s.cardMeta}>
+                        <span>{a.age ? `${a.age} yrs` : ""}</span>
+                        {a.age && a.gender && <span>•</span>}
+                        <span>{a.gender}</span>
                       </div>
-
-                      <div className={pageStyles.doctorInfo}>
-                        {a.doctorName} :{" "}
-                        <span className={pageStyles.doctorSpeciality}>
-                          {a.speciality}
-                        </span>
+                      <div className={s.cardMeta}>
+                        <span>{a.mobile}</span>
+                      </div>
+                      <div className={s.cardDoctor}>
+                        <span className={s.cardDoctorBold}>{a.doctorName}</span>
+                        <span className="text-gray-400"> ({a.speciality})</span>
                       </div>
                     </div>
 
-                    <div className="text-right">
-                      <div className={pageStyles.feeLabel}>
-                        Fees
-                      </div>
-                      <div className={pageStyles.feeAmount}>
-                        <IndianRupee size={16} />
+                    <div className={s.cardFeeCol}>
+                      <span className={s.cardFeeLabel}>Fees</span>
+                      <div className={s.cardFeeValue}>
+                        <IndianRupee size={15} />
                         <span>{a.fee}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 flex-wrap">
-                    <div className={pageStyles.slotContainer}>
-                      <Calendar size={14} className={pageStyles.slotIcon} />
-                      <span>
-                        {formatDateISO(a.slot.date)} — {a.slot.time}
-                      </span>
+                  {/* Slot Information */}
+                  <div className={s.slotRow}>
+                    <div className={s.slotBadge}>
+                      <Calendar size={13} className="text-sky-400" />
+                      <span>{formatDateISO(a.slot.date)} — {a.slot.time}</span>
                     </div>
 
-                    <div
-                      className={`${pageStyles.statusBadge} ${statusClasses(a.status)}`}
-                    >
-                      {a.status ? a.status.toUpperCase() : "PENDING"}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {isAdmin && (
-                        <button
-                          onClick={() => adminCancelAppointment(a.id)}
-                          title={
-                            isDisabled
-                              ? isCompleted
-                                ? "Cannot cancel a completed appointment"
-                                : "Already cancelled"
-                              : "Admin Cancel (mark as cancelled)"
-                          }
-                          disabled={isDisabled}
-                          aria-disabled={isDisabled}
-                          className={pageStyles.cancelButton(isDisabled, isCompleted)}
-                        >
-                          {isDisabled
-                            ? isCompleted
-                              ? "Completed"
-                              : "Admin Cancelled"
-                            : "Admin Cancel"}
-                        </button>
-                      )}
+                    <div className={s.statusBadge(a.status)}>
+                      {a.status.toUpperCase()}
                     </div>
                   </div>
+
+                  {/* Actions / Management controls */}
+                  <div className={s.actionsRow}>
+                    <select
+                      value={a.status}
+                      onChange={(e) => handleStatusChange(a.id, e.target.value)}
+                      className={s.statusSelect}
+                      disabled={isSaving}
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Confirmed">Confirmed</option>
+                      <option value="Completed">Completed</option>
+                      <option value="Canceled">Canceled</option>
+                      <option value="Rescheduled">Rescheduled</option>
+                    </select>
+
+                    <button
+                      onClick={() => toggleReschedulePanel(a.id, a.slot)}
+                      className={s.rescheduleBtn(isRescheduling)}
+                      disabled={isSaving}
+                    >
+                      <Edit2 size={13} />
+                      <span>Reschedule</span>
+                    </button>
+                  </div>
+
+                  {/* Inline Reschedule Expandable Panel */}
+                  {isRescheduling && (
+                    <div className={s.reschedulePanel}>
+                      <div className={s.reschedulePanelTitle}>Reschedule Appointment</div>
+                      
+                      <div>
+                        <label className={s.reschedulePanelLabel}>New Date</label>
+                        <input
+                          type="date"
+                          className={s.rescheduleDateInput}
+                          value={rescheduleData[a.id]?.date || ""}
+                          onChange={(e) => updateRescheduleField(a.id, "date", e.target.value)}
+                        />
+                      </div>
+
+                      <div>
+                        <label className={s.reschedulePanelLabel}>New Time (e.g. 10:00 AM)</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. 10:00 AM"
+                          className={s.rescheduleTimeInput}
+                          value={rescheduleData[a.id]?.time || ""}
+                          onChange={(e) => updateRescheduleField(a.id, "time", e.target.value)}
+                        />
+                      </div>
+
+                      <div className="flex gap-2 justify-end mt-1">
+                        <button
+                          onClick={() => toggleReschedulePanel(a.id)}
+                          className={s.rescheduleCancelBtn}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={() => handleRescheduleSubmit(a.id)}
+                          className={s.rescheduleSaveBtn}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                )
-              })}
-            </main>
-          )
-        }
+              );
+            })}
+          </main>
+        )}
+
+        {/* Pagination / Show More */}
         {sortedFiltered.length > 8 && (
-          <div className="flex justify-center mt-4">
-            <button onClick={()=> setShowAll((s)=>!s)}
-              className={pageStyles.showMoreButton}>
-                {showAll ? "Show Less" : `Show more (${sortedFiltered.length - 8})`}
+          <div className={s.showMoreWrap}>
+            <button
+              onClick={() => setShowAll((prev) => !prev)}
+              className={s.showMoreBtn}
+            >
+              {showAll ? "Show Less" : `Show more (${sortedFiltered.length - 8})`}
             </button>
           </div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AppointmentsPage
+export default AppointmentsPage;

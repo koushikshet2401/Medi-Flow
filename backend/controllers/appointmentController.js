@@ -379,16 +379,27 @@ export const updateAppointment = async (req, res) => {
   try {
     const { id } = req.params;
     const body = req.body || {};
+    const adminOverride = req.query.adminOverride === "true";
     const appt = await Appointment.findById(id);
     if (!appt)
       return res.status(404).json({ success: false, message: "Appointment not found" });
 
     const terminal = appt.status === "Completed" || appt.status === "Canceled";
-    if (terminal && body.status && body.status !== appt.status) {
-      return res.status(400).json({
-        success: false,
-        message: "Cannot change status of a completed/canceled appointment",
-      });
+
+    // Admin override skips the terminal-status guard
+    if (!adminOverride) {
+      if (terminal && body.status && body.status !== appt.status) {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot change status of a completed/canceled appointment",
+        });
+      }
+      if (terminal && body.date && body.time) {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot reschedule completed/canceled appointment",
+        });
+      }
     }
 
     const update = {};
@@ -396,12 +407,6 @@ export const updateAppointment = async (req, res) => {
     if (body.notes !== undefined) update.notes = body.notes;
 
     if (body.date && body.time) {
-      if (terminal) {
-        return res.status(400).json({
-          success: false,
-          message: "Cannot reschedule completed/canceled appointment",
-        });
-      }
       update.date = body.date;
       update.time = body.time;
       update.status = "Rescheduled";
