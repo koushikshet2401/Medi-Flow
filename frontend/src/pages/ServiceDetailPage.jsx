@@ -511,43 +511,7 @@ export default function ServiceDetail() {
               />
             </div>
 
-            <div className={serviceDetailStyles.dateSection}>
-              <label className={serviceDetailStyles.paymentLabel}>
-                Payment Method
-              </label>
-              <div className={serviceDetailStyles.paymentOptions}>
-                <label
-                  className={serviceDetailStyles.paymentOption(
-                    paymentMethod === "Cash",
-                  )}
-                >
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="Cash"
-                    checked={paymentMethod === "Cash"}
-                    onChange={() => setPaymentMethod("Cash")}
-                    className={serviceDetailStyles.paymentInput}
-                  />
-                  Cash
-                </label>
-                <label
-                  className={serviceDetailStyles.paymentOption(
-                    paymentMethod === "Online",
-                  )}
-                >
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="Online"
-                    checked={paymentMethod === "Online"}
-                    onChange={() => setPaymentMethod("Online")}
-                    className={serviceDetailStyles.paymentInput}
-                  />
-                  Online
-                </label>
-              </div>
-            </div>
+
           </div>
 
           {/* DATE */}
