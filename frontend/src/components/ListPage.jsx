@@ -478,7 +478,16 @@ const ListPage = () => {
                     ? (a.patient || "").toLowerCase().includes(search.toLowerCase())
                     : true,
             )
-            .filter((a) => (statusFilter ? a.status === statusFilter : true))
+            .filter((a) => {
+                if (!statusFilter) return true;
+                if (statusFilter === "Refund Requested") {
+                    return a.refundStatus === "Pending";
+                }
+                if (statusFilter === "Refund Approved") {
+                    return a.refundStatus === "Approved";
+                }
+                return a.status === statusFilter;
+            })
             .sort(
                 (a, b) => parseDateTime(b.date, b.time) - parseDateTime(a.date, a.time),
             );
@@ -518,11 +527,14 @@ const ListPage = () => {
                             title="Filter by status"
                         >
                             <option value="">All</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
                             <option value="complete">Completed</option>
                             <option value="cancelled">Cancelled</option>
                             <option value="rescheduled">Rescheduled</option>
                             <option value="missed">Missed</option>
-                            <option value="refunded">Refunded</option>
+                            <option value="Refund Requested">Refund Requested</option>
+                            <option value="Refund Approved">Refund Approved</option>
                         </select>
                     </div>
                 </div>

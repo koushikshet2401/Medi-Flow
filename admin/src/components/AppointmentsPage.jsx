@@ -122,11 +122,17 @@ const AppointmentsPage = () => {
       )
         return false;
       if (filterDate && a.slot?.date !== filterDate) return false;
-      if (
-        filterStatus !== "all" &&
-        (a.status || "").toLowerCase() !== filterStatus.toLowerCase()
-      )
-        return false;
+      if (filterStatus !== "all") {
+        if (filterStatus === "Refund Requested") {
+          if (a.refundStatus !== "Pending") return false;
+        } else if (filterStatus === "Refund Approved") {
+          if (a.refundStatus !== "Approved") return false;
+        } else if (
+          (a.status || "").toLowerCase() !== filterStatus.toLowerCase()
+        ) {
+          return false;
+        }
+      }
       if (!q) return true;
       return (
         (a.doctorName || "").toLowerCase().includes(q) ||
@@ -378,7 +384,7 @@ const AppointmentsPage = () => {
 
         {/* Status Filter Tabs */}
         <div className={s.statusTabsWrap}>
-          {["all", "Pending", "Confirmed", "Completed", "Canceled", "Rescheduled"].map((status) => (
+          {["all", "Pending", "Confirmed", "Completed", "Canceled", "Rescheduled", "Refund Requested", "Refund Approved"].map((status) => (
             <button
               key={status}
               onClick={() => setFilterStatus(status)}

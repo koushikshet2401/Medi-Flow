@@ -596,7 +596,16 @@ function ServiceAppointmentsPage() {
             (a.serviceName || "").toLowerCase().includes(q)
           : true,
       )
-      .filter((a) => (statusFilter ? a.status === statusFilter : true));
+      .filter((a) => {
+        if (!statusFilter) return true;
+        if (statusFilter === "Refund Requested") {
+          return a.refundStatus === "Pending";
+        }
+        if (statusFilter === "Refund Approved") {
+          return a.refundStatus === "Approved";
+        }
+        return a.status === statusFilter;
+      });
   }, [appointments, debouncedSearch, statusFilter]);
 
   function getTimestamp(a) {
@@ -672,7 +681,8 @@ function ServiceAppointmentsPage() {
               <option value="Completed">Completed</option>
               <option value="Canceled">Canceled</option>
               <option value="Missed">Missed</option>
-              <option value="Refunded">Refunded</option>
+              <option value="Refund Requested">Refund Requested</option>
+              <option value="Refund Approved">Refund Approved</option>
             </select>
 
             <div className={serviceAppointmentsStyles.searchInfo}>
