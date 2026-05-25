@@ -2,7 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { serviceAppointmentsStyles } from "../assets/dummyStyles";
 import { Loader2, SearchIcon, XIcon, User, Phone, IndianRupee, Calendar, Clock, CheckCircle} from "lucide-react";
 
-const API_BASE = "https://medi-flow-backend.onrender.com";
+const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://localhost:4000"
+  : "https://medi-flow-backend.onrender.com";
 
 //Helper function
 function formatTwo(n) {
@@ -98,7 +100,10 @@ function Toast({ toasts, removeToast }) {
 
 function StatusSelect({ appointment, onChange, disabled }) {
   const terminal =
-    appointment.status === "Completed" || appointment.status === "Canceled";
+    appointment.status?.toLowerCase() === "completed" || 
+    appointment.status?.toLowerCase() === "canceled" || 
+    appointment.status?.toLowerCase() === "missed" || 
+    appointment.status?.toLowerCase() === "refunded";
 
   const options = [
     { value: "Pending", label: "Pending" },
@@ -316,6 +321,8 @@ function ServiceAppointmentsPage() {
             minute: parsed.minute,
             ampm: parsed.ampm,
             status: a.status || (a.payment && a.payment.status) || "Pending",
+            refundStatus: a.refundStatus || "None",
+            visitConfirmation: a.visitConfirmation || "Pending",
             raw: a,
           };
         })
@@ -551,6 +558,35 @@ function ServiceAppointmentsPage() {
     }
   }
 
+  // Approve Service Refund API Call
+  async function handleApproveRefund(id) {
+    if (!window.confirm("Are you sure you want to approve this refund? This will refund the payment and mark the appointment as Canceled / Refunded.")) {
+      return;
+    }
+    pushToast("Processing refund", `Initiating refund for appointment #${id}...`);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/service-appointments/${id}/approve-refund`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.message || `Failed to approve refund (${res.status})`);
+      }
+
+      const body = await res.json();
+      pushToast("Refund approved", body.message || "Refund processed successfully!");
+      
+      // Reload everything to sync stats and updated appointments
+      await fetchAppointments();
+    } catch (err) {
+      console.error("Service refund approval error:", err);
+      pushToast("Refund failed", err.message || "Failed to approve refund");
+    }
+  }
+
   const filtered = useMemo(() => {
     const q = debouncedSearch.toLowerCase();
     return appointments
@@ -635,6 +671,8 @@ function ServiceAppointmentsPage() {
               <option value="Rescheduled">Rescheduled</option>
               <option value="Completed">Completed</option>
               <option value="Canceled">Canceled</option>
+              <option value="Missed">Missed</option>
+              <option value="Refunded">Refunded</option>
             </select>
 
             <div className={serviceAppointmentsStyles.searchInfo}>
@@ -683,7 +721,10 @@ function ServiceAppointmentsPage() {
           ) : (
             displayList.map((a) => {
               const isLocked =
-                a.status === "completed" || a.status === "canceled";
+                a.status?.toLowerCase() === "completed" || 
+                a.status?.toLowerCase() === "canceled" || 
+                a.status?.toLowerCase() === "missed" || 
+                a.status?.toLowerCase() === "refunded";
 
               return (
                 <article
@@ -793,7 +834,39 @@ function ServiceAppointmentsPage() {
                           </span>
                         </div>
                       </div>
+
+                      {/* Visit Confirmation Display */}
+                    <div className="mx-4 mt-2 px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-lg flex justify-between items-center text-xs">
+                      <span className="text-gray-500 font-medium">Confirmation Status:</span>
+                      {a.visitConfirmation === "Coming" ? (
+                        <span className="px-1.5 py-0.5 rounded font-semibold bg-emerald-100 text-emerald-800 text-[10px]">Coming</span>
+                      ) : a.visitConfirmation === "Not Coming" ? (
+                        <span className="px-1.5 py-0.5 rounded font-semibold bg-rose-100 text-rose-800 text-[10px]">Not Coming</span>
+                      ) : (
+                        <span className="px-1.5 py-0.5 rounded font-semibold bg-amber-100 text-amber-800 text-[10px]">Pending</span>
+                      )}
                     </div>
+
+                    {/* Refund Request Alerts & Action Buttons */}
+                    {a.refundStatus === "Pending" && (
+                      <div className="mx-4 mt-2 mb-1 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-between text-xs text-amber-800 animate-pulse">
+                        <span className="font-semibold">⚠️ Refund requested — canceled by user</span>
+                        <button
+                          onClick={() => handleApproveRefund(a.id)}
+                          className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded font-bold shadow-sm transition-all duration-200 cursor-pointer disabled:opacity-50 text-[11px]"
+                        >
+                          Refund
+                        </button>
+                      </div>
+                    )}
+
+                    {a.refundStatus === "Approved" && (
+                      <div className="mx-4 mt-2 mb-1 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-lg flex items-center gap-1.5 text-xs text-emerald-800">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span className="font-semibold">Refund Approved & Processed</span>
+                      </div>
+                    )}
+                  </div>
 
                     <div className={serviceAppointmentsStyles.actionsContainer}>
                       <div

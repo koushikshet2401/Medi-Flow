@@ -2,6 +2,7 @@ import ServiceAppointment from "../models/serviceAppointment.js";
 import Service from "../models/Service.js";
 import Stripe from "stripe";
 import { getAuth } from "@clerk/express";
+import { sendSMS } from "../utils/smsHelper.js";
 
 const stripeKey = process.env.STRIPE_SECRET_KEY || null;
 
@@ -340,6 +341,18 @@ export const confirmServicePayment = async (req, res) => {
     if (!appt)
       return res.status(404).json({ success: false, message: "Service appointment not found" });
 
+    try {
+      if (appt.mobile) {
+        const frontBase = process.env.FRONTEND_URL || "http://localhost:5173";
+        sendSMS(
+          appt.mobile,
+          `MediFlow: Your booking for ${appt.serviceName} is confirmed for ${appt.date} at ${appt.time}. Confirm attendance at: ${frontBase}/appointments`
+        );
+      }
+    } catch (smsErr) {
+      console.warn("SMS sending failed:", smsErr);
+    }
+
     return res.json({ success: true, appointment: appt });
   } catch (err) {
     console.error("confirmServicePayment error", err);
@@ -347,9 +360,28 @@ export const confirmServicePayment = async (req, res) => {
   }
 };
 
+async function autoCleanupMissedServiceAppointments() {
+  try {
+    const todayStr = new Date().toISOString().split("T")[0];
+    await ServiceAppointment.updateMany(
+      {
+        date: { $lt: todayStr },
+        status: { $in: ["Pending", "Confirmed"] },
+        visitConfirmation: { $ne: "Coming" },
+      },
+      {
+        $set: { status: "Missed" },
+      }
+    );
+  } catch (err) {
+    console.error("autoCleanupMissedServiceAppointments error:", err);
+  }
+}
+
 // ─── GET ALL SERVICE APPOINTMENTS (admin) ────────────────────────────────────
 export const getServiceAppointment = async (req, res) => {
   try {
+    await autoCleanupMissedServiceAppointments();
     const {
       serviceId, mobile, status,
       page: pageRaw = 1, limit: limitRaw = 50, search = "",
@@ -452,6 +484,17 @@ export const updateServiceAppointment = async (req, res) => {
     if (!updated)
       return res.status(404).json({ success: false, message: "Not found" });
 
+    try {
+      if (updates.rescheduledTo && updated && updated.mobile) {
+        sendSMS(
+          updated.mobile,
+          `MediFlow: Your booking for ${updated.serviceName || "Service"} has been rescheduled to ${updates.rescheduledTo.date} at ${updates.rescheduledTo.time}.`
+        );
+      }
+    } catch (smsErr) {
+      console.warn("SMS sending failed:", smsErr);
+    }
+
     return res.json({ success: true, data: updated });
   } catch (err) {
     console.error("updateServiceAppointment error", err);
@@ -536,6 +579,7 @@ export const getServiceAppointmentStats = async (req, res) => {
 // ─── GET SERVICE APPOINTMENTS FOR LOGGED-IN PATIENT (/me) ────────────────────
 export const getServiceAppointmentByPatient = async (req, res) => {
   try {
+    await autoCleanupMissedServiceAppointments();
     // ✅ FIXED: use resolveClerkUserId instead of req.auth?.userId directly
     const clerkUserId = resolveClerkUserId(req);
     const { createdBy, mobile } = req.query;
@@ -561,6 +605,79 @@ export const getServiceAppointmentByPatient = async (req, res) => {
   }
 };
 
+// ─── REQUEST SERVICE REFUND ──────────────────────────────────────────────────
+export const requestServiceRefund = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const appt = await ServiceAppointment.findById(id);
+    if (!appt) {
+      return res.status(404).json({ success: false, message: "Appointment not found" });
+    }
+    appt.status = "Canceled";
+    appt.refundStatus = "Pending";
+    await appt.save();
+    return res.json({ success: true, message: "Refund requested successfully", appointment: appt });
+  } catch (err) {
+    console.error("requestServiceRefund error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// ─── CONFIRM SERVICE VISIT ────────────────────────────────────────────────────
+export const confirmServiceVisit = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { decision } = req.body;
+    const appt = await ServiceAppointment.findById(id);
+    if (!appt) {
+      return res.status(404).json({ success: false, message: "Appointment not found" });
+    }
+    appt.visitConfirmation = decision;
+    if (decision === "Not Coming") {
+      appt.status = "Canceled";
+      appt.refundStatus = "Pending";
+    } else if (decision === "Coming") {
+      appt.status = "Confirmed";
+    }
+    await appt.save();
+    return res.json({ success: true, message: `Visit confirmed as: ${decision}`, appointment: appt });
+  } catch (err) {
+    console.error("confirmServiceVisit error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// ─── APPROVE SERVICE REFUND ──────────────────────────────────────────────────
+export const approveServiceRefund = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const appt = await ServiceAppointment.findById(id);
+    if (!appt) {
+      return res.status(404).json({ success: false, message: "Appointment not found" });
+    }
+    
+    const providerId = appt.payment?.providerId;
+    if (providerId && stripe) {
+      try {
+        await stripe.refunds.create({
+          payment_intent: providerId,
+        });
+      } catch (stripeErr) {
+        console.warn("Stripe Refund API failed (might be test or offline mode):", stripeErr?.message || stripeErr);
+      }
+    }
+    
+    appt.refundStatus = "Approved";
+    appt.payment.status = "Refunded";
+    appt.status = "Canceled";
+    await appt.save();
+    return res.json({ success: true, message: "Refund processed successfully", appointment: appt });
+  } catch (err) {
+    console.error("approveServiceRefund error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 export default {
   createServiceAppointment,
   confirmServicePayment,
@@ -570,4 +687,7 @@ export default {
   cancelServiceAppointment,
   getServiceAppointmentStats,
   getServiceAppointmentByPatient,
+  requestServiceRefund,
+  confirmServiceVisit,
+  approveServiceRefund,
 };

@@ -3,7 +3,9 @@ import { listPageStyles } from '../assets/dummyStyles'
 import { useParams } from 'react-router-dom';
 import { Calendar, Phone, Search, X } from 'lucide-react';
 
-const API_BASE = "https://medi-flow-backend.onrender.com";
+const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://localhost:4000"
+  : "https://medi-flow-backend.onrender.com";
 
 // helper function similer to dashboard page
 function parseDateTime(date, time) {
@@ -62,6 +64,8 @@ function backendToFrontendStatus(s) {
     if (v === "completed" || v === "complete") return "complete";
     if (v === "canceled" || v === "cancelled") return "cancelled";
     if (v === "rescheduled") return "rescheduled";
+    if (v === "missed") return "missed";
+    if (v === "refunded") return "refunded";
     return v;
 }
 
@@ -123,6 +127,8 @@ function normalizeAppointment(a) {
         time,
         fee,
         status,
+        visitConfirmation: a.visitConfirmation || "Pending",
+        refundStatus: a.refundStatus || "None",
         raw: a,
     };
 }
@@ -154,6 +160,18 @@ function StatusBadge({ status }) {
                 Rescheduled
             </span>
         );
+    if (status === "missed")
+        return (
+            <span className={`${base} bg-rose-100 text-rose-800 border border-rose-200`}>
+                Missed
+            </span>
+        );
+    if (status === "refunded")
+        return (
+            <span className={`${base} bg-emerald-100 text-emerald-800 border border-emerald-200`}>
+                Refunded
+            </span>
+        );
     return (
         <span className={`${base} ${listPageStyles.statusBadgePending}`}>
             Pending
@@ -163,7 +181,10 @@ function StatusBadge({ status }) {
 
 function StatusSelect({ appointment, onChange }) {
     const terminal =
-        appointment.status === "complete" || appointment.status === "cancelled";
+        appointment.status === "complete" || 
+        appointment.status === "cancelled" || 
+        appointment.status === "missed" || 
+        appointment.status === "refunded";
 
     if (appointment.status === "rescheduled") {
         return (
@@ -500,6 +521,8 @@ const ListPage = () => {
                             <option value="complete">Completed</option>
                             <option value="cancelled">Cancelled</option>
                             <option value="rescheduled">Rescheduled</option>
+                            <option value="missed">Missed</option>
+                            <option value="refunded">Refunded</option>
                         </select>
                     </div>
                 </div>
@@ -561,6 +584,33 @@ const ListPage = () => {
                                             onChange={(s)=> updateStatus(a.id,s)}
                                             />
                                         </div>
+                                    </div>
+                                    
+                                    {/* Confirmation & Refund Statuses */}
+                                    <div className="px-4 py-2.5 bg-slate-50/70 border-y border-slate-100 flex flex-wrap gap-2 items-center justify-between">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="text-xs text-slate-500 font-medium">Confirmation:</span>
+                                            {a.visitConfirmation === "Coming" ? (
+                                                <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">Coming</span>
+                                            ) : a.visitConfirmation === "Not Coming" ? (
+                                                <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-100 text-rose-800 border border-rose-200">Not Coming</span>
+                                            ) : (
+                                                <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-200">Pending</span>
+                                            )}
+                                        </div>
+
+                                        {a.refundStatus && a.refundStatus !== "None" && (
+                                            <div className="flex items-center gap-1.5">
+                                                <span className="text-xs text-slate-500 font-medium">Refund:</span>
+                                                {a.refundStatus === "Approved" ? (
+                                                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">Refunded</span>
+                                                ) : a.refundStatus === "Rejected" ? (
+                                                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-100 text-rose-800 border border-rose-200">Rejected</span>
+                                                ) : (
+                                                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-200 animate-pulse border-dashed">Refund Pending</span>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                     
                                     <div className={listPageStyles.rescheduleContainer}>

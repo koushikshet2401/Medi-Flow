@@ -2,7 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { adminApptStyles, keyframesStyles } from '../assets/dummyStyles';
 import { Calendar, Search, IndianRupee, Clock, Edit2, Check, X } from 'lucide-react';
 
-const API_BASE = "https://medi-flow-backend.onrender.com";
+const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://localhost:4000"
+  : "https://medi-flow-backend.onrender.com";
 
 // HELPER FUNCTIONS
 function formatDateISO(iso) {
@@ -86,6 +88,8 @@ const AppointmentsPage = () => {
             time: a.time || (a.slot && a.slot.time) || "00:00 AM",
           },
           status: a.status || (a.payment && a.payment.status) || "Pending",
+          refundStatus: a.refundStatus || "None",
+          visitConfirmation: a.visitConfirmation || "Pending",
           raw: a,
         };
       });
@@ -231,6 +235,45 @@ const AppointmentsPage = () => {
     } catch (err) {
       console.error("Reschedule error:", err);
       alert(err.message || "Failed to reschedule appointment");
+    } finally {
+      setSavingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
+  };
+
+  // Approve Refund API Call
+  const handleApproveRefund = async (id) => {
+    if (!window.confirm("Are you sure you want to approve this refund? This will refund the payment and mark the appointment as Canceled / Refunded.")) {
+      return;
+    }
+    setSavingIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+
+    try {
+      const res = await fetch(`${API_BASE}/api/appointments/${id}/approve-refund`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.message || `Failed to approve refund (${res.status})`);
+      }
+
+      const body = await res.json();
+      alert(body.message || "Refund approved successfully!");
+      
+      // Reload everything to sync stats and updated appointments
+      await loadAppointments();
+    } catch (err) {
+      console.error("Refund approval error:", err);
+      alert(err.message || "Failed to approve refund");
     } finally {
       setSavingIds((prev) => {
         const next = new Set(prev);
@@ -407,6 +450,39 @@ const AppointmentsPage = () => {
                       {a.status.toUpperCase()}
                     </div>
                   </div>
+
+                  {/* Visit Confirmation Display */}
+                  <div className="mx-4 mt-1 px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-lg flex justify-between items-center text-xs">
+                    <span className="text-gray-500 font-medium">Confirmation Status:</span>
+                    {a.visitConfirmation === "Coming" ? (
+                      <span className="px-1.5 py-0.5 rounded font-semibold bg-emerald-100 text-emerald-800 text-[10px]">Coming</span>
+                    ) : a.visitConfirmation === "Not Coming" ? (
+                      <span className="px-1.5 py-0.5 rounded font-semibold bg-rose-100 text-rose-800 text-[10px]">Not Coming</span>
+                    ) : (
+                      <span className="px-1.5 py-0.5 rounded font-semibold bg-amber-100 text-amber-800 text-[10px]">Pending</span>
+                    )}
+                  </div>
+
+                  {/* Refund Request Alerts & Action Buttons */}
+                  {a.refundStatus === "Pending" && (
+                    <div className="mx-4 mt-2 mb-1 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-between text-xs text-amber-800 animate-pulse">
+                      <span className="font-semibold">⚠️ Refund requested — canceled by user</span>
+                      <button
+                        onClick={() => handleApproveRefund(a.id)}
+                        disabled={isSaving}
+                        className="px-2.5 py-1 bg-amber-600 hover:bg-amber-750 text-white rounded font-bold shadow-sm transition-all duration-200 cursor-pointer disabled:opacity-50 text-[11px]"
+                      >
+                        Refund
+                      </button>
+                    </div>
+                  )}
+
+                  {a.refundStatus === "Approved" && (
+                    <div className="mx-4 mt-2 mb-1 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-lg flex items-center gap-1.5 text-xs text-emerald-800">
+                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      <span className="font-semibold">Refund Approved & Processed</span>
+                    </div>
+                  )}
 
                   {/* Actions / Management controls */}
                   <div className={s.actionsRow}>

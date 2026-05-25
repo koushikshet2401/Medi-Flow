@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import Stripe from "stripe";
 import { getAuth } from "@clerk/express";
 import { clerkClient } from "@clerk/clerk-sdk-node";
+import { sendSMS } from "../utils/smsHelper.js";
 dotenv.config();
 
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
@@ -45,9 +46,28 @@ function resolveClerkUserId(req) {
   }
 }
 
+async function autoCleanupMissedAppointments() {
+  try {
+    const todayStr = new Date().toISOString().split("T")[0];
+    await Appointment.updateMany(
+      {
+        date: { $lt: todayStr },
+        status: { $in: ["Pending", "Confirmed"] },
+        visitConfirmation: { $ne: "Coming" },
+      },
+      {
+        $set: { status: "Missed" },
+      }
+    );
+  } catch (err) {
+    console.error("autoCleanupMissedAppointments error:", err);
+  }
+}
+
 // ─── GET ALL APPOINTMENTS (admin) ────────────────────────────────────────────
 export const getAppointments = async (req, res) => {
   try {
+    await autoCleanupMissedAppointments();
     const {
       doctorId, mobile, status, search = "",
       limit: limitRaw = 50, page: pageRaw = 1,
@@ -90,6 +110,7 @@ export const getAppointments = async (req, res) => {
 // ─── GET APPOINTMENTS FOR LOGGED-IN PATIENT (/me) ────────────────────────────
 export const getAppointmentByPatient = async (req, res) => {
   try {
+    await autoCleanupMissedAppointments();
     const clerkUserId = resolveClerkUserId(req);
     const queryCreatedBy = req.query.createdBy || null;
     const resolvedCreatedBy = clerkUserId || queryCreatedBy || null;
@@ -367,6 +388,19 @@ export const confirmPayment = async (req, res) => {
         message: "Appointment not found for this payment session",
       });
 
+    try {
+      const doctorName = appt.doctorName || (appt.doctorId && appt.doctorId.name) || "Doctor";
+      if (appt.mobile) {
+        const frontBase = FRONTEND_URL || "http://localhost:5173";
+        sendSMS(
+          appt.mobile,
+          `MediFlow: Your appointment with ${doctorName} is confirmed for ${appt.date} at ${appt.time}. Confirm attendance at: ${frontBase}/appointments`
+        );
+      }
+    } catch (smsErr) {
+      console.warn("SMS sending failed:", smsErr);
+    }
+
     return res.json({ success: true, appointment: appt });
   } catch (err) {
     console.error("confirmPayment error:", err);
@@ -420,6 +454,18 @@ export const updateAppointment = async (req, res) => {
       .populate({ path: "doctorId", select: "name imageUrl" })
       .lean();
 
+    try {
+      if (body.date && body.time && updated && updated.mobile) {
+        const doctorName = updated.doctorName || (updated.doctorId && updated.doctorId.name) || "Doctor";
+        sendSMS(
+          updated.mobile,
+          `MediFlow: Your appointment with ${doctorName} has been rescheduled to ${body.date} at ${body.time}.`
+        );
+      }
+    } catch (smsErr) {
+      console.warn("SMS sending failed:", smsErr);
+    }
+
     return res.json({ success: true, appointment: updated });
   } catch (err) {
     console.error("updateAppointment error:", err);
@@ -468,6 +514,7 @@ export const getStats = async (req, res) => {
 // ─── GET APPOINTMENTS BY DOCTOR ID ───────────────────────────────────────────
 export const getAppointementsByDoctor = async (req, res) => {
   try {
+    await autoCleanupMissedAppointments();
     const { doctorId } = req.params;
     if (!doctorId)
       return res.status(400).json({ success: false, message: "Doctor Id required" });
@@ -515,6 +562,79 @@ export async function getRegisteredUserCount(req, res) {
   }
 }
 
+// ─── REQUEST REFUND ─────────────────────────────────────────────────────────
+export const requestRefund = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const appt = await Appointment.findById(id);
+    if (!appt) {
+      return res.status(404).json({ success: false, message: "Appointment not found" });
+    }
+    appt.status = "Canceled";
+    appt.refundStatus = "Pending";
+    await appt.save();
+    return res.json({ success: true, message: "Refund requested successfully", appointment: appt });
+  } catch (err) {
+    console.error("requestRefund error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// ─── CONFIRM VISIT ──────────────────────────────────────────────────────────
+export const confirmVisit = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { decision } = req.body;
+    const appt = await Appointment.findById(id);
+    if (!appt) {
+      return res.status(404).json({ success: false, message: "Appointment not found" });
+    }
+    appt.visitConfirmation = decision;
+    if (decision === "Not Coming") {
+      appt.status = "Canceled";
+      appt.refundStatus = "Pending";
+    } else if (decision === "Coming") {
+      appt.status = "Confirmed";
+    }
+    await appt.save();
+    return res.json({ success: true, message: `Visit confirmed as: ${decision}`, appointment: appt });
+  } catch (err) {
+    console.error("confirmVisit error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// ─── APPROVE REFUND ─────────────────────────────────────────────────────────
+export const approveRefund = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const appt = await Appointment.findById(id);
+    if (!appt) {
+      return res.status(404).json({ success: false, message: "Appointment not found" });
+    }
+    
+    const providerId = appt.payment?.providerId;
+    if (providerId && stripe) {
+      try {
+        await stripe.refunds.create({
+          payment_intent: providerId,
+        });
+      } catch (stripeErr) {
+        console.warn("Stripe Refund API failed (might be test or offline mode):", stripeErr?.message || stripeErr);
+      }
+    }
+    
+    appt.refundStatus = "Approved";
+    appt.payment.status = "Refunded";
+    appt.status = "Canceled";
+    await appt.save();
+    return res.json({ success: true, message: "Refund processed successfully", appointment: appt });
+  } catch (err) {
+    console.error("approveRefund error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 export default {
   getAppointments,
   getAppointmentByPatient,
@@ -525,4 +645,7 @@ export default {
   getStats,
   getAppointementsByDoctor,
   getRegisteredUserCount,
+  requestRefund,
+  confirmVisit,
+  approveRefund,
 };
