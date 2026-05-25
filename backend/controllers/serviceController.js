@@ -162,6 +162,25 @@ export async function UpdateService(req, res) {
     if (b.instructions !== undefined) updateData.instructions = parseJsonArrayField(b.instructions);
     if (b.slots !== undefined) updateData.slots = normalizeSlotsToMap(parseJsonArrayField(b.slots));
 
+    if (b.availabilitySettings !== undefined) {
+      let settings = b.availabilitySettings;
+      if (typeof settings === "string") {
+        try {
+          settings = JSON.parse(settings);
+        } catch (e) {
+          settings = null;
+        }
+      }
+      if (settings) {
+        updateData.availabilitySettings = {
+          sessions: settings.sessions ?? existing.availabilitySettings?.sessions ?? "Both",
+          weeklyDays: settings.weeklyDays ?? existing.availabilitySettings?.weeklyDays ?? ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          blockedDates: settings.blockedDates ?? existing.availabilitySettings?.blockedDates ?? [],
+          partialDayAvailability: settings.partialDayAvailability ?? existing.availabilitySettings?.partialDayAvailability ?? {},
+        };
+      }
+    }
+
     if (req.file) {
       try {
         const up = await uploadToCloudinary(req.file.path, "services");
@@ -201,6 +220,72 @@ export async function UpdateService(req, res) {
   }
 }
 
+// to trigger service emergency absence and reschedule affected bookings
+export async function triggerServiceAbsence(req, res) {
+  try {
+    const { id } = req.params;
+    const { date, type, untilSlot } = req.body || {};
+
+    if (!date || !type) {
+      return res.status(400).json({ success: false, message: "date and type are required" });
+    }
+
+    const svc = await Service.findById(id);
+    if (!svc) {
+      return res.status(404).json({ success: false, message: "Service not found" });
+    }
+
+    if (!svc.availabilitySettings) {
+      svc.availabilitySettings = {
+        sessions: "Both",
+        weeklyDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        blockedDates: [],
+        partialDayAvailability: {},
+      };
+    }
+
+    if (type === "full-day") {
+      if (!svc.availabilitySettings.blockedDates.includes(date)) {
+        svc.availabilitySettings.blockedDates.push(date);
+      }
+    } else {
+      if (!svc.availabilitySettings.partialDayAvailability) {
+        svc.availabilitySettings.partialDayAvailability = {};
+      }
+      
+      let limitSlot = "09:30 AM";
+      if (type === "morning") {
+        limitSlot = "02:30 PM";
+      } else if (type === "afternoon") {
+        limitSlot = "02:30 PM";
+      } else if (type === "partial") {
+        limitSlot = untilSlot;
+      }
+
+      if (svc.availabilitySettings.partialDayAvailability instanceof Map) {
+        svc.availabilitySettings.partialDayAvailability.set(date, limitSlot);
+      } else {
+        svc.availabilitySettings.partialDayAvailability[date] = limitSlot;
+      }
+    }
+
+    svc.markModified("availabilitySettings");
+    await svc.save();
+
+    const { rescheduleForAbsence } = await import("../utils/slotHelper.js");
+    const result = await rescheduleForAbsence(id, "service", { date, type, untilSlot });
+
+    return res.json({
+      success: true,
+      message: `Absence triggered on ${date} and ${result.count} appointments auto-rescheduled.`,
+      availabilitySettings: svc.availabilitySettings,
+    });
+  } catch (err) {
+    console.error("triggerServiceAbsence error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
 // DELETE
 export async function deleteService(req, res) {
   try {
@@ -235,5 +320,50 @@ export async function deleteService(req, res) {
   } catch (err) {
     console.error("Delete Service Error", err);
     return res.status(500).json({ success: false, message: "Server Error" });
+  }
+}
+
+// to retrieve dynamically generated slots for client booking (services)
+export async function getServiceAvailableSlots(req, res) {
+  try {
+    const { id } = req.params;
+    const svc = await Service.findById(id).lean();
+    if (!svc) {
+      return res.status(404).json({ success: false, message: "Service not found" });
+    }
+
+    const { getSlotsForSettings, getAvailableSlots } = await import("../utils/slotHelper.js");
+
+    const dates = [];
+    const slotsMap = {};
+    const today = new Date();
+
+    for (let i = 0; i < 14; i++) {
+      const dt = new Date(today);
+      dt.setDate(today.getDate() + i);
+      const dateStr = dt.toISOString().split("T")[0];
+
+      const allSlots = getSlotsForSettings(dateStr, svc.availabilitySettings);
+      if (allSlots.length === 0) continue;
+
+      const info = await getAvailableSlots(id, "service", dateStr);
+      dates.push(dateStr);
+      slotsMap[dateStr] = {
+        allSlots: info.allSlots,
+        availableSlots: info.availableSlots,
+        bookedSlots: info.bookedSlots,
+      };
+    }
+
+    return res.json({
+      success: true,
+      dates,
+      slots: slotsMap,
+      blockedDates: svc.availabilitySettings?.blockedDates || [],
+      availabilitySettings: svc.availabilitySettings,
+    });
+  } catch (err) {
+    console.error("getServiceAvailableSlots error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 }

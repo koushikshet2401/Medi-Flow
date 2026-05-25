@@ -101,6 +101,16 @@ function Navbar() {
             date: a.date,
           });
         }
+        if (a.status === "Rescheduled") {
+          list.push({
+            id: `rescheduled-${a._id || a.id}`,
+            title: "Rescheduled Alert 📅",
+            message: `Your appointment with ${doctorName} has been rescheduled to ${a.date} at ${String(a.hour).padStart(2, "0")}:${String(a.minute).padStart(2, "0")} ${a.ampm}.`,
+            type: "rescheduled",
+            targetId: a._id || a.id,
+            date: a.date,
+          });
+        }
       });
 
       svcList.forEach(s => {
@@ -131,6 +141,16 @@ function Navbar() {
             title: "Refund Approved ✅",
             message: `Refund of ₹${s.fees || 0} for ${name} is approved and processed!`,
             type: "approved",
+            targetId: s._id || s.id,
+            date: s.date,
+          });
+        }
+        if (s.status === "Rescheduled") {
+          list.push({
+            id: `rescheduled-${s._id || s.id}`,
+            title: "Rescheduled Alert 📅",
+            message: `Your booking for ${name} has been rescheduled to ${s.date} at ${String(s.hour).padStart(2, "0")}:${String(s.minute).padStart(2, "0")} ${s.ampm}.`,
+            type: "rescheduled",
             targetId: s._id || s.id,
             date: s.date,
           });
@@ -364,17 +384,21 @@ function Navbar() {
                                       ? "bg-rose-50/70 border-rose-100 hover:bg-rose-50"
                                       : n.type === "approved"
                                       ? "bg-emerald-50/70 border-emerald-100 hover:bg-emerald-50"
+                                      : n.type === "rescheduled"
+                                      ? "bg-sky-50/80 border-sky-100 hover:bg-sky-50"
                                       : "bg-amber-50/70 border-amber-100 hover:bg-amber-50"
-                                  }`}
-                                >
+                                    }`}
+                                  >
                                   <div className="font-bold text-[11px] mb-0.5 flex justify-between items-center">
                                     <span className={
                                       n.type === "missed"
                                         ? "text-rose-800"
                                         : n.type === "approved"
                                         ? "text-emerald-800"
+                                        : n.type === "rescheduled"
+                                        ? "text-sky-800"
                                         : "text-amber-800"
-                                    }>{n.title}</span>
+                                      }>{n.title}</span>
                                   </div>
                                   <p className="text-[10.5px] text-slate-600 leading-snug font-medium">
                                     {n.message}

@@ -7,6 +7,7 @@ import doctorRouter from './routes/doctorRouter.js';
 import serviceRouter from './routes/serviceRouter.js';
 import appointmentRouter from './routes/appointmentRouter.js';
 import serviceAppointmentRouter from './routes/serviceAppointmentRouter.js';
+import notificationRouter from './routes/notificationRouter.js';
 
 const app = express();
 const port = 4000;
@@ -68,6 +69,7 @@ app.use("/api/doctors", doctorRouter);
 app.use("/api/services", serviceRouter);
 app.use("/api/appointments", appointmentRouter);
 app.use("/api/service-appointments", serviceAppointmentRouter);
+app.use("/api/notifications", notificationRouter);
 
 app.get('/', (req, res) => {
     res.send('api working!');

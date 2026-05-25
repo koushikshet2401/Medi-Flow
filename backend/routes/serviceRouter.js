@@ -1,6 +1,6 @@
 import express from 'express'
 import multer  from 'multer'
-import { createService, deleteService, getServiceById, getServices ,UpdateService} from '../controllers/serviceController.js';
+import { createService, deleteService, getServiceById, getServices, UpdateService, triggerServiceAbsence, getServiceAvailableSlots } from '../controllers/serviceController.js';
 
 const upload=multer({dest : "/tmp"})
 
@@ -8,9 +8,11 @@ const serviceRouter=express.Router();
 
 serviceRouter.get("/",getServices);
 serviceRouter.get("/:id", getServiceById);
+serviceRouter.get("/:id/available-slots", getServiceAvailableSlots);
 
 serviceRouter.post('/', upload.single("image"), createService);
 serviceRouter.put("/:id", upload.single("image"), UpdateService);
+serviceRouter.post("/:id/absence", triggerServiceAbsence);
 
 serviceRouter.delete('/:id',deleteService)
 

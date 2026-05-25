@@ -10,6 +10,7 @@ import ServiceDashboard from "./components/ServiceDashboard";
 import AddSer from "./pages/AddSer";
 import ListService from "./pages/ListService";
 import ServiceAppointments from "./pages/ServiceAppointments";
+import DoctorEditPage from "./pages/DoctorEditPage";
 
 function RequireAuth({ children }) {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -90,6 +91,14 @@ export default function App() {
         element={
           <RequireAuth>
             <List/>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/list/doctor/:id"
+        element={
+          <RequireAuth>
+            <DoctorEditPage />
           </RequireAuth>
         }
       />

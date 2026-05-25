@@ -1,9 +1,26 @@
 import jwt from "jsonwebtoken";
 import Doctor from "../models/Doctor.js";
+import { resolveClerkUserId } from "../utils/authHelper.js";
+import { clerkClient } from "@clerk/clerk-sdk-node";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export default async function doctorAuth(req, res, next) {
+  // Check if request is from Clerk admin user
+  const userId = resolveClerkUserId(req);
+  if (userId) {
+    try {
+      const user = await clerkClient.users.getUser(userId);
+      const email = user.emailAddresses?.[0]?.emailAddress;
+      if (email === "medicareproject77@gmail.com") {
+        req.isAdmin = true;
+        return next();
+      }
+    } catch (e) {
+      console.warn("doctorAuth clerk admin bypass check error:", e.message);
+    }
+  }
+
   const authHeader = req.headers.authorization;
 
   // Check token

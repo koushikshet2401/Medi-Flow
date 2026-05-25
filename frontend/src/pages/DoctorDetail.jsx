@@ -147,6 +147,8 @@ export default function DoctorDetail() {
     }
   }, [userLoaded, user]);
 
+  const [slotsData, setSlotsData] = useState({ dates: [], slots: {}, blockedDates: [] });
+
   useEffect(() => {
     let mounted = true;
     async function fetchDoctor() {
@@ -163,6 +165,22 @@ export default function DoctorDetail() {
         const payload = await res.json();
         const doc = payload?.data || null;
         if (mounted) setDoctor(doc);
+
+        // Fetch dynamically generated availability slots
+        const slotsRes = await fetch(`${API_BASE}/api/doctors/${id}/available-slots`);
+        if (slotsRes.ok) {
+          const slotsPayload = await slotsRes.json();
+          if (mounted && slotsPayload.success) {
+            setSlotsData({
+              dates: slotsPayload.dates || [],
+              slots: slotsPayload.slots || {},
+              blockedDates: slotsPayload.blockedDates || [],
+            });
+            if (slotsPayload.dates && slotsPayload.dates.length > 0) {
+              setSelectedDate(new Date(slotsPayload.dates[0] + "T00:00:00"));
+            }
+          }
+        }
       } catch (err) {
         if (mounted) setError(err.message || "Failed to fetch doctor");
       } finally {
@@ -175,14 +193,19 @@ export default function DoctorDetail() {
     };
   }, [id]);
 
-  const next7 = useMemo(() => getScheduleDates(doctor?.schedule), [doctor]);
+  const next7 = useMemo(() => {
+    return slotsData.dates.map((d) => new Date(d + "T00:00:00"));
+  }, [slotsData]);
+
   const fee = Number(doctor?.fee ?? doctor?.fees ?? 0);
 
-  const slots = useMemo(() => {
-    if (!selectedDate || !doctor?.schedule) return [];
+  const slotsInfo = useMemo(() => {
+    if (!selectedDate) return { allSlots: [], availableSlots: [], bookedSlots: [] };
     const key = selectedDate.toISOString().split("T")[0];
-    return doctor.schedule && doctor.schedule[key] ? doctor.schedule[key] : [];
-  }, [selectedDate, doctor]);
+    return slotsData.slots[key] || { allSlots: [], availableSlots: [], bookedSlots: [] };
+  }, [selectedDate, slotsData]);
+
+  const slots = slotsInfo.allSlots;
 
   // Mobile input handlers: only digits, max 10
   const handleMobileChange = (value) => {
@@ -661,22 +684,30 @@ export default function DoctorDetail() {
                     </p>
                   )}
 
-                  {slots.map((slot) => (
-                    <button
-                      key={slot}
-                      onClick={() => setSelectedSlot(slot)}
-                      className={`${doctorDetailStyles.timeSlotButton} ${
-                        selectedSlot === slot
-                          ? doctorDetailStyles.timeSlotButtonSelected
-                          : doctorDetailStyles.timeSlotButtonUnselected
-                      }`}
-                    >
-                      <div className={doctorDetailStyles.timeSlotContent}>
-                        <Clock className={doctorDetailStyles.timeSlotIcon} />
-                        <span>{slot}</span>
-                      </div>
-                    </button>
-                  ))}
+                  {slots.map((slot) => {
+                    const isBooked = slotsInfo.bookedSlots.includes(slot);
+                    return (
+                      <button
+                        key={slot}
+                        disabled={isBooked}
+                        onClick={() => setSelectedSlot(slot)}
+                        className={`${doctorDetailStyles.timeSlotButton} ${
+                          selectedSlot === slot
+                            ? doctorDetailStyles.timeSlotButtonSelected
+                            : doctorDetailStyles.timeSlotButtonUnselected
+                        } ${
+                          isBooked
+                            ? "opacity-40 cursor-not-allowed bg-gray-100 line-through"
+                            : ""
+                        }`}
+                      >
+                        <div className={doctorDetailStyles.timeSlotContent}>
+                          <Clock className={doctorDetailStyles.timeSlotIcon} />
+                          <span>{slot} {isBooked && "(Booked)"}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
 
                 {/* SUMMARY */}

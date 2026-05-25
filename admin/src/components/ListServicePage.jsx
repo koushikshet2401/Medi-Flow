@@ -989,61 +989,29 @@ function sortSlotsForDisplay(slots = []) {
                   </div>
                 ) : (
                   <div className={s.viewSection}>
-                    <div>
-                      <h3 className={s.viewSectionTitle}>About</h3>
-                      <p className={s.viewSectionContent}>{svc.about}</p>
-                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <h3 className={s.viewSectionTitle}>About</h3>
+                        <p className={s.viewSectionContent}>{svc.about}</p>
+                      </div>
 
-                    <div>
-                      <h3 className={s.viewSectionTitle}>Instructions</h3>
-                      <ul className={s.instructionsList}>
-                        {svc.instructions.map((p, i) => (
-                          <li key={i}>{p}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <h3 className={s.viewSectionTitle}>Slots</h3>
-                      <div className={s.slotsList}>
-                        {svc.slots.length === 0 ? (
-                          <div className={s.noSlotsMessage}>
-                            No slots scheduled
-                          </div>
-                        ) : (
-                          // sort slots for display: past-first, then today+future
-                          sortSlotsForDisplay(svc.slots).map((slot) => (
-                            <div key={slot.id} className={s.slotItem}>
-                              <Calendar className={s.slotIcon} />
-                              <div>
-                                <div>
-                                  {formatDateHuman(slot.date)} — {slot.hour}:
-                                  {String(slot.minute).padStart(2, "0")}{" "}
-                                  {slot.ampm}
-                                </div>
-                              </div>
-                            </div>
-                          ))
-                        )}
+                      <div>
+                        <h3 className={s.viewSectionTitle}>Instructions</h3>
+                        <ul className={s.instructionsList}>
+                          {svc.instructions.map((p, i) => (
+                            <li key={i}>{p}</li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
 
-                    <div className={s.viewActions}>
-                      <button
-                        onClick={() => startEdit(svc)}
-                        className={`${s.editButton} ${s.cursorPointer}`}
-                      >
-                        <Edit2 className="w-4 h-4 text-emerald-600" />{" "}
-                        <span className={s.textEmerald700}>Edit</span>
-                      </button>
-
-                      <button
-                        onClick={() => removeService(svc.id)}
-                        className={`${s.removeButton} ${s.cursorPointer}`}
-                      >
-                        <Trash2 className="w-4 h-4" /> Remove
-                      </button>
-                    </div>
+                    <ServiceAvailabilityPanel
+                      svc={svc}
+                      API_BASE={API_BASE}
+                      fetchServices={fetchServices}
+                      startEdit={startEdit}
+                      removeService={removeService}
+                    />
                   </div>
                 )}
               </div>
@@ -1128,6 +1096,261 @@ function sortSlotsForDisplay(slots = []) {
               </div>
             </div>
           ))}
+      </div>
+    </div>
+  );
+}
+
+function ServiceAvailabilityPanel({ svc, API_BASE, fetchServices, startEdit, removeService }) {
+  const [sessionMode, setSessionMode] = useState(svc._raw?.availabilitySettings?.sessionMode || "Both");
+  const [weeklyDays, setWeeklyDays] = useState(svc._raw?.availabilitySettings?.weeklyDays || ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]);
+  const [blockedDates, setBlockedDates] = useState(svc._raw?.availabilitySettings?.blockedDates || []);
+  const [newBlockDate, setNewBlockDate] = useState("");
+  const [savingSettings, setSavingSettings] = useState(false);
+
+  // Absence state
+  const [absenceDate, setAbsenceDate] = useState("");
+  const [absenceSession, setAbsenceSession] = useState("Both");
+  const [triggeringAbsence, setTriggeringAbsence] = useState(false);
+
+  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  const handleDayToggle = (day) => {
+    setWeeklyDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    );
+  };
+
+  const handleAddBlockDate = () => {
+    if (!newBlockDate) return;
+    if (blockedDates.includes(newBlockDate)) return;
+    setBlockedDates((prev) => [...prev, newBlockDate]);
+    setNewBlockDate("");
+  };
+
+  const handleRemoveBlockDate = (dateStr) => {
+    setBlockedDates((prev) => prev.filter((d) => d !== dateStr));
+  };
+
+  const handleSaveSettings = async () => {
+    setSavingSettings(true);
+    try {
+      const settings = {
+        sessionMode,
+        weeklyDays,
+        blockedDates,
+      };
+
+      const res = await fetch(`${API_BASE}/api/services/${svc.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          availabilitySettings: JSON.stringify(settings),
+        }),
+      });
+
+      const body = await res.json().catch(() => null);
+      if (res.ok) {
+        alert("Service availability settings updated successfully!");
+        fetchServices();
+      } else {
+        alert(body?.message || "Failed to update service settings");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error saving settings");
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
+  const handleTriggerAbsence = async () => {
+    if (!absenceDate) {
+      alert("Please select a date for emergency closure");
+      return;
+    }
+    const ok = window.confirm(
+      `Trigger Emergency Closure for ${svc.name} on ${absenceDate} (${absenceSession})?\nThis will automatically push and reschedule affected service bookings forward.`
+    );
+    if (!ok) return;
+
+    setTriggeringAbsence(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/services/${svc.id}/absence`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          date: absenceDate,
+          session: absenceSession,
+        }),
+      });
+
+      const body = await res.json().catch(() => null);
+      if (res.ok) {
+        alert(
+          `Emergency Closure registered successfully!\nMoved ${body?.affectedAppointmentsCount || 0} service appointment(s).`
+        );
+        fetchServices();
+      } else {
+        alert(body?.message || "Failed to register emergency closure");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error registering emergency closure");
+    } finally {
+      setTriggeringAbsence(false);
+    }
+  };
+
+  return (
+    <div className="mt-4 border-t pt-4">
+      <h3 className="text-base font-semibold text-gray-900 mb-3">Availability & Closure Controls</h3>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+        {/* COLUMN 1: Session */}
+        <div className="space-y-4">
+          <div>
+            <h4 className="font-semibold text-gray-900 border-b pb-1 mb-2">Session Preference</h4>
+            <select
+              value={sessionMode}
+              onChange={(e) => setSessionMode(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
+            >
+              <option value="Morning">Morning Only (9:30 AM – 1:30 PM)</option>
+              <option value="Afternoon">Afternoon Only (2:30 PM – 5:30 PM)</option>
+              <option value="Both">Both Sessions (Full Day)</option>
+            </select>
+          </div>
+        </div>
+
+        {/* COLUMN 2: Weekly Days & Date Blocking */}
+        <div className="space-y-4">
+          <div>
+            <h4 className="font-semibold text-gray-900 border-b pb-1 mb-2">Weekly Availability</h4>
+            <div className="grid grid-cols-2 gap-2">
+              {daysOfWeek.map((day) => {
+                const checked = weeklyDays.includes(day);
+                return (
+                  <label key={day} className="flex items-center gap-2 cursor-pointer text-xs">
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => handleDayToggle(day)}
+                      className="rounded text-blue-600 focus:ring-blue-500 h-3.5 w-3.5"
+                    />
+                    <span>{day}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-gray-900 border-b pb-1 mb-2">Blocked Dates</h4>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="date"
+                value={newBlockDate}
+                onChange={(e) => setNewBlockDate(e.target.value)}
+                className="flex-1 p-1.5 border border-gray-300 rounded text-xs bg-white"
+              />
+              <button
+                onClick={handleAddBlockDate}
+                className="px-3 py-1 bg-gray-800 text-white rounded text-xs hover:bg-gray-700"
+              >
+                Block
+              </button>
+            </div>
+            <div className="max-h-24 overflow-y-auto border border-gray-200 rounded p-1 bg-white space-y-1">
+              {blockedDates.length === 0 ? (
+                <p className="text-xs text-gray-400 p-1">No date blocks set.</p>
+              ) : (
+                blockedDates.map((date) => (
+                  <div key={date} className="flex items-center justify-between text-xs bg-gray-100 px-2 py-0.5 rounded">
+                    <span>{date}</span>
+                    <button
+                      onClick={() => handleRemoveBlockDate(date)}
+                      className="text-red-500 hover:text-red-700 font-bold"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          <button
+            onClick={handleSaveSettings}
+            disabled={savingSettings}
+            className="w-full py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-medium rounded transition"
+          >
+            {savingSettings ? "Saving Settings..." : "Save Availability Settings"}
+          </button>
+        </div>
+
+        {/* COLUMN 3: Emergency Closure */}
+        <div className="space-y-4 bg-red-50 border border-red-200 rounded p-4">
+          <div>
+            <h4 className="font-semibold text-red-900 border-b border-red-200 pb-1 mb-2 flex items-center gap-1.5">
+              ⚠️ Emergency Absence / Closure
+            </h4>
+            <p className="text-xs text-red-700 mb-3">
+              Triggering closure instantly blocks the date/session and automatically reschedules all service bookings forward.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold text-red-800">Select Date</label>
+            <input
+              type="date"
+              value={absenceDate}
+              onChange={(e) => setAbsenceDate(e.target.value)}
+              className="w-full p-2 border border-red-300 rounded text-xs bg-white"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold text-red-800">Select Session</label>
+            <select
+              value={absenceSession}
+              onChange={(e) => setAbsenceSession(e.target.value)}
+              className="w-full p-2 border border-red-300 rounded text-xs bg-white"
+            >
+              <option value="Morning">Morning Only (9:30 AM – 1:30 PM)</option>
+              <option value="Afternoon">Afternoon Only (2:30 PM – 5:30 PM)</option>
+              <option value="Both">Both Sessions (Full Day)</option>
+            </select>
+          </div>
+
+          <button
+            onClick={handleTriggerAbsence}
+            disabled={triggeringAbsence}
+            className="w-full py-2 bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white font-semibold rounded text-xs transition uppercase tracking-wider"
+          >
+            {triggeringAbsence ? "Processing Shifting..." : "Trigger Emergency Closure"}
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-4 flex gap-3 justify-end">
+        <button
+          onClick={() => startEdit(svc)}
+          className="flex items-center gap-1.5 px-4 py-2 border border-gray-300 hover:bg-gray-100 rounded font-medium transition cursor-pointer"
+        >
+          Edit Basic Info
+        </button>
+
+        <button
+          onClick={() => removeService(svc.id)}
+          className="flex items-center gap-1.5 px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded font-medium transition cursor-pointer"
+        >
+          Remove Service
+        </button>
       </div>
     </div>
   );

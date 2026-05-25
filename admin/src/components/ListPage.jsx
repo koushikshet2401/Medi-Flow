@@ -371,72 +371,7 @@ function ListPage() {
                 }}
               >
                 {isOpen && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className={doctorListStyles.aboutSection}>
-                      <h4 className={doctorListStyles.aboutHeading}>About</h4>
-                      <p className={doctorListStyles.aboutText}>{doc.about}</p>
-
-                      <div className="mt-4">
-                        <div className={doctorListStyles.qualificationsHeading}>
-                          Qualifications
-                        </div>
-                        <div className={doctorListStyles.qualificationsText}>
-                          {doc.qualifications}
-                        </div>
-                      </div>
-
-                      <div className="mt-4">
-                        <div className={doctorListStyles.scheduleHeading}>
-                          Schedule
-                        </div>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {sortedDates.map((date) => {
-                            const slots = scheduleMap[date] || [];
-                            return (
-                              <div key={date} className="min-w-full md:min-w-0">
-                                <div className={doctorListStyles.scheduleDate}>
-                                  {formatDateISO(date)}
-                                </div>
-                                <div className="mt-1 flex flex-wrap gap-2">
-                                  {slots.map((s, i) => (
-                                    <span
-                                      key={i}
-                                      className={doctorListStyles.scheduleSlot}
-                                    >
-                                      {s}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-
-                    <aside className={doctorListStyles.statsSidebar}>
-                      <div className={doctorListStyles.statsItemHeading}>
-                        Success
-                      </div>
-                      <div className={doctorListStyles.statsItemValue}>
-                        {doc.success}%
-                      </div>
-
-                      <div className={doctorListStyles.statsItemHeading}>
-                        Patients
-                      </div>
-                      <div className={doctorListStyles.statsItemValue}>
-                        {doc.patients}
-                      </div>
-
-                      <div className={doctorListStyles.statsItemHeading}>
-                        Location
-                      </div>
-                      <div className={doctorListStyles.locationValue}>
-                        {doc.location}
-                      </div>
-                    </aside>
-                  </div>
+                  <DoctorAvailabilityPanel doc={doc} API_BASE={API_BASE} fetchDoctors={fetchDoctors} />
                 )}
               </div>
             </article>
@@ -459,3 +394,251 @@ function ListPage() {
 }
 
 export default ListPage;
+
+function DoctorAvailabilityPanel({ doc, API_BASE, fetchDoctors }) {
+  const [sessionMode, setSessionMode] = useState(doc.availabilitySettings?.sessionMode || "Both");
+  const [weeklyDays, setWeeklyDays] = useState(doc.availabilitySettings?.weeklyDays || ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]);
+  const [blockedDates, setBlockedDates] = useState(doc.availabilitySettings?.blockedDates || []);
+  const [newBlockDate, setNewBlockDate] = useState("");
+  const [savingSettings, setSavingSettings] = useState(false);
+
+  // Absence state
+  const [absenceDate, setAbsenceDate] = useState("");
+  const [absenceSession, setAbsenceSession] = useState("Both");
+  const [triggeringAbsence, setTriggeringAbsence] = useState(false);
+
+  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  const handleDayToggle = (day) => {
+    setWeeklyDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    );
+  };
+
+  const handleAddBlockDate = () => {
+    if (!newBlockDate) return;
+    if (blockedDates.includes(newBlockDate)) return;
+    setBlockedDates((prev) => [...prev, newBlockDate]);
+    setNewBlockDate("");
+  };
+
+  const handleRemoveBlockDate = (dateStr) => {
+    setBlockedDates((prev) => prev.filter((d) => d !== dateStr));
+  };
+
+  const handleSaveSettings = async () => {
+    setSavingSettings(true);
+    try {
+      const settings = {
+        sessionMode,
+        weeklyDays,
+        blockedDates,
+      };
+      
+      const res = await fetch(`${API_BASE}/api/doctors/${doc._id || doc.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          availabilitySettings: JSON.stringify(settings),
+        }),
+      });
+
+      const body = await res.json().catch(() => null);
+      if (res.ok) {
+        alert("Availability settings updated successfully!");
+        fetchDoctors();
+      } else {
+        alert(body?.message || "Failed to update availability settings");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error saving settings");
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
+  const handleTriggerAbsence = async () => {
+    if (!absenceDate) {
+      alert("Please select a date for emergency absence");
+      return;
+    }
+    const ok = window.confirm(
+      `Trigger Emergency Absence for ${doc.name} on ${absenceDate} (${absenceSession})?\nThis will automatically push and reschedule affected bookings forward.`
+    );
+    if (!ok) return;
+
+    setTriggeringAbsence(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/doctors/${doc._id || doc.id}/absence`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          date: absenceDate,
+          session: absenceSession,
+        }),
+      });
+
+      const body = await res.json().catch(() => null);
+      if (res.ok) {
+        alert(
+          `Emergency Closure registered successfully!\nMoved ${body?.affectedAppointmentsCount || 0} appointment(s).`
+        );
+        fetchDoctors();
+      } else {
+        alert(body?.message || "Failed to register emergency closure");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error registering emergency closure");
+    } finally {
+      setTriggeringAbsence(false);
+    }
+  };
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+      {/* COLUMN 1: Basic & Weekly Days */}
+      <div className="space-y-4">
+        <div>
+          <h4 className="font-semibold text-gray-900 border-b pb-1 mb-2">Doctor Profile</h4>
+          <p className="text-xs text-gray-600 mb-2">
+            <strong>Qualifications:</strong> {doc.qualifications}
+          </p>
+          <p className="text-xs text-gray-600 mb-2">
+            <strong>Location:</strong> {doc.location}
+          </p>
+          <p className="text-xs text-gray-600">
+            <strong>About:</strong> {doc.about || "No biography provided."}
+          </p>
+        </div>
+
+        <div>
+          <h4 className="font-semibold text-gray-900 border-b pb-1 mb-2">Session Preference</h4>
+          <select
+            value={sessionMode}
+            onChange={(e) => setSessionMode(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
+          >
+            <option value="Morning">Morning Only (9:30 AM – 1:30 PM)</option>
+            <option value="Afternoon">Afternoon Only (2:30 PM – 5:30 PM)</option>
+            <option value="Both">Both Sessions (Full Day)</option>
+          </select>
+        </div>
+      </div>
+
+      {/* COLUMN 2: Weekly Days & Date Blocking */}
+      <div className="space-y-4">
+        <div>
+          <h4 className="font-semibold text-gray-900 border-b pb-1 mb-2">Weekly Availability</h4>
+          <div className="grid grid-cols-2 gap-2">
+            {daysOfWeek.map((day) => {
+              const checked = weeklyDays.includes(day);
+              return (
+                <label key={day} className="flex items-center gap-2 cursor-pointer text-xs">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => handleDayToggle(day)}
+                    className="rounded text-blue-600 focus:ring-blue-500 h-3.5 w-3.5"
+                  />
+                  <span>{day}</span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-semibold text-gray-900 border-b pb-1 mb-2">Blocked Dates</h4>
+          <div className="flex gap-2 mb-2">
+            <input
+              type="date"
+              value={newBlockDate}
+              onChange={(e) => setNewBlockDate(e.target.value)}
+              className="flex-1 p-1.5 border border-gray-300 rounded text-xs bg-white"
+            />
+            <button
+              onClick={handleAddBlockDate}
+              className="px-3 py-1 bg-gray-800 text-white rounded text-xs hover:bg-gray-700"
+            >
+              Block
+            </button>
+          </div>
+          <div className="max-h-24 overflow-y-auto border border-gray-200 rounded p-1 bg-white space-y-1">
+            {blockedDates.length === 0 ? (
+              <p className="text-xs text-gray-400 p-1">No date blocks set.</p>
+            ) : (
+              blockedDates.map((date) => (
+                <div key={date} className="flex items-center justify-between text-xs bg-gray-100 px-2 py-0.5 rounded">
+                  <span>{date}</span>
+                  <button
+                    onClick={() => handleRemoveBlockDate(date)}
+                    className="text-red-500 hover:text-red-700 font-bold"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        <button
+          onClick={handleSaveSettings}
+          disabled={savingSettings}
+          className="w-full py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-medium rounded transition"
+        >
+          {savingSettings ? "Saving Settings..." : "Save Availability Settings"}
+        </button>
+      </div>
+
+      {/* COLUMN 3: Emergency Absence & Shifting */}
+      <div className="space-y-4 bg-red-50 border border-red-200 rounded p-4">
+        <div>
+          <h4 className="font-semibold text-red-900 border-b border-red-200 pb-1 mb-2 flex items-center gap-1.5">
+            ⚠️ Emergency Absence
+          </h4>
+          <p className="text-xs text-red-700 mb-3">
+            Triggering an absence instantly blocks the selected date/session and automatically reschedules all impacted patient appointments forward in sequential order.
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-xs font-semibold text-red-800">Select Date</label>
+          <input
+            type="date"
+            value={absenceDate}
+            onChange={(e) => setAbsenceDate(e.target.value)}
+            className="w-full p-2 border border-red-300 rounded text-xs bg-white"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-xs font-semibold text-red-800">Select Session</label>
+          <select
+            value={absenceSession}
+            onChange={(e) => setAbsenceSession(e.target.value)}
+            className="w-full p-2 border border-red-300 rounded text-xs bg-white"
+          >
+            <option value="Morning">Morning Only (9:30 AM – 1:30 PM)</option>
+            <option value="Afternoon">Afternoon Only (2:30 PM – 5:30 PM)</option>
+            <option value="Both">Both Sessions (Full Day)</option>
+          </select>
+        </div>
+
+        <button
+          onClick={handleTriggerAbsence}
+          disabled={triggeringAbsence}
+          className="w-full py-2 bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white font-semibold rounded text-xs transition uppercase tracking-wider"
+        >
+          {triggeringAbsence ? "Processing Shifting..." : "Trigger Emergency Closure"}
+        </button>
+      </div>
+    </div>
+  );
+}

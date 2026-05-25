@@ -100,6 +100,30 @@ const serviceAppointmentSchema = new mongoose.Schema({
     ampm: { type: String, enum: ["AM", "PM"] },
   },
 
+  originalSlotHistory: [
+    {
+      date: { type: String },
+      hour: { type: Number },
+      minute: { type: Number },
+      ampm: { type: String, enum: ["AM", "PM"] },
+      reason: { type: String },
+      updatedAt: { type: Date, default: Date.now },
+    }
+  ],
+  rescheduledSlotHistory: [
+    {
+      date: { type: String },
+      hour: { type: Number },
+      minute: { type: Number },
+      ampm: { type: String, enum: ["AM", "PM"] },
+    }
+  ],
+  bookingStatus: {
+    type: String,
+    enum: ["Booked", "Rescheduled by Doctor", "Doctor Unavailable", "Auto-Reassigned", "Awaiting Patient Confirmation"],
+    default: "Booked",
+  },
+
   payment: {
     method: {
       type: String,
@@ -147,7 +171,17 @@ const serviceAppointmentSchema = new mongoose.Schema({
 
 serviceAppointmentSchema.index({ date : 1, status :1});
 serviceAppointmentSchema.index({ serviceId: 1});
-serviceAppointmentSchema.index({"payment.sessionId" : 1})
+serviceAppointmentSchema.index({"payment.sessionId" : 1});
+
+serviceAppointmentSchema.index(
+  { serviceId: 1, date: 1, hour: 1, minute: 1, ampm: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      status: { $in: ["Pending", "Confirmed", "Rescheduled"] },
+    },
+  }
+);
 
 const ServiceAppointment = mongoose.model.ServiceAppointment || 
 mongoose.model("ServiceAppointment", serviceAppointmentSchema)

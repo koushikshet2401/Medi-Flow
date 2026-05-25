@@ -56,6 +56,26 @@ const appointmentSchema = new mongoose.Schema(
       time: { type: String },
     },
 
+    originalSlotHistory: [
+      {
+        date: { type: String },
+        time: { type: String },
+        reason: { type: String },
+        updatedAt: { type: Date, default: Date.now },
+      }
+    ],
+    rescheduledSlotHistory: [
+      {
+        date: { type: String },
+        time: { type: String },
+      }
+    ],
+    bookingStatus: {
+      type: String,
+      enum: ["Booked", "Rescheduled by Doctor", "Doctor Unavailable", "Auto-Reassigned", "Awaiting Patient Confirmation"],
+      default: "Booked",
+    },
+
     // payment info
     payment: {
       method: {
@@ -78,6 +98,16 @@ const appointmentSchema = new mongoose.Schema(
   {
     timestamps: true,
   },
+);
+
+appointmentSchema.index(
+  { doctorId: 1, date: 1, time: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      status: { $in: ["Pending", "Confirmed", "Rescheduled"] },
+    },
+  }
 );
 
 const Appointment =

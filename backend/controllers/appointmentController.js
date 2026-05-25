@@ -179,6 +179,21 @@ export const createAppointment = async (req, res) => {
       });
     }
 
+    // Double Booking Prevention: Check if anyone else has booked this slot
+    const slotTaken = await Appointment.findOne({
+      doctorId,
+      date: String(date),
+      time: String(time),
+      status: { $in: ["Pending", "Confirmed", "Rescheduled"] },
+    }).lean();
+
+    if (slotTaken) {
+      return res.status(409).json({
+        success: false,
+        message: "This slot has already been booked by another patient. Please choose a different slot.",
+      });
+    }
+
     let doctor = null;
     try {
       doctor = await Doctor.findById(doctorId).lean();
@@ -481,8 +496,16 @@ export const cancelAppointment = async (req, res) => {
     if (!appt)
       return res.status(404).json({ success: false, message: "Appointment not found" });
 
+    const oldDate = appt.date;
+    const oldTime = appt.time;
+    const doctorId = appt.doctorId;
+
     appt.status = "Canceled";
     await appt.save();
+
+    // Trigger Slot Shifting
+    const { shiftAppointmentsOnCancellation } = await import("../utils/slotHelper.js");
+    await shiftAppointmentsOnCancellation(doctorId, "doctor", oldDate, oldTime);
 
     return res.json({ success: true, appointment: appt });
   } catch (err) {
@@ -624,10 +647,23 @@ export const approveRefund = async (req, res) => {
       }
     }
     
+    const oldDate = appt.date;
+    const oldTime = appt.time;
+    const doctorId = appt.doctorId;
+
     appt.refundStatus = "Approved";
     appt.payment.status = "Refunded";
     appt.status = "Canceled";
     await appt.save();
+
+    // Trigger Slot Shifting
+    try {
+      const { shiftAppointmentsOnCancellation } = await import("../utils/slotHelper.js");
+      await shiftAppointmentsOnCancellation(doctorId, "doctor", oldDate, oldTime);
+    } catch (e) {
+      console.error("shiftAppointmentsOnCancellation failed in approveRefund:", e.message);
+    }
+
     return res.json({ success: true, message: "Refund processed successfully", appointment: appt });
   } catch (err) {
     console.error("approveRefund error:", err);

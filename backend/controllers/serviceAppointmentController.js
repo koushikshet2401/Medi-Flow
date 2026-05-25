@@ -149,6 +149,22 @@ export const createServiceAppointment = async (req, res) => {
           success: false,
           message: "You already have a booking for this service at the selected date and time.",
         });
+
+      // Strict Double Booking check
+      const taken = await ServiceAppointment.findOne({
+        serviceId: String(serviceId),
+        date: String(date),
+        hour: Number(finalHour),
+        minute: Number(finalMinute),
+        ampm: finalAmpm,
+        status: { $in: ["Pending", "Confirmed", "Rescheduled"] },
+      }).lean();
+      if (taken) {
+        return res.status(409).json({
+          success: false,
+          message: "This slot is already booked by another patient. Please select a different slot.",
+        });
+      }
     } catch (chkErr) {
       console.warn("Duplicate booking check failed:", chkErr);
     }
@@ -512,11 +528,24 @@ export const cancelServiceAppointment = async (req, res) => {
     if (appt.status === "Completed")
       return res.status(400).json({ success: false, message: "Cannot cancel a completed appointment" });
 
+    const oldDate = appt.date;
+    const oldTime = `${String(appt.hour).padStart(2, "0")}:${String(appt.minute).padStart(2, "0")} ${appt.ampm}`;
+    const serviceId = appt.serviceId;
+
     appt.status = "Canceled";
     if (appt.payment)
       appt.payment.status = appt.payment.status === "Confirmed" ? "Canceled" : "Pending";
 
     await appt.save();
+
+    // Trigger Slot Shifting
+    try {
+      const { shiftAppointmentsOnCancellation } = await import("../utils/slotHelper.js");
+      await shiftAppointmentsOnCancellation(serviceId, "service", oldDate, oldTime);
+    } catch (e) {
+      console.error("shiftAppointmentsOnCancellation failed in cancelServiceAppointment:", e.message);
+    }
+
     return res.json({ success: true, data: appt });
   } catch (err) {
     console.error("cancelServiceAppointment error", err);
@@ -667,10 +696,23 @@ export const approveServiceRefund = async (req, res) => {
       }
     }
     
+    const oldDate = appt.date;
+    const oldTime = `${String(appt.hour).padStart(2, "0")}:${String(appt.minute).padStart(2, "0")} ${appt.ampm}`;
+    const serviceId = appt.serviceId;
+
     appt.refundStatus = "Approved";
     appt.payment.status = "Refunded";
     appt.status = "Canceled";
     await appt.save();
+
+    // Trigger Slot Shifting
+    try {
+      const { shiftAppointmentsOnCancellation } = await import("../utils/slotHelper.js");
+      await shiftAppointmentsOnCancellation(serviceId, "service", oldDate, oldTime);
+    } catch (e) {
+      console.error("shiftAppointmentsOnCancellation failed in approveServiceRefund:", e.message);
+    }
+
     return res.json({ success: true, message: "Refund processed successfully", appointment: appt });
   } catch (err) {
     console.error("approveServiceRefund error:", err);

@@ -8,6 +8,27 @@ const serviceSchema = new mongoose.Schema({
   price: { type: Number, default: 0 },
   available: { type: Boolean, default: true },
 
+  availabilitySettings: {
+    sessions: {
+      type: String,
+      enum: ["Morning", "Afternoon", "Both"],
+      default: "Both",
+    },
+    weeklyDays: {
+      type: [String],
+      default: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    },
+    blockedDates: {
+      type: [String],
+      default: [],
+    },
+    partialDayAvailability: {
+      type: Map,
+      of: String,
+      default: {},
+    },
+  },
+
   imageUrl: { type: String, default: null },
   imagePublicId: { type: String, default: null },
 

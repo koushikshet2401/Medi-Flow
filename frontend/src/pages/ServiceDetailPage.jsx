@@ -60,107 +60,64 @@ export default function ServiceDetail() {
 
   const isFormValid = () => getClientMissingFields().length === 0;
 
+  const [slotsData, setSlotsData] = useState({ dates: [], slots: {}, blockedDates: [] });
+
   useEffect(() => {
     let mounted = true;
     const controller = new AbortController();
-
-    const endpoints = [
-      `${DEFAULT_HOST}/api/services/${encodeURIComponent(id)}`,
-    ];
 
     async function tryFetch() {
       setLoading(true);
       setFetchError(null);
 
-      let lastError = null;
-      for (const url of endpoints) {
-        try {
-          const res = await fetch(url, {
-            method: "GET",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            signal: controller.signal,
-          });
+      try {
+        const res = await fetch(`${DEFAULT_HOST}/api/services/${id}`, {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          signal: controller.signal,
+        });
 
-          if (res.status === 404) {
-            lastError = new Error(`404 ${url}`);
-            continue;
-          }
-
-          const contentType = res.headers.get("content-type") || "";
-          if (!res.ok || !contentType.includes("application/json")) {
-            const txt = await res.text().catch(() => "");
-            lastError = new Error(
-              `Bad response ${res.status} at ${url}: ${String(txt).slice(
-                0,
-                200,
-              )}`,
-            );
-            continue;
-          }
-
-          const json = await res.json().catch(() => null);
-          const doc = json?.data ?? json?.service ?? json;
-
-          if (!doc) {
-            lastError = new Error(`No service data at ${url}`);
-            continue;
-          }
-
-          const transformed = transformServiceShape(doc);
-
-          if (!mounted) return;
-          setService(transformed);
-          if (transformed.dates && transformed.dates.length > 0) {
-            setSelectedDate(transformed.dates[0]);
-            setSelectedTime("");
-          }
-          setLoading(false);
-          return;
-        } catch (err) {
-          if (err.name === "AbortError") return;
-          lastError = err;
-          continue;
+        if (!res.ok) {
+          throw new Error("Failed to fetch service data");
         }
-      }
 
-      if (!mounted) return;
-      console.warn(
-        "All endpoints failed, falling back to local servicesData. Last error:",
-        lastError,
-      );
-      const local =
-        servicesData && servicesData.find((s) => String(s.id) === String(id));
-      if (local) {
-        const cloned = JSON.parse(JSON.stringify(local));
-        if (
-          !cloned.slots ||
-          (Array.isArray(cloned.slots) &&
-            cloned.dates &&
-            cloned.dates.length > 0)
-        ) {
-          const arrSlots = Array.isArray(cloned.slots) ? cloned.slots : [];
-          const slotsMap = {};
-          if (cloned.dates && cloned.dates.length > 0) {
-            cloned.dates.forEach((d) => (slotsMap[d] = arrSlots.slice()));
-          } else {
-            const today = new Date().toISOString().split("T")[0];
-            slotsMap[today] = arrSlots.slice();
-            cloned.dates = [today];
-          }
-          cloned.slots = slotsMap;
+        const json = await res.json().catch(() => null);
+        const doc = json?.data ?? json?.service ?? json;
+
+        if (!doc) {
+          throw new Error("No service data");
         }
-        setService(cloned);
-        if (cloned.dates && cloned.dates.length > 0)
-          setSelectedDate(cloned.dates[0]);
+
+        const transformed = transformServiceShape(doc);
+
+        if (!mounted) return;
+        setService(transformed);
+
+        // Fetch dynamically generated availability slots
+        const slotsRes = await fetch(`${DEFAULT_HOST}/api/services/${id}/available-slots`);
+        if (slotsRes.ok) {
+          const slotsPayload = await slotsRes.json();
+          if (mounted && slotsPayload.success) {
+            setSlotsData({
+              dates: slotsPayload.dates || [],
+              slots: slotsPayload.slots || {},
+              blockedDates: slotsPayload.blockedDates || [],
+            });
+            if (slotsPayload.dates && slotsPayload.dates.length > 0) {
+              setSelectedDate(slotsPayload.dates[0]);
+              setSelectedTime("");
+            }
+          }
+        }
         setLoading(false);
-        return;
+      } catch (err) {
+        if (err.name === "AbortError") return;
+        setFetchError("Unable to fetch service details from server.");
+        setLoading(false);
       }
-
-      setFetchError("Unable to fetch service details from server.");
-      setLoading(false);
     }
 
     tryFetch();
@@ -519,7 +476,7 @@ export default function ServiceDetail() {
             <h2 className={serviceDetailStyles.dateTitle}>Select Date *</h2>
             <div className={serviceDetailStyles.dateScrollContainer}>
               <div className={serviceDetailStyles.dateButtonsContainer}>
-                {service.dates.map((d) => (
+                {slotsData.dates.map((d) => (
                   <button
                     key={d}
                     onClick={() => {
@@ -543,20 +500,28 @@ export default function ServiceDetail() {
               <h2 className={serviceDetailStyles.timeTitle}>Select Time *</h2>
               <div className={serviceDetailStyles.timeScrollContainer}>
                 <div className={serviceDetailStyles.timeButtonsContainer}>
-                  {(service.slots[selectedDate] || []).map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setSelectedTime(t)}
-                      className={serviceDetailStyles.timeButton(
-                        selectedTime === t,
-                      )}
-                    >
-                      <Clock className={`${iconSize.small} mr-1`} />
-                      {t}
-                    </button>
-                  ))}
-                  {(!service.slots[selectedDate] ||
-                    service.slots[selectedDate].length === 0) && (
+                  {(slotsData.slots[selectedDate]?.allSlots || []).map((t) => {
+                    const isBooked = slotsData.slots[selectedDate]?.bookedSlots?.includes(t);
+                    return (
+                      <button
+                        key={t}
+                        disabled={isBooked}
+                        onClick={() => setSelectedTime(t)}
+                        className={`${serviceDetailStyles.timeButton(
+                          selectedTime === t,
+                        )} ${
+                          isBooked
+                            ? "opacity-40 cursor-not-allowed bg-gray-100 line-through"
+                            : ""
+                        }`}
+                      >
+                        <Clock className={`${iconSize.small} mr-1`} />
+                        {t} {isBooked && "(Booked)"}
+                      </button>
+                    );
+                  })}
+                  {(!slotsData.slots[selectedDate]?.allSlots ||
+                    slotsData.slots[selectedDate]?.allSlots.length === 0) && (
                     <div className={serviceDetailStyles.noSlotsMessage}>
                       No slots available for this date.
                     </div>

@@ -275,7 +275,7 @@ export async function updateDoctor(req, res) {
     const { id } = req.params;
     const body = req.body || {};
 
-    if (!req.doctor || String(req.doctor._id || req.doctor.id) !== String(id)) {
+    if (!req.isAdmin && (!req.doctor || String(req.doctor._id || req.doctor.id) !== String(id))) {
       return res.status(403).json({
         success: false,
         message: "Not authorized to update this doctor",
@@ -309,6 +309,25 @@ export async function updateDoctor(req, res) {
 
     if (body.schedule) existing.schedule = parseScheduleInput(body.schedule);
 
+    if (body.availabilitySettings) {
+      let settings = body.availabilitySettings;
+      if (typeof settings === "string") {
+        try {
+          settings = JSON.parse(settings);
+        } catch (e) {
+          settings = null;
+        }
+      }
+      if (settings) {
+        existing.availabilitySettings = {
+          sessions: settings.sessions ?? existing.availabilitySettings?.sessions ?? "Both",
+          weeklyDays: settings.weeklyDays ?? existing.availabilitySettings?.weeklyDays ?? ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          blockedDates: settings.blockedDates ?? existing.availabilitySettings?.blockedDates ?? [],
+          partialDayAvailability: settings.partialDayAvailability ?? existing.availabilitySettings?.partialDayAvailability ?? {},
+        };
+      }
+    }
+
     const updatable = [
       "name",
       "specialization",
@@ -337,6 +356,7 @@ export async function updateDoctor(req, res) {
 
     if (body.password) existing.password = body.password;
 
+    existing.markModified("availabilitySettings");
     await existing.save();
 
     const out = normalizeDocForClient(existing.toObject());
@@ -344,6 +364,50 @@ export async function updateDoctor(req, res) {
     return res.json({ success: true, data: out }); //updated data
   } catch (err) {
     console.error("updateDoctor error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
+// Admin-only availability settings update (uses Clerk admin token, no doctor JWT)
+export async function adminUpdateDoctor(req, res) {
+  try {
+    const { id } = req.params;
+    const body = req.body || {};
+
+    const existing = await Doctor.findById(id);
+    if (!existing)
+      return res.status(404).json({ success: false, message: "Doctor not found" });
+
+    // Parse availabilitySettings
+    if (body.availabilitySettings !== undefined) {
+      let settings = body.availabilitySettings;
+      if (typeof settings === "string") {
+        try { settings = JSON.parse(settings); } catch { settings = null; }
+      }
+      if (settings) {
+        existing.availabilitySettings = {
+          sessions: settings.sessionMode ?? settings.sessions ?? existing.availabilitySettings?.sessions ?? "Both",
+          weeklyDays: settings.weeklyDays ?? existing.availabilitySettings?.weeklyDays ?? ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+          blockedDates: settings.blockedDates ?? existing.availabilitySettings?.blockedDates ?? [],
+          partialDayAvailability: settings.partialDayAvailability ?? existing.availabilitySettings?.partialDayAvailability ?? {},
+        };
+      }
+    }
+
+    // Allow basic field updates from admin
+    const adminUpdatable = ["name","specialization","experience","qualifications","location","about","fee","availability","success","patients","rating"];
+    adminUpdatable.forEach((k) => {
+      if (body[k] !== undefined) existing[k] = body[k];
+    });
+
+    existing.markModified("availabilitySettings");
+    await existing.save();
+
+    const out = normalizeDocForClient(existing.toObject());
+    delete out.password;
+    return res.json({ success: true, data: out });
+  } catch (err) {
+    console.error("adminUpdateDoctor error:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 }
@@ -378,7 +442,7 @@ export async function toggleAvailability(req, res) {
   try {
     const { id } = req.params;
 
-    if (!req.doctor || String(req.doctor._id || req.doctor.id) !== String(id)) {
+    if (!req.isAdmin && (!req.doctor || String(req.doctor._id || req.doctor.id) !== String(id))) {
       return res.status(403).json({
         success: false,
         message: "Not authorized to update this doctor availability",
@@ -405,6 +469,77 @@ export async function toggleAvailability(req, res) {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 }
+
+// to trigger doctor emergency absence and reschedule affected bookings
+export async function triggerDoctorAbsence(req, res) {
+  try {
+    const { id } = req.params;
+    const { date, type, untilSlot } = req.body || {};
+
+    if (!date || !type) {
+      return res.status(400).json({ success: false, message: "date and type are required" });
+    }
+
+    if (!req.isAdmin && (!req.doctor || String(req.doctor._id || req.doctor.id) !== String(id))) {
+      return res.status(403).json({ success: false, message: "Not authorized to trigger absence for this doctor" });
+    }
+
+    const doc = await Doctor.findById(id);
+    if (!doc) {
+      return res.status(404).json({ success: false, message: "Doctor not found" });
+    }
+
+    if (!doc.availabilitySettings) {
+      doc.availabilitySettings = {
+        sessions: "Both",
+        weeklyDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        blockedDates: [],
+        partialDayAvailability: {},
+      };
+    }
+
+    if (type === "full-day") {
+      if (!doc.availabilitySettings.blockedDates.includes(date)) {
+        doc.availabilitySettings.blockedDates.push(date);
+      }
+    } else {
+      if (!doc.availabilitySettings.partialDayAvailability) {
+        doc.availabilitySettings.partialDayAvailability = {};
+      }
+      
+      let limitSlot = "09:30 AM";
+      if (type === "morning") {
+        limitSlot = "02:30 PM"; // Morning unavailable means only available afternoon onwards (2:30 PM limit)
+      } else if (type === "afternoon") {
+        limitSlot = "02:30 PM"; // Afternoon unavailable means unavailable after 2:30 PM
+      } else if (type === "partial") {
+        limitSlot = untilSlot;
+      }
+
+      if (doc.availabilitySettings.partialDayAvailability instanceof Map) {
+        doc.availabilitySettings.partialDayAvailability.set(date, limitSlot);
+      } else {
+        doc.availabilitySettings.partialDayAvailability[date] = limitSlot;
+      }
+    }
+
+    doc.markModified("availabilitySettings");
+    await doc.save();
+
+    const { rescheduleForAbsence } = await import("../utils/slotHelper.js");
+    const result = await rescheduleForAbsence(id, "doctor", { date, type, untilSlot });
+
+    return res.json({
+      success: true,
+      message: `Absence triggered on ${date} and ${result.count} appointments auto-rescheduled.`,
+      availabilitySettings: doc.availabilitySettings,
+    });
+  } catch (err) {
+    console.error("triggerDoctorAbsence error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
 
 // to login doctor
 export async function DoctorLogin(req, res) {
@@ -447,6 +582,53 @@ export async function DoctorLogin(req, res) {
       return res.json({success: true, token, data: out });
   } catch (err) {
     console.error("Login error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
+// to retrieve dynamically generated slots for client booking
+export async function getDoctorAvailableSlots(req, res) {
+  try {
+    const { id } = req.params;
+    const doc = await Doctor.findById(id).lean();
+    if (!doc) {
+      return res.status(404).json({ success: false, message: "Doctor not found" });
+    }
+
+    const { getSlotsForSettings, getAvailableSlots } = await import("../utils/slotHelper.js");
+
+    const dates = [];
+    const slotsMap = {};
+    const today = new Date();
+    
+    // Generate for the next 14 days
+    for (let i = 0; i < 14; i++) {
+      const dt = new Date(today);
+      dt.setDate(today.getDate() + i);
+      const dateStr = dt.toISOString().split("T")[0];
+
+      // Check if date is blocked or weekday is off
+      const allSlots = getSlotsForSettings(dateStr, doc.availabilitySettings);
+      if (allSlots.length === 0) continue; // Skip blocked/off days
+
+      const info = await getAvailableSlots(id, "doctor", dateStr);
+      dates.push(dateStr);
+      slotsMap[dateStr] = {
+        allSlots: info.allSlots,
+        availableSlots: info.availableSlots,
+        bookedSlots: info.bookedSlots,
+      };
+    }
+
+    return res.json({
+      success: true,
+      dates,
+      slots: slotsMap,
+      blockedDates: doc.availabilitySettings?.blockedDates || [],
+      availabilitySettings: doc.availabilitySettings,
+    });
+  } catch (err) {
+    console.error("getDoctorAvailableSlots error:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 }

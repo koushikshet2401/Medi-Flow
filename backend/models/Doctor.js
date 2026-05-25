@@ -37,6 +37,27 @@ const doctorSchema = new mongoose.Schema({
         default: "Available"
     },
 
+    availabilitySettings: {
+        sessions: {
+            type: String,
+            enum: ["Morning", "Afternoon", "Both"],
+            default: "Both",
+        },
+        weeklyDays: {
+            type: [String],
+            default: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        },
+        blockedDates: {
+            type: [String],
+            default: [],
+        },
+        partialDayAvailability: {
+            type: Map,
+            of: String,
+            default: {},
+        },
+    },
+
     schedule: {type:Map, of:[String], default:{}},
     success: {type:String,default:""},
     patients:{type:String,default:""},
