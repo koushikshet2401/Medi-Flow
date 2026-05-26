@@ -158,6 +158,24 @@ export default function App() {
 
 
 <Route
+  path="/service/:id"
+  element={
+    <RequireAuth>
+      <ServiceEditPage />
+    </RequireAuth>
+  }
+/>
+
+<Route
+  path="/list-service/service/:id"
+  element={
+    <RequireAuth>
+      <ServiceEditPage />
+    </RequireAuth>
+  }
+/>
+
+<Route
   path="/service-appointments"
   element={
     <RequireAuth>

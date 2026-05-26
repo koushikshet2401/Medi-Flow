@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import AdminLayout from "../components/AdminLayout";
+import AvailabilityPanel from "../components/shared/AvailabilityPanel";
+import EmergencyClosurePanel from "../components/shared/EmergencyClosurePanel";
 import {
   ArrowLeft, Save, AlertTriangle, Calendar, Clock, Shield,
   User, MapPin, Star, CheckCircle, XCircle, Stethoscope, Loader2
@@ -131,16 +133,6 @@ export default function DoctorEditPage() {
   useEffect(() => {
     loadDoctorData();
   }, [id]);
-
-  // Helpers
-  const toggleDay = (day) =>
-    setWeeklyDays(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]);
-
-  const addBlockDate = () => {
-    if (!newBlockDate || blockedDates.includes(newBlockDate)) return;
-    setBlockedDates(prev => [...prev, newBlockDate].sort());
-    setNewBlockDate("");
-  };
 
   const removeBlockDate = (d) => {
     setBlockedDates(prev => prev.filter(x => x !== d));
@@ -531,160 +523,29 @@ export default function DoctorEditPage() {
               {/* ──────────────────────────────────────────────────────────────
                   SECTION 4: AVAILABILITY MANAGEMENT SECTION
                   ────────────────────────────────────────────────────────────── */}
-              <div className="bg-white rounded-3xl shadow-xs border border-slate-200/60 p-6 hover:shadow-sm transition-all duration-300 space-y-5">
-                <div className="flex items-center gap-3 border-b border-slate-100 pb-3.5">
-                  <div className="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center">
-                    <Shield className="w-4.5 h-4.5 text-emerald-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">Availability Settings</h3>
-                    <p className="text-[11px] text-slate-400">Control preferences, days & blocks</p>
-                  </div>
-                </div>
-
-                {/* Session Mode */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-2">Session Preference</label>
-                  <select
-                    value={sessionMode}
-                    onChange={(e) => setSessionMode(e.target.value)}
-                    className="w-full text-xs sm:text-sm border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-100 bg-slate-50 cursor-pointer"
-                  >
-                    <option value="Morning">Morning Only (9:30 AM – 1:30 PM)</option>
-                    <option value="Afternoon">Afternoon Only (2:30 PM – 5:30 PM)</option>
-                    <option value="Both">Both Sessions (Full Day)</option>
-                  </select>
-                </div>
-
-                {/* Weekly Days */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-2">Weekly Availability</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {DAYS.map(day => {
-                      const active = weeklyDays.includes(day);
-                      return (
-                        <button
-                          key={day}
-                          onClick={() => toggleDay(day)}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                            active 
-                              ? "bg-emerald-50 border-emerald-300 text-emerald-700 shadow-2xs" 
-                              : "bg-slate-50 border-slate-200 text-slate-500 hover:border-emerald-200"
-                          }`}
-                        >
-                          <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${active ? "bg-emerald-400 animate-pulse" : "bg-slate-350"}`} />
-                          {day.slice(0, 3)}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Blocked Dates */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-2">Blocked Dates</label>
-                  <div className="flex gap-2 mb-3">
-                    <input
-                      type="date"
-                      value={newBlockDate}
-                      onChange={e => setNewBlockDate(e.target.value)}
-                      className="flex-1 text-xs border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-100 bg-slate-50 cursor-pointer"
-                    />
-                    <button
-                      onClick={addBlockDate}
-                      className="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl transition-all shadow-sm cursor-pointer"
-                    >
-                      Block
-                    </button>
-                  </div>
-
-                  <div className="max-h-36 overflow-y-auto space-y-1.5 pr-1 border border-slate-100 rounded-xl p-2 bg-slate-50/50">
-                    {blockedDates.length === 0 ? (
-                      <p className="text-[11px] text-slate-400 text-center py-4 italic">No blocked dates set.</p>
-                    ) : (
-                      blockedDates.map(d => (
-                        <div key={d} className="flex items-center justify-between bg-white border border-slate-100 px-3 py-1.5 rounded-lg shadow-2xs">
-                          <span className="text-xs text-slate-700 font-bold">{formatDateISO(d)}</span>
-                          <button
-                            onClick={() => removeBlockDate(d)}
-                            className="text-rose-500 hover:text-rose-700 text-sm font-black cursor-pointer leading-none px-1"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-
-                {/* Save Settings Footer */}
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all cursor-pointer"
-                >
-                  {saving ? <Loader2 className="w-4.5 h-4.5 animate-spin" /> : <Save className="w-4.5 h-4.5" />}
-                  Save Availability Settings
-                </button>
-              </div>
+              <AvailabilityPanel
+                sessionMode={sessionMode}
+                setSessionMode={setSessionMode}
+                weeklyDays={weeklyDays}
+                setWeeklyDays={setWeeklyDays}
+                blockedDates={blockedDates}
+                setBlockedDates={setBlockedDates}
+                saving={saving}
+                onSave={handleSave}
+              />
 
               {/* ──────────────────────────────────────────────────────────────
                   SECTION 5: EMERGENCY ABSENCE SECTION
                   ────────────────────────────────────────────────────────────── */}
-              <div className="bg-rose-50/70 border border-rose-200/80 rounded-3xl p-6 hover:shadow-sm transition-all duration-300 space-y-5 shadow-xs">
-                <div className="flex items-center gap-3 border-b border-rose-200/50 pb-3.5">
-                  <div className="w-9 h-9 bg-rose-100 rounded-xl flex items-center justify-center">
-                    <AlertTriangle className="w-4.5 h-4.5 text-rose-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-extrabold text-rose-800 text-sm sm:text-base">Emergency Absence</h3>
-                    <p className="text-[11px] text-rose-600">Absence shifting tool</p>
-                  </div>
-                </div>
-
-                {/* Warning Card */}
-                <div className="bg-white border border-rose-200/70 p-4 rounded-2xl shadow-2xs">
-                  <p className="text-xs text-rose-700 leading-relaxed font-semibold">
-                    ⚠️ Triggering a closure blocks the date/session immediately. All affected patient bookings are <strong>rescheduled forward</strong> in sequential booking order.
-                  </p>
-                </div>
-
-                <div className="space-y-3.5">
-                  <div>
-                    <label className="block text-xs font-bold text-rose-700 mb-1.5">Closure Date</label>
-                    <input
-                      type="date"
-                      value={absenceDate}
-                      onChange={e => setAbsenceDate(e.target.value)}
-                      className="w-full text-xs sm:text-sm border border-rose-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-rose-200 bg-white cursor-pointer"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-rose-700 mb-1.5">Session to Close</label>
-                    <select
-                      value={absenceSession}
-                      onChange={e => setAbsenceSession(e.target.value)}
-                      className="w-full text-xs sm:text-sm border border-rose-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-rose-200 bg-white cursor-pointer"
-                    >
-                      <option value="Morning">Morning Only (9:30 AM – 1:30 PM)</option>
-                      <option value="Afternoon">Afternoon Only (2:30 PM – 5:30 PM)</option>
-                      <option value="Both">Both Sessions (Full Day)</option>
-                    </select>
-                  </div>
-
-                  <button
-                    onClick={handleAbsence}
-                    disabled={triggeringAbsence || !absenceDate}
-                    className="w-full py-3.5 bg-rose-600 hover:bg-rose-700 disabled:bg-rose-300 text-white font-extrabold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider"
-                  >
-                    {triggeringAbsence
-                      ? <><Loader2 className="w-4 h-4 animate-spin" /> Rescheduling Appointments...</>
-                      : <><AlertTriangle className="w-4.5 h-4.5" /> Trigger Emergency Closure</>
-                    }
-                  </button>
-                </div>
-              </div>
+              <EmergencyClosurePanel
+                entityName={`Dr. ${doctor.name}`}
+                absenceDate={absenceDate}
+                setAbsenceDate={setAbsenceDate}
+                absenceSession={absenceSession}
+                setAbsenceSession={setAbsenceSession}
+                triggering={triggeringAbsence}
+                onTrigger={handleAbsence}
+              />
 
             </div>
 
