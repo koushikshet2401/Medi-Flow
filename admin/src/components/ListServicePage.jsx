@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Image as ImageIcon,
   Edit2,
   Trash2,
   Check,
   X,
-  ChevronDown,
+  ChevronRight,
   Search,
   Calendar,
   Plus,
@@ -13,6 +14,7 @@ import {
 import { serviceListStyles as s } from "../assets/dummyStyles";
 
 export default function ListServicePage() {
+  const navigate = useNavigate();
   const API_BASE = "https://medi-flow-backend.onrender.com";
 
   const [services, setServices] = useState([]);
@@ -721,7 +723,7 @@ function sortSlotsForDisplay(slots = []) {
             <div key={svc.id} className={s.serviceCard}>
               <div
                 className={s.serviceCardContent}
-                onClick={() => toggleDetails(svc.id)}
+                onClick={() => navigate(`/service/${svc.id}`)}
               >
                 <div className={s.serviceImageContainer}>
                   {svc.image ? (
@@ -775,10 +777,8 @@ function sortSlotsForDisplay(slots = []) {
                 </div>
 
                 <div className={s.chevronContainer}>
-                  <ChevronDown
-                    className={`${s.chevronIcon} ${
-                      isOpen ? s.chevronOpen : s.chevronClosed
-                    }`}
+                  <ChevronRight
+                    className="w-6 h-6 text-sky-350"
                   />
                 </div>
               </div>

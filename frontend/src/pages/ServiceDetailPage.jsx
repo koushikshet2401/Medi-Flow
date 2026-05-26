@@ -18,6 +18,29 @@ const DEFAULT_HOST = (
     : "https://medi-flow-backend.onrender.com"
 ).replace(/\/$/, "");
 
+const SLOT_RANGES = {
+  "10:30 AM": "10:30 AM - 11:30 AM",
+  "11:30 AM": "11:30 AM - 12:30 PM",
+  "12:30 PM": "12:30 PM - 01:30 PM",
+  "02:30 PM": "02:30 PM - 03:30 PM",
+  "03:30 PM": "03:30 PM - 04:30 PM",
+  "04:30 PM": "04:30 PM - 05:30 PM",
+  "05:30 PM": "05:30 PM - 06:30 PM",
+  "06:30 PM": "06:30 PM - 07:30 PM",
+};
+
+const formatAssignedDate = (dateStr) => {
+  if (!dateStr) return "";
+  const dt = new Date(dateStr + "T00:00:00");
+  if (isNaN(dt)) return dateStr;
+  const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  return `${weekdays[dt.getDay()]}, ${dt.getDate()} ${months[dt.getMonth()]} ${dt.getFullYear()}`;
+};
+
 export default function ServiceDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -110,10 +133,19 @@ export default function ServiceDetail() {
               slots: slotsPayload.slots || {},
               blockedDates: slotsPayload.blockedDates || [],
             });
-            if (slotsPayload.dates && slotsPayload.dates.length > 0) {
-              setSelectedDate(slotsPayload.dates[0]);
-              setSelectedTime("");
+            // Find the first date and slot that is available in queue order
+            let foundDate = "";
+            let foundTime = "";
+            for (const d of slotsPayload.dates || []) {
+              const info = slotsPayload.slots[d];
+              if (info && info.availableSlots && info.availableSlots.length > 0) {
+                foundDate = d;
+                foundTime = info.availableSlots[0];
+                break;
+              }
             }
+            setSelectedDate(foundDate);
+            setSelectedTime(foundTime);
           }
         }
         setLoading(false);
@@ -475,63 +507,37 @@ export default function ServiceDetail() {
 
           </div>
 
-          {/* DATE */}
-          <div>
-            <h2 className={serviceDetailStyles.dateTitle}>Select Date *</h2>
-            <div className={serviceDetailStyles.dateScrollContainer}>
-              <div className={serviceDetailStyles.dateButtonsContainer}>
-                {slotsData.dates.map((d) => (
-                  <button
-                    key={d}
-                    onClick={() => {
-                      setSelectedDate(d);
-                      setSelectedTime("");
-                    }}
-                    className={serviceDetailStyles.dateButton(
-                      selectedDate === d,
-                    )}
-                  >
-                    {d}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* TIME */}
-          {selectedDate && (
-            <div className={serviceDetailStyles.timeSection}>
-              <h2 className={serviceDetailStyles.timeTitle}>Select Time *</h2>
-              <div className={serviceDetailStyles.timeScrollContainer}>
-                <div className={serviceDetailStyles.timeButtonsContainer}>
-                  {(slotsData.slots[selectedDate]?.allSlots || []).map((t) => {
-                    const isBooked = slotsData.slots[selectedDate]?.bookedSlots?.includes(t);
-                    return (
-                      <button
-                        key={t}
-                        disabled={isBooked}
-                        onClick={() => setSelectedTime(t)}
-                        className={`${serviceDetailStyles.timeButton(
-                          selectedTime === t,
-                        )} ${
-                          isBooked
-                            ? "opacity-40 cursor-not-allowed bg-gray-100 line-through"
-                            : ""
-                        }`}
-                      >
-                        <Clock className={`${iconSize.small} mr-1`} />
-                        {t} {isBooked && "(Booked)"}
-                      </button>
-                    );
-                  })}
-                  {(!slotsData.slots[selectedDate]?.allSlots ||
-                    slotsData.slots[selectedDate]?.allSlots.length === 0) && (
-                    <div className={serviceDetailStyles.noSlotsMessage}>
-                      No slots available for this date.
-                    </div>
-                  )}
+          {/* ASSIGNED SLOT */}
+          {selectedDate && selectedTime ? (
+            <div className="bg-[#E6F1FB] border border-[#85B7EB] rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+              <h3 className="text-lg font-bold text-[#042C53] flex items-center gap-2">
+                <Clock className="w-5 h-5 text-[#185FA5]" />
+                Assigned Booking Slot
+              </h3>
+              <p className="text-sm text-[#0C447C] leading-relaxed">
+                To maintain a fair, queue-based booking system, we automatically allocate the next available slot.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                <div className="bg-white rounded-xl p-4 border border-[#B5D4F4]">
+                  <div className="text-xs text-[#185FA5] font-semibold uppercase tracking-wider">Date</div>
+                  <div className="text-base font-bold text-[#042C53] mt-1">
+                    {formatAssignedDate(selectedDate)}
+                  </div>
+                </div>
+                <div className="bg-white rounded-xl p-4 border border-[#B5D4F4]">
+                  <div className="text-xs text-[#185FA5] font-semibold uppercase tracking-wider">Time Interval</div>
+                  <div className="text-base font-bold text-[#042C53] mt-1">
+                    {SLOT_RANGES[selectedTime] || selectedTime}
+                  </div>
                 </div>
               </div>
+            </div>
+          ) : (
+            <div className="bg-rose-50 border border-rose-200 rounded-2xl p-6 shadow-sm text-center">
+              <h3 className="text-lg font-bold text-rose-800">No Slots Available</h3>
+              <p className="text-sm text-rose-600 mt-2">
+                There are no available slots in the upcoming 14 days. Please contact the administrator or check back later.
+              </p>
             </div>
           )}
 

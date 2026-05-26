@@ -7,9 +7,18 @@ import { sendSMS } from "./smsHelper.js";
 import { sendEmail } from "./emailHelper.js";
 import { clerkClient } from "@clerk/clerk-sdk-node";
 
-export const ALL_MORNING_SLOTS = ["09:30 AM", "10:30 AM", "11:30 AM", "12:30 PM"];
-export const ALL_AFTERNOON_SLOTS = ["02:30 PM", "03:30 PM", "04:30 PM"];
-export const ALL_SLOTS = [...ALL_MORNING_SLOTS, ...ALL_AFTERNOON_SLOTS];
+export const DOCTOR_MORNING_SLOTS = ["09:30 AM", "10:30 AM", "11:30 AM", "12:30 PM"];
+export const DOCTOR_AFTERNOON_SLOTS = ["02:30 PM", "03:30 PM", "04:30 PM"];
+export const DOCTOR_SLOTS = [...DOCTOR_MORNING_SLOTS, ...DOCTOR_AFTERNOON_SLOTS];
+
+export const SERVICE_MORNING_SLOTS = ["10:30 AM", "11:30 AM", "12:30 PM"];
+export const SERVICE_AFTERNOON_SLOTS = ["02:30 PM", "03:30 PM", "04:30 PM", "05:30 PM", "06:30 PM"];
+export const SERVICE_SLOTS = [...SERVICE_MORNING_SLOTS, ...SERVICE_AFTERNOON_SLOTS];
+
+// Backward-compatible defaults
+export const ALL_MORNING_SLOTS = DOCTOR_MORNING_SLOTS;
+export const ALL_AFTERNOON_SLOTS = DOCTOR_AFTERNOON_SLOTS;
+export const ALL_SLOTS = DOCTOR_SLOTS;
 
 // Convert time to minutes since midnight
 export function parseTimeToMinutes(t = "") {
@@ -72,9 +81,13 @@ export async function notifyPatient(appointment, title, message) {
 /**
  * Generates slots for a given date based on availability settings.
  */
-export function getSlotsForSettings(dateStr, settings) {
+export function getSlotsForSettings(dateStr, settings, entityType = "doctor") {
+  const morningSlots = entityType === "doctor" ? DOCTOR_MORNING_SLOTS : SERVICE_MORNING_SLOTS;
+  const afternoonSlots = entityType === "doctor" ? DOCTOR_AFTERNOON_SLOTS : SERVICE_AFTERNOON_SLOTS;
+  const allSlots = [...morningSlots, ...afternoonSlots];
+
   if (!settings) {
-    return ALL_SLOTS;
+    return allSlots;
   }
 
   // 1. Specific Date Blocking
@@ -94,10 +107,10 @@ export function getSlotsForSettings(dateStr, settings) {
   let slots = [];
   const sess = settings.sessions || "Both";
   if (sess === "Morning" || sess === "Both") {
-    slots = slots.concat(ALL_MORNING_SLOTS);
+    slots = slots.concat(morningSlots);
   }
   if (sess === "Afternoon" || sess === "Both") {
-    slots = slots.concat(ALL_AFTERNOON_SLOTS);
+    slots = slots.concat(afternoonSlots);
   }
 
   // 4. Partial Day limits
@@ -152,7 +165,7 @@ export async function getAvailableSlots(entityId, entityType, dateStr) {
     bookedSlots = appointments.map((a) => formatSlotString(a.hour, a.minute, a.ampm));
   }
 
-  const allSlots = getSlotsForSettings(dateStr, settings);
+  const allSlots = getSlotsForSettings(dateStr, settings, entityType);
   const availableSlots = allSlots.filter((s) => !bookedSlots.includes(s));
 
   return {
@@ -168,8 +181,11 @@ export async function getAvailableSlots(entityId, entityType, dateStr) {
  */
 export async function shiftAppointmentsOnCancellation(entityId, entityType, dateStr, canceledSlotTime) {
   try {
-    const isMorning = ALL_MORNING_SLOTS.includes(canceledSlotTime);
-    const sessionSlots = isMorning ? ALL_MORNING_SLOTS : ALL_AFTERNOON_SLOTS;
+    const morningSlots = entityType === "doctor" ? DOCTOR_MORNING_SLOTS : SERVICE_MORNING_SLOTS;
+    const afternoonSlots = entityType === "doctor" ? DOCTOR_AFTERNOON_SLOTS : SERVICE_AFTERNOON_SLOTS;
+
+    const isMorning = morningSlots.includes(canceledSlotTime);
+    const sessionSlots = isMorning ? morningSlots : afternoonSlots;
     const canceledIdx = sessionSlots.indexOf(canceledSlotTime);
 
     if (canceledIdx === -1) return;
@@ -282,6 +298,8 @@ export async function rescheduleForAbsence(entityId, entityType, absenceSettings
   const { date, type, untilSlot } = absenceSettings; // type: full-day, morning, afternoon, partial
   try {
     let affectedBookings = [];
+    const morningSlots = entityType === "doctor" ? DOCTOR_MORNING_SLOTS : SERVICE_MORNING_SLOTS;
+    const afternoonSlots = entityType === "doctor" ? DOCTOR_AFTERNOON_SLOTS : SERVICE_AFTERNOON_SLOTS;
 
     if (entityType === "doctor") {
       const query = {
@@ -293,8 +311,8 @@ export async function rescheduleForAbsence(entityId, entityType, absenceSettings
 
       affectedBookings = bookings.filter((b) => {
         if (type === "full-day") return true;
-        if (type === "morning") return ALL_MORNING_SLOTS.includes(b.time);
-        if (type === "afternoon") return ALL_AFTERNOON_SLOTS.includes(b.time);
+        if (type === "morning") return morningSlots.includes(b.time);
+        if (type === "afternoon") return afternoonSlots.includes(b.time);
         if (type === "partial") {
           return parseTimeToMinutes(b.time) >= parseTimeToMinutes(untilSlot);
         }
@@ -314,8 +332,8 @@ export async function rescheduleForAbsence(entityId, entityType, absenceSettings
       affectedBookings = bookings.filter((b) => {
         const timeStr = formatSlotString(b.hour, b.minute, b.ampm);
         if (type === "full-day") return true;
-        if (type === "morning") return ALL_MORNING_SLOTS.includes(timeStr);
-        if (type === "afternoon") return ALL_AFTERNOON_SLOTS.includes(timeStr);
+        if (type === "morning") return morningSlots.includes(timeStr);
+        if (type === "afternoon") return afternoonSlots.includes(timeStr);
         if (type === "partial") {
           return parseTimeToMinutes(timeStr) >= parseTimeToMinutes(untilSlot);
         }

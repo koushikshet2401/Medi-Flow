@@ -343,7 +343,7 @@ export async function getServiceAvailableSlots(req, res) {
       dt.setDate(today.getDate() + i);
       const dateStr = dt.toISOString().split("T")[0];
 
-      const allSlots = getSlotsForSettings(dateStr, svc.availabilitySettings);
+      const allSlots = getSlotsForSettings(dateStr, svc.availabilitySettings, "service");
       if (allSlots.length === 0) continue;
 
       const info = await getAvailableSlots(id, "service", dateStr);

@@ -16,69 +16,10 @@ function AddService({ serviceId }) {
     const [availability, setAvailability] = useState("available");
 
     const [instructions, setInstructions] = useState([""]);
-    const [slots, setSlots] = useState([]);
-
-    //   date / time controls for adding slots.
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth();
-    const currentDate = today.getDate();
-
-    const years = Array.from({ length: 5 }).map((_, i) => currentYear + i);
-    const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-    ];
-    const hours = Array.from({ length: 12 }).map((_, i) =>
-        String(i + 1).padStart(2, "0")
-    );
-    const minutes = Array.from({ length: 12 }).map((_, i) =>
-        String(i * 5).padStart(2, "0")
-    );
-    const ampm = ["AM", "PM"];
-
-    //   initial values as string matching options
-    const [slotDay, setSlotDay] = useState(String(currentDate));
-    const [slotMonth, setSlotMonth] = useState(String(currentMonth));
-    const [slotYear, setSlotYear] = useState(String(currentYear));
-    //   for time
-    const [slotHour, setSlotHour] = useState("11");
-    const [slotMinute, setSlotMinute] = useState("00");
-    const [slotAmPm, setSlotAmPm] = useState("AM");
 
     const [submitting, setSubmitting] = useState(false);
     const [toast, setToast] = useState(null);
     const [errors, setErrors] = useState({});
-
-    //   select the days for selected month/year (respecting the month length)
-    const selectedYearNum = Number(slotYear);
-    const selectedMonthNum = Number(slotMonth);
-    const daysInSelectedMonth = new Date(
-        selectedYearNum,
-        selectedMonthNum + 1,
-        0
-    ).getDate();
-    const days = Array.from({ length: daysInSelectedMonth }).map((_, i) =>
-        String(i + 1)
-    );
-
-    //user cant select previous year/ month/date. from today
-    useEffect(() => {
-        if (Number(slotDay) > daysInSelectedMonth) {
-            setSlotDay(String(daysInSelectedMonth));
-        }
-    }, [slotMonth, slotYear, daysInSelectedMonth]);
 
     //   to fetch services when in editing state
     useEffect(() => {
@@ -111,7 +52,6 @@ function AddService({ serviceId }) {
                         ? data.instructions
                         : [""]
                 );
-                setSlots(Array.isArray(data.slots) ? data.slots : []);
                 if (data.imageUrl) {
                     setImagePreview(data.imageUrl);
                     setHasExistingImage(true);
@@ -173,7 +113,6 @@ function AddService({ serviceId }) {
         setPrice("");
         setAvailability("available");
         setInstructions([""]);
-        setSlots([]);
         setErrors({});
     }
 
@@ -183,69 +122,7 @@ function AddService({ serviceId }) {
         setTimeout(() => setToast(null), 3500);
     }
 
-    //convert selected 12Hrs components to a Date Object
-    function selectedDateTime() {
-        const d = Number(slotDay);
-        const m = Number(slotMonth);
-        const y = Number(slotYear);
-        let h = Number(slotHour);
-        const mm = Number(slotMinute);
-        const ap = slotAmPm;
 
-        if (ap === "AM") {
-            if (h === 12) h = 0;
-        } else {
-            if (h !== 12) h = h + 12;
-        }
-
-        return new Date(y, m, d, h, mm, 0, 0);
-    }
-
-    //to prevent user for selecting the past time for that particular date
-    function isSelectedDateTimeInPast() {
-        const sel = selectedDateTime();
-        return sel.getTime() <= Date.now();
-    }
-
-    //   to add or update slots
-    function addSlot() {
-        const m = months[Number(slotMonth)];
-        const d = String(slotDay).padStart(2, "0");
-        const y = slotYear;
-        const h = String(slotHour).padStart(2, "0");
-        const mm = slotMinute;
-        const ap = slotAmPm;
-        const formatted = `${d} ${m} ${y} • ${h}:${mm} ${ap}`;
-
-        if (slots.includes(formatted)) {
-            showToast(
-                "error",
-                "Duplicate Slot",
-                "This time slot has already been added. Please select a different time."
-            );
-            return;
-        }
-
-        if (isSelectedDateTimeInPast()) {
-            showToast(
-                "error",
-                "Past Time",
-                "You cannot add a time slot in the past. Please select a future date/time."
-            );
-            setErrors((e) => ({ ...e, slots: true }));
-            return;
-        }
-
-        setSlots((s) => [...s, formatted]);
-        setErrors((e) => ({ ...e, slots: false }));
-        showToast("success", "Slot Added", `Time slot added: ${formatted}`);
-    }
-
-    function removeSlot(i) {
-        const removedSlot = slots[i];
-        setSlots((s) => s.filter((_, idx) => idx !== i));
-        showToast("info", "Slot Removed", `Removed: ${removedSlot}`);
-    }
 
     //to validate that all fields are filled by user or not
     function validate() {
@@ -255,7 +132,6 @@ function AddService({ serviceId }) {
         if (!about.trim()) newErrors.about = true;
         if (!String(price).trim()) newErrors.price = true;
         if (!instructions.some((ins) => ins.trim())) newErrors.instructions = true;
-        if (!slots.length) newErrors.slots = true;
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -284,7 +160,7 @@ function AddService({ serviceId }) {
             fd.append("availability", availability);
             // arrays serialized as JSON
             fd.append("instructions", JSON.stringify(instructions));
-            fd.append("slots", JSON.stringify(slots));
+            fd.append("slots", JSON.stringify([]));
 
             if (imageFile) {
                 fd.append("image", imageFile);
@@ -310,7 +186,7 @@ function AddService({ serviceId }) {
             showToast(
                 "success",
                 serviceId ? "Service Updated" : "Service Added",
-                `${serviceName} saved with ${slots.length} slot(s).`
+                `${serviceName} saved successfully.`
             );
 
             if (!serviceId) {
@@ -572,171 +448,6 @@ function AddService({ serviceId }) {
                             </div>
                         </div>
 
-                        {/* slot controls */}
-                        <div
-                            className={addServiceStyles.slots.container(errors.slots)}
-                        >
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center gap-2 text-emerald-700 font-medium">
-                                    <Calendar className="w-5 h-5" /> Slots & Schedule
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="text-sm text-gray-500">
-                                        {slots.length} slot{slots.length !== 1 ? "s" : ""} added
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className={addServiceStyles.grids.timeGrid}>
-                                <div className="min-w-0">
-                                    <label className={addServiceStyles.labels.small}>Day</label>
-                                    <select
-                                        value={slotDay}
-                                        onChange={(e) => setSlotDay(e.target.value)}
-                                        className={addServiceStyles.formFields.smallSelect}
-                                    >
-                                        {days.map((d) => {
-                                            const dNum = Number(d);
-                                            const disabled =
-                                                Number(slotYear) === currentYear &&
-                                                Number(slotMonth) === currentMonth &&
-                                                dNum < currentDate;
-                                            return (
-                                                <option key={d} value={d} disabled={disabled}>
-                                                    {d}
-                                                </option>
-                                            );
-                                        })}
-                                    </select>
-                                </div>
-
-                                <div className="min-w-0">
-                                    <label className={addServiceStyles.labels.small}>Month</label>
-                                    <select
-                                        value={slotMonth}
-                                        onChange={(e) => setSlotMonth(e.target.value)}
-                                        className={addServiceStyles.formFields.smallSelect}
-                                    >
-                                        {months.map((m, idx) => {
-                                            const disabled =
-                                                Number(slotYear) === currentYear && idx < currentMonth;
-                                            return (
-                                                <option key={m} value={String(idx)} disabled={disabled}>
-                                                    {m}
-                                                </option>
-                                            );
-                                        })}
-                                    </select>
-                                </div>
-
-                                <div className="min-w-0">
-                                    <label className={addServiceStyles.labels.small}>Year</label>
-                                    <select
-                                        value={slotYear}
-                                        onChange={(e) => setSlotYear(e.target.value)}
-                                        className={addServiceStyles.formFields.smallSelect}
-                                    >
-                                        {years.map((y) => (
-                                            <option key={y} value={String(y)}>
-                                                {y}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div className={addServiceStyles.grids.timeSubGrid}>
-                                    <div className="min-w-0">
-                                        <label className={addServiceStyles.labels.small}>Hour</label>
-                                        <select
-                                            value={slotHour}
-                                            onChange={(e) => setSlotHour(e.target.value)}
-                                            className={addServiceStyles.formFields.timeSelect}
-                                        >
-                                            {hours.map((h) => (
-                                                <option key={h} value={h}>
-                                                    {h}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div className="min-w-0">
-                                        <label className={addServiceStyles.labels.small}>Minute</label>
-                                        <select
-                                            value={slotMinute}
-                                            onChange={(e) => setSlotMinute(e.target.value)}
-                                            className={addServiceStyles.formFields.timeSelect}
-                                        >
-                                            {minutes.map((m) => (
-                                                <option key={m} value={m}>
-                                                    {m}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div className="min-w-0">
-                                        <label className={addServiceStyles.labels.small}>AM/PM</label>
-                                        <select
-                                            value={slotAmPm}
-                                            onChange={(e) => setSlotAmPm(e.target.value)}
-                                            className={addServiceStyles.formFields.ampmSelect}
-                                        >
-                                            {ampm.map((a) => (
-                                                <option key={a} value={a}>
-                                                    {a}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mb-4">
-                                <button
-                                    type="button"
-                                    onClick={addSlot}
-                                    className={addServiceStyles.buttons.addSlot}
-                                >
-                                    <Plus className="w-4 h-4" /> Add This Time Slot
-                                </button>
-                            </div>
-
-                            <div>
-                                <div className="text-xs text-gray-500 mb-2">
-                                    Added Slots ({slots.length})
-                                </div>
-
-                                <div className={addServiceStyles.grids.slotsGrid}>
-                                    {slots.length === 0 ? (
-                                        <div className="text-sm text-gray-400 italic px-4 py-2">
-                                            No slots added yet. Select a time and click "Add This Time Slot"
-                                        </div>
-                                    ) : (
-                                        slots.map((s, idx) => (
-                                            <div
-                                                key={s}
-                                                className={addServiceStyles.slots.slotItem}
-                                            >
-                                                <div className="flex items-center gap-2 min-w-0">
-                                                    <Clock className={addServiceStyles.icon.clock} />
-                                                    <div className={addServiceStyles.slots.slotText}>
-                                                        {s}
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeSlot(idx)}
-                                                    className={addServiceStyles.buttons.slotRemove}
-                                                >
-                                                    <Trash2 className={addServiceStyles.icon.trash} />
-                                                </button>
-                                            </div>
-                                        ))
-                                    )}
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </form>
