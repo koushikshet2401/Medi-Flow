@@ -14,6 +14,8 @@ import {
   Shield,
   Users,
   Phone,
+  Sun,
+  Sunset,
 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,68 +29,28 @@ const API_BASE =
     ? "http://localhost:4000"
     : "https://medi-flow-backend.onrender.com";
 
-function getScheduleDates(schedule) {
-  if (!schedule) return [];
-
-  const keys =
-    typeof schedule === "object" && !Array.isArray(schedule)
-      ? Object.keys(schedule)
-      : [];
-
-  // Parse keys into Date objects (supporting YYYY-MM-DD and ISO)
-  const parsed = keys
-    .map((k) => {
-      const d = new Date(k);
-      if (!isNaN(d)) return { key: k, date: d };
-
-      // fallback: try splitting YYYY-MM-DD
-      const parts = k.split("-").map((n) => Number(n));
-      if (parts.length >= 3) {
-        const [y, m, day] = parts;
-        const dd = new Date(y, m - 1, day);
-        if (!isNaN(dd)) return { key: k, date: dd };
-      }
-      return null;
-    })
-    .filter(Boolean);
-
-  // Normalize compare by date-only (use UTC to avoid timezone time-of-day issues)
-  const dateOnlyValue = (d) =>
-    Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
-
-  const today = new Date();
-  const todayVal = dateOnlyValue(today);
-
-  const past = parsed
-    .filter((p) => dateOnlyValue(p.date) < todayVal)
-    .sort(
-      (a, b) =>
-        // most recent past first (descending)
-        dateOnlyValue(b.date) - dateOnlyValue(a.date),
-    );
-
-  const future = parsed
-    .filter((p) => dateOnlyValue(p.date) >= todayVal)
-    .sort(
-      (a, b) =>
-        // earliest first (ascending)
-        dateOnlyValue(a.date) - dateOnlyValue(b.date),
-    );
-
-  // Return array of Date objects in desired order
-  return [...past, ...future].map((p) => p.date);
-}
-
 /**
  * Normalize phone string: remove non-digits and return up to last 10 digits.
- * Returns empty string if no digits.
  */
 function normalizePhoneTo10(phone) {
   if (!phone) return "";
   const digits = ("" + phone).replace(/\D/g, "");
   if (!digits) return "";
-  // prefer last 10 digits (common when country code present)
   return digits.length <= 10 ? digits : digits.slice(-10);
+}
+
+// ── Slot groups (same as backend)
+const MORNING_SLOTS = ["09:30 AM", "10:30 AM", "11:30 AM", "12:30 PM"];
+const AFTERNOON_SLOTS = ["02:30 PM", "03:30 PM", "04:30 PM"];
+
+function groupSlots(allSlots) {
+  const morning = allSlots.filter((s) => MORNING_SLOTS.includes(s));
+  const afternoon = allSlots.filter((s) => AFTERNOON_SLOTS.includes(s));
+  // anything else goes to afternoon bucket
+  const other = allSlots.filter(
+    (s) => !MORNING_SLOTS.includes(s) && !AFTERNOON_SLOTS.includes(s)
+  );
+  return { morning, afternoon: [...afternoon, ...other] };
 }
 
 export default function DoctorDetail() {
@@ -121,7 +83,7 @@ export default function DoctorDetail() {
     setIsVisible(true);
   }, []);
 
-  // Prefill the form fields quietly if user is available (no UI markup change)
+  // Prefill the form fields quietly if user is available
   useEffect(() => {
     if (!userLoaded) return;
     if (user) {
@@ -196,8 +158,9 @@ export default function DoctorDetail() {
     };
   }, [id]);
 
-  const next7 = useMemo(() => {
-    return slotsData.dates.map((d) => new Date(d + "T00:00:00"));
+  // Only show next 6 available dates
+  const next6 = useMemo(() => {
+    return slotsData.dates.slice(0, 6).map((d) => new Date(d + "T00:00:00"));
   }, [slotsData]);
 
   const fee = Number(doctor?.fee ?? doctor?.fees ?? 0);
@@ -208,7 +171,10 @@ export default function DoctorDetail() {
     return slotsData.slots[key] || { allSlots: [], availableSlots: [], bookedSlots: [] };
   }, [selectedDate, slotsData]);
 
-  const slots = slotsInfo.allSlots;
+  const { morning: morningSlots, afternoon: afternoonSlots } = useMemo(
+    () => groupSlots(slotsInfo.allSlots || []),
+    [slotsInfo]
+  );
 
   // Mobile input handlers: only digits, max 10
   const handleMobileChange = (value) => {
@@ -276,17 +242,14 @@ export default function DoctorDetail() {
 
     setIsSubmitting(true);
 
-    const dateISO = selectedDate.toISOString().split("T")[0]; // YYYY-MM-DD
+    const dateISO = selectedDate.toISOString().split("T")[0];
 
-    // prefer fields from doctor object (this is only sent as a hint; backend will use DB)
     const doctorNameValue = doctor?.name || "";
     const specialityValue =
       doctor?.specialization ||
       doctor?.speciality ||
       doctor?.specialityName ||
       "";
-
-    // optional owner from doctor object (backend will prefer doctor.owner)
     const ownerValue = doctor?.owner || undefined;
 
     const payload = {
@@ -294,7 +257,6 @@ export default function DoctorDetail() {
       doctorName: doctorNameValue,
       speciality: specialityValue,
       owner: ownerValue,
-      // NEW: send image hints (optional — backend prefers DB but accepts these)
       doctorImageUrl: doctor?.imageUrl || doctor?.image || "",
       doctorImagePublicId:
         doctor?.imagePublicId || doctor?.image?.publicId || "",
@@ -334,20 +296,16 @@ export default function DoctorDetail() {
         return;
       }
 
-      // If checkoutUrl is returned -> redirect to Stripe Checkout
       if (body?.checkoutUrl) {
-        // redirect user to Stripe Checkout
         window.location.href = body.checkoutUrl;
         return;
       }
 
-      // Booking created (Cash or free)
       toast.success("Booking successful", {
         position: "top-center",
         autoClose: 1500,
       });
 
-      // navigate to appointments list (you can change this path)
       setTimeout(() => {
         window.location.href = "/appointments?payment_status=Pending";
       }, 700);
@@ -360,6 +318,16 @@ export default function DoctorDetail() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // ── helpers
+  const isToday = (date) => {
+    const t = new Date();
+    return (
+      date.getDate() === t.getDate() &&
+      date.getMonth() === t.getMonth() &&
+      date.getFullYear() === t.getFullYear()
+    );
   };
 
   if (loading)
@@ -424,6 +392,7 @@ export default function DoctorDetail() {
           </div>
         </div>
       </div>
+
       <div
         className={`${doctorDetailStyles.mainContent} ${
           isVisible
@@ -567,44 +536,55 @@ export default function DoctorDetail() {
             <div className={doctorDetailStyles.appointmentGrid}>
               {/* LEFT COLUMN */}
               <div className={doctorDetailStyles.dateSection}>
-                <h3 className={doctorDetailStyles.dateTitle}>
-                  <CalendarCheck className={doctorDetailStyles.dateTitleIcon} />{" "}
-                  Select Date
-                </h3>
 
-                <div className={doctorDetailStyles.dateScrollContainer}>
-                  <div className={doctorDetailStyles.dateButtonsContainer}>
-                    {next7.map((date) => {
-                      const isSelected =
-                        selectedDate?.toDateString() === date.toDateString();
-                      return (
-                        <button
-                          key={date.toISOString()}
-                          onClick={() => setSelectedDate(date)}
-                          className={`${doctorDetailStyles.dateButton} ${
-                            isSelected
-                              ? doctorDetailStyles.dateButtonSelected
-                              : doctorDetailStyles.dateButtonUnselected
-                          }`}
-                        >
-                          <div className={doctorDetailStyles.dateContent}>
-                            <div className={doctorDetailStyles.dateWeekday}>
-                              {date.toLocaleDateString("en-US", {
-                                weekday: "short",
-                              })}
-                            </div>
-                            <div className={doctorDetailStyles.dateDay}>
+                {/* ── NEW: Compact horizontal date strip ───────────────── */}
+                <div>
+                  <h3 className={doctorDetailStyles.dateTitle}>
+                    <CalendarCheck className={doctorDetailStyles.dateTitleIcon} />{" "}
+                    Select Date
+                    <span className="ml-auto text-xs text-gray-400 font-normal normal-case">Next 6 days</span>
+                  </h3>
+
+                  {/* Date strip */}
+                  <div className="flex gap-2 overflow-x-auto pb-1 mt-3 scrollbar-hide">
+                    {next6.length === 0 ? (
+                      <p className="text-sm text-gray-400 py-2">No available dates found.</p>
+                    ) : (
+                      next6.map((date) => {
+                        const isSelected =
+                          selectedDate?.toDateString() === date.toDateString();
+                        const today = isToday(date);
+
+                        return (
+                          <button
+                            key={date.toISOString()}
+                            onClick={() => {
+                              setSelectedDate(date);
+                              setSelectedSlot("");
+                            }}
+                            className={`
+                              flex-shrink-0 flex flex-col items-center
+                              px-3.5 py-2.5 rounded-xl border-2 cursor-pointer
+                              min-w-[60px] transition-all duration-200
+                              ${isSelected
+                                ? "bg-[#185FA5] border-[#185FA5] text-white shadow-lg shadow-[#185FA5]/20"
+                                : "bg-white border-[#B5D4F4] text-gray-600 hover:border-[#185FA5] hover:bg-[#E6F1FB]"
+                              }
+                            `}
+                          >
+                            <span className={`text-[9px] font-bold uppercase tracking-widest ${isSelected ? "text-blue-200" : "text-gray-400"}`}>
+                              {today ? "Today" : date.toLocaleDateString("en-US", { weekday: "short" })}
+                            </span>
+                            <span className={`text-lg font-bold leading-tight ${isSelected ? "text-white" : "text-gray-800"}`}>
                               {date.getDate()}
-                            </div>
-                            <div className={doctorDetailStyles.dateMonth}>
-                              {date.toLocaleDateString("en-US", {
-                                month: "short",
-                              })}
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
+                            </span>
+                            <span className={`text-[9px] font-medium ${isSelected ? "text-blue-200" : "text-gray-400"}`}>
+                              {date.toLocaleDateString("en-US", { month: "short" })}
+                            </span>
+                          </button>
+                        );
+                      })
+                    )}
                   </div>
                 </div>
 
@@ -675,43 +655,95 @@ export default function DoctorDetail() {
 
               {/* RIGHT COLUMN */}
               <div className={doctorDetailStyles.timeSlotsSection}>
+                {/* ── NEW: Grouped time slots ──────────────────────────── */}
                 <h3 className={doctorDetailStyles.timeSlotsTitle}>
                   <Clock className={doctorDetailStyles.timeSlotsIcon} />{" "}
                   Available Time Slots
                 </h3>
 
-                <div className={doctorDetailStyles.timeSlotsContainer}>
-                  {slots.length === 0 && (
-                    <p className={doctorDetailStyles.noSlotsMessage}>
-                      No time slots for this date.
-                    </p>
-                  )}
-
-                  {slots.map((slot) => {
-                    const isBooked = slotsInfo.bookedSlots.includes(slot);
-                    return (
-                      <button
-                        key={slot}
-                        disabled={isBooked}
-                        onClick={() => setSelectedSlot(slot)}
-                        className={`${doctorDetailStyles.timeSlotButton} ${
-                          selectedSlot === slot
-                            ? doctorDetailStyles.timeSlotButtonSelected
-                            : doctorDetailStyles.timeSlotButtonUnselected
-                        } ${
-                          isBooked
-                            ? "opacity-40 cursor-not-allowed bg-gray-100 line-through"
-                            : ""
-                        }`}
-                      >
-                        <div className={doctorDetailStyles.timeSlotContent}>
-                          <Clock className={doctorDetailStyles.timeSlotIcon} />
-                          <span>{slot} {isBooked && "(Booked)"}</span>
+                {slotsInfo.allSlots.length === 0 ? (
+                  <p className={doctorDetailStyles.noSlotsMessage}>
+                    No time slots for this date.
+                  </p>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Morning group */}
+                    {morningSlots.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Sun size={13} className="text-amber-500" />
+                          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Morning</span>
+                          <div className="flex-1 h-px bg-[#E6F1FB]" />
                         </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                        <div className="flex flex-wrap gap-2">
+                          {morningSlots.map((slot) => {
+                            const isBooked = slotsInfo.bookedSlots?.includes(slot);
+                            const isSelected = selectedSlot === slot;
+                            return (
+                              <button
+                                key={slot}
+                                disabled={isBooked}
+                                onClick={() => !isBooked && setSelectedSlot(slot)}
+                                className={`
+                                  flex items-center gap-1.5 px-3 py-1.5 rounded-xl
+                                  text-sm font-semibold border-2 transition-all duration-200
+                                  ${isSelected
+                                    ? "bg-[#185FA5] border-[#185FA5] text-white shadow-md"
+                                    : isBooked
+                                      ? "bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed line-through"
+                                      : "bg-white border-[#B5D4F4] text-gray-600 hover:border-[#185FA5] hover:bg-[#E6F1FB] hover:text-[#185FA5] cursor-pointer"
+                                  }
+                                `}
+                              >
+                                <Clock size={11} className={isSelected ? "text-blue-200" : "text-[#378ADD]"} />
+                                {slot}
+                                {isBooked && <span className="text-[10px] font-normal ml-0.5">(Full)</span>}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Afternoon group */}
+                    {afternoonSlots.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Sunset size={13} className="text-orange-400" />
+                          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Afternoon</span>
+                          <div className="flex-1 h-px bg-[#E6F1FB]" />
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {afternoonSlots.map((slot) => {
+                            const isBooked = slotsInfo.bookedSlots?.includes(slot);
+                            const isSelected = selectedSlot === slot;
+                            return (
+                              <button
+                                key={slot}
+                                disabled={isBooked}
+                                onClick={() => !isBooked && setSelectedSlot(slot)}
+                                className={`
+                                  flex items-center gap-1.5 px-3 py-1.5 rounded-xl
+                                  text-sm font-semibold border-2 transition-all duration-200
+                                  ${isSelected
+                                    ? "bg-[#185FA5] border-[#185FA5] text-white shadow-md"
+                                    : isBooked
+                                      ? "bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed line-through"
+                                      : "bg-white border-[#B5D4F4] text-gray-600 hover:border-[#185FA5] hover:bg-[#E6F1FB] hover:text-[#185FA5] cursor-pointer"
+                                  }
+                                `}
+                              >
+                                <Clock size={11} className={isSelected ? "text-blue-200" : "text-[#378ADD]"} />
+                                {slot}
+                                {isBooked && <span className="text-[10px] font-normal ml-0.5">(Full)</span>}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* SUMMARY */}
                 <div className={doctorDetailStyles.summaryContainer}>
@@ -798,8 +830,14 @@ export default function DoctorDetail() {
               </div>
             </div>
           </div>
-        </div>
-      </div>{" "}
+        </div>{" "}
+      </div>
+
+      {/* scrollbar-hide utility */}
+      <style>{`
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </div>
   );
 }

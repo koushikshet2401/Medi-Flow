@@ -11,6 +11,7 @@ import AddSer from "./pages/AddSer";
 import ListService from "./pages/ListService";
 import ServiceAppointments from "./pages/ServiceAppointments";
 import DoctorEditPage from "./pages/DoctorEditPage";
+import ServiceEditPage from "./pages/ServiceEditPage";
 
 function RequireAuth({ children }) {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -146,6 +147,24 @@ export default function App() {
   }
 />
 
+
+<Route
+  path="/service/:id"
+  element={
+    <RequireAuth>
+      <ServiceEditPage />
+    </RequireAuth>
+  }
+/>
+
+<Route
+  path="/list-service/service/:id"
+  element={
+    <RequireAuth>
+      <ServiceEditPage />
+    </RequireAuth>
+  }
+/>
 
 <Route
   path="/service-appointments"

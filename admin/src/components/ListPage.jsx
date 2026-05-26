@@ -392,15 +392,15 @@ function ListPage() {
               <div
                 className={doctorListStyles.expandableContent}
                 style={{
-                  maxHeight: isOpen ? (isMobileScreen ? 1200 : 1600) : 0,
+                  maxHeight: isOpen ? 400 : 0,
                   transition:
-                    "max-height 420ms cubic-bezier(.2,.9,.2,1), padding 220ms ease",
+                    "max-height 300ms ease, padding 200ms ease",
                   paddingTop: isOpen ? 16 : 0,
                   paddingBottom: isOpen ? 16 : 0,
                 }}
               >
                 {isOpen && (
-                  <DoctorQuickPreview doc={doc} API_BASE={API_BASE} fetchDoctors={fetchDoctors} />
+                  <DoctorQuickPreview doc={doc} />
                 )}
               </div>
             </article>
@@ -424,324 +424,23 @@ function ListPage() {
 
 export default ListPage;
 
-function DoctorQuickPreview({ doc, API_BASE, fetchDoctors }) {
-  const weeklyDays = doc.availabilitySettings?.weeklyDays || ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-  
-  const dayAbbrevs = {
-    Monday: "Mon",
-    Tuesday: "Tue",
-    Wednesday: "Wed",
-    Thursday: "Thu",
-    Friday: "Fri",
-    Saturday: "Sat",
-    Sunday: "Sun"
-  };
-  
-  const activeDaysStr = weeklyDays.length > 0
-    ? weeklyDays.map(d => dayAbbrevs[d] || d.slice(0, 3)).join(" • ")
-    : "No availability days set";
+function DoctorQuickPreview({ doc }) {
+  const scheduleText = doc.availabilitySettings?.weeklyDays?.length
+    ? doc.availabilitySettings.weeklyDays.join(", ")
+    : "Not specified";
 
   return (
-    <div className="flex flex-col bg-white p-1 text-sm w-full">
-      <div className="grid grid-cols-3 gap-6">
-        {/* Left Column (takes 2 out of 3 columns) */}
-        <div className="col-span-2 space-y-4 text-left">
-          <div>
-            <h4 className="text-md font-bold text-sky-700 mb-1 font-serif">About</h4>
-            <p className="text-sm text-sky-600 break-words whitespace-normal">{doc.about || "No biography provided."}</p>
-          </div>
-
-          <div>
-            <h4 className="text-md font-bold text-sky-700 mb-1 font-serif">Qualifications</h4>
-            <p className="text-sm text-sky-600 break-words whitespace-normal">
-              {doc.qualification || doc.qualifications || "Not specified"}
-            </p>
-          </div>
-
-          <div>
-            <h4 className="text-md font-bold text-sky-700 mb-1 font-serif">Schedule</h4>
-            <p className="text-xs text-sky-500 font-semibold mb-0.5">Available on:</p>
-            <p className="text-sm text-sky-600 font-bold">{activeDaysStr}</p>
-          </div>
-        </div>
-
-        {/* Right Column (takes 1 out of 3 columns) */}
-        <div className="col-span-1 text-right space-y-4 flex flex-col items-end">
-          <div>
-            <h4 className="text-md font-bold text-sky-700 mb-1 font-serif">Success</h4>
-            <p className="text-sm text-sky-600 font-bold">{doc.success || "98%"}</p>
-          </div>
-
-          <div>
-            <h4 className="text-md font-bold text-sky-700 mb-1 font-serif">Patients</h4>
-            <p className="text-sm text-sky-600 font-bold">{doc.patients || "12000"}</p>
-          </div>
-
-          <div>
-            <h4 className="text-md font-bold text-sky-700 mb-1 font-serif">Location</h4>
-            <p className="text-sm text-sky-600 font-bold">{doc.location || "Delhi"}</p>
-          </div>
-        </div>
+    <div className="grid grid-cols-2 gap-4 mt-2 pt-4 border-t border-gray-100 text-sm text-gray-600 px-4">
+      <div className="space-y-2 text-left">
+        <p><span className="font-semibold text-gray-500">About:</span> {doc.about || "No biography provided."}</p>
+        <p><span className="font-semibold text-gray-500">Qualifications:</span> {doc.qualification || doc.qualifications || "Not specified"}</p>
+        <p><span className="font-semibold text-gray-500">Schedule:</span> {scheduleText}</p>
+        <p><span className="font-semibold text-gray-500">Time slots:</span> {doc.slots || "Not specified"}</p>
       </div>
-
-      <DoctorAvailabilityPanel doc={doc} API_BASE={API_BASE} fetchDoctors={fetchDoctors} />
-    </div>
-  );
-}
-
-function DoctorAvailabilityPanel({ doc, API_BASE, fetchDoctors }) {
-  const [sessionMode, setSessionMode] = useState(doc.availabilitySettings?.sessions || "Both");
-  const [weeklyDays, setWeeklyDays] = useState(doc.availabilitySettings?.weeklyDays || ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]);
-  const [blockedDates, setBlockedDates] = useState(doc.availabilitySettings?.blockedDates || []);
-  const [newBlockDate, setNewBlockDate] = useState("");
-  const [savingSettings, setSavingSettings] = useState(false);
-
-  // Absence state
-  const [absenceDate, setAbsenceDate] = useState("");
-  const [absenceType, setAbsenceType] = useState("full-day"); // full-day, morning, afternoon, partial
-  const [untilSlot, setUntilSlot] = useState("11:30 AM");
-  const [triggeringAbsence, setTriggeringAbsence] = useState(false);
-
-  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-  const timeSlots = ["09:30 AM", "10:30 AM", "11:30 AM", "12:30 PM", "02:30 PM", "03:30 PM", "04:30 PM"];
-
-  const handleDayToggle = (day) => {
-    setWeeklyDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
-    );
-  };
-
-  const handleAddBlockDate = () => {
-    if (!newBlockDate) return;
-    if (blockedDates.includes(newBlockDate)) return;
-    setBlockedDates((prev) => [...prev, newBlockDate]);
-    setNewBlockDate("");
-  };
-
-  const handleRemoveBlockDate = (dateStr) => {
-    setBlockedDates((prev) => prev.filter((d) => d !== dateStr));
-  };
-
-  const handleSaveSettings = async () => {
-    setSavingSettings(true);
-    try {
-      const settings = {
-        sessions: sessionMode,
-        weeklyDays,
-        blockedDates,
-      };
-
-      const res = await fetch(`${API_BASE}/api/doctors/${doc._id || doc.id}/admin-update`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          availabilitySettings: settings,
-        }),
-      });
-
-      const body = await res.json().catch(() => null);
-      if (res.ok) {
-        alert("Doctor availability settings updated successfully!");
-        fetchDoctors();
-      } else {
-        alert(body?.message || "Failed to update doctor settings");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error saving settings");
-    } finally {
-      setSavingSettings(false);
-    }
-  };
-
-  const handleTriggerAbsence = async () => {
-    if (!absenceDate) {
-      alert("Please select a date for emergency absence");
-      return;
-    }
-    const ok = window.confirm(
-      `Trigger Emergency Absence for Dr. ${doc.name} on ${absenceDate} (Type: ${absenceType})?\nThis will automatically push and reschedule affected patient appointments forward.`
-    );
-    if (!ok) return;
-
-    setTriggeringAbsence(true);
-    try {
-      const res = await fetch(`${API_BASE}/api/doctors/${doc._id || doc.id}/admin-absence`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          date: absenceDate,
-          type: absenceType,
-          untilSlot: absenceType === "partial" ? untilSlot : undefined,
-        }),
-      });
-
-      const body = await res.json().catch(() => null);
-      if (res.ok) {
-        alert(
-          `Emergency Absence registered successfully!\nMoved ${body?.affectedAppointmentsCount || body?.count || 0} appointment(s).`
-        );
-        fetchDoctors();
-      } else {
-        alert(body?.message || "Failed to register emergency absence");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error registering emergency absence");
-    } finally {
-      setTriggeringAbsence(false);
-    }
-  };
-
-  return (
-    <div className="mt-4 border-t pt-4 w-full">
-      <h3 className="text-base font-semibold text-gray-900 mb-3 text-left">Availability & Closure Controls</h3>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
-        {/* COLUMN 1: Session */}
-        <div className="space-y-4 text-left">
-          <div>
-            <h4 className="font-semibold text-gray-900 border-b pb-1 mb-2">Session Preference</h4>
-            <select
-              value={sessionMode}
-              onChange={(e) => setSessionMode(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
-            >
-              <option value="Morning">Morning Only (9:30 AM – 1:30 PM)</option>
-              <option value="Afternoon">Afternoon Only (2:30 PM – 5:30 PM)</option>
-              <option value="Both">Both Sessions (Full Day)</option>
-            </select>
-          </div>
-        </div>
-
-        {/* COLUMN 2: Weekly Days & Date Blocking */}
-        <div className="space-y-4 text-left">
-          <div>
-            <h4 className="font-semibold text-gray-900 border-b pb-1 mb-2">Weekly Availability</h4>
-            <div className="grid grid-cols-2 gap-2">
-              {daysOfWeek.map((day) => {
-                const checked = weeklyDays.includes(day);
-                return (
-                  <label key={day} className="flex items-center gap-2 cursor-pointer text-xs">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => handleDayToggle(day)}
-                      className="rounded text-blue-600 focus:ring-blue-500 h-3.5 w-3.5"
-                    />
-                    <span>{day}</span>
-                  </label>
-                );
-              })}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-gray-900 border-b pb-1 mb-2">Blocked Dates</h4>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="date"
-                value={newBlockDate}
-                onChange={(e) => setNewBlockDate(e.target.value)}
-                className="flex-1 p-1.5 border border-gray-300 rounded text-xs bg-white"
-              />
-              <button
-                onClick={handleAddBlockDate}
-                className="px-3 py-1 bg-gray-800 text-white rounded text-xs hover:bg-gray-700"
-              >
-                Block
-              </button>
-            </div>
-            <div className="max-h-24 overflow-y-auto border border-gray-200 rounded p-1 bg-white space-y-1">
-              {blockedDates.length === 0 ? (
-                <p className="text-xs text-gray-400 p-1">No date blocks set.</p>
-              ) : (
-                blockedDates.map((date) => (
-                  <div key={date} className="flex items-center justify-between text-xs bg-gray-100 px-2 py-0.5 rounded">
-                    <span>{date}</span>
-                    <button
-                      onClick={() => handleRemoveBlockDate(date)}
-                      className="text-red-500 hover:text-red-700 font-bold"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          <button
-            onClick={handleSaveSettings}
-            disabled={savingSettings}
-            className="w-full py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-medium rounded transition"
-          >
-            {savingSettings ? "Saving Settings..." : "Save Availability Settings"}
-          </button>
-        </div>
-
-        {/* COLUMN 3: Emergency Closure */}
-        <div className="space-y-4 bg-red-50 border border-red-200 rounded p-4 text-left">
-          <div>
-            <h4 className="font-semibold text-red-900 border-b border-red-200 pb-1 mb-2 flex items-center gap-1.5">
-              ⚠️ Emergency Absence / Closure
-            </h4>
-            <p className="text-xs text-red-700 mb-3">
-              Triggering closure instantly blocks the date/session and automatically reschedules all patient appointments forward.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-xs font-semibold text-red-800">Select Date</label>
-            <input
-              type="date"
-              value={absenceDate}
-              onChange={(e) => setAbsenceDate(e.target.value)}
-              className="w-full p-2 border border-red-300 rounded text-xs bg-white"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-xs font-semibold text-red-800">Absence Type</label>
-            <select
-              value={absenceType}
-              onChange={(e) => setAbsenceType(e.target.value)}
-              className="w-full p-2 border border-red-300 rounded text-xs bg-white"
-            >
-              <option value="full-day">Full Day</option>
-              <option value="morning">Morning Only (9:30 AM – 1:30 PM)</option>
-              <option value="afternoon">Afternoon Only (2:30 PM – 5:30 PM)</option>
-              <option value="partial">Partial Day (Starts From Time)</option>
-            </select>
-          </div>
-
-          {absenceType === "partial" && (
-            <div className="space-y-2">
-              <label className="block text-xs font-semibold text-red-800">Unavailable From</label>
-              <select
-                value={untilSlot}
-                onChange={(e) => setUntilSlot(e.target.value)}
-                className="w-full p-2 border border-red-300 rounded text-xs bg-white"
-              >
-                {timeSlots.map((ts) => (
-                  <option key={ts} value={ts}>{ts}</option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <button
-            onClick={handleTriggerAbsence}
-            disabled={triggeringAbsence}
-            className="w-full py-2 bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white font-semibold rounded text-xs transition uppercase tracking-wider"
-          >
-            {triggeringAbsence ? "Processing Shifting..." : "Trigger Emergency Absence"}
-          </button>
-        </div>
+      <div className="space-y-2 text-right flex flex-col items-end">
+        <p><span className="font-semibold text-gray-500">Success:</span> {doc.success || "98%"}</p>
+        <p><span className="font-semibold text-gray-500">Patients:</span> {doc.patients || "12000"}</p>
+        <p><span className="font-semibold text-gray-500">Location:</span> {doc.location || "Delhi"}</p>
       </div>
     </div>
   );
