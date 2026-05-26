@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-import React, { useState, useRef, useEffect } from "react";
-=======
 /**
  * ListServicePage.jsx
  * Compact service list with:
@@ -12,7 +9,6 @@ import React, { useState, useRef, useEffect } from "react";
  *  - Built-in toast notification system
  */
 import React, { useState, useEffect } from "react";
->>>>>>> 9ccc40b2616421a52cce35c6ff80f52d9a79a5c5
 import { useNavigate } from "react-router-dom";
 import {
   Image as ImageIcon,
@@ -40,10 +36,7 @@ const months = [
 
 export default function ListServicePage() {
   const navigate = useNavigate();
-<<<<<<< HEAD
-  const API_BASE = "https://medi-flow-backend.onrender.com";
-=======
->>>>>>> 9ccc40b2616421a52cce35c6ff80f52d9a79a5c5
+
 
   const [services, setServices] = useState([]);
   const [openDetails, setOpenDetails] = useState({});
