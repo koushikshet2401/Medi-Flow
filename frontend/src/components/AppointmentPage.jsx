@@ -76,6 +76,7 @@ function computeStatus(item) {
   const now = new Date();
   if (!item) return "Pending";
 
+  if (item.refundStatus === "Approved") return "Refunded";
   if (item.status === "Canceled") return "Canceled";
   if (item.status === "Rescheduled") {
     if (

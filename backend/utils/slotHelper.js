@@ -347,7 +347,10 @@ export async function rescheduleForAbsence(entityId, entityType, absenceSettings
       }
 
       while (!rescheduled && checkDaysLimit > 0) {
-        const searchDateStr = searchDateObj.toISOString().split("T")[0];
+        const y = searchDateObj.getFullYear();
+        const m = String(searchDateObj.getMonth() + 1).padStart(2, "0");
+        const d = String(searchDateObj.getDate()).padStart(2, "0");
+        const searchDateStr = `${y}-${m}-${d}`;
         const { availableSlots } = await getAvailableSlots(entityId, entityType, searchDateStr);
 
         // Filter out slots that we already allocated to other rescheduled patients in this transaction

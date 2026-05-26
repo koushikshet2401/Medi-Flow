@@ -12,7 +12,11 @@ import { useAuth } from "@clerk/clerk-react";
 import toast, { Toaster } from "react-hot-toast";
 import { serviceDetailStyles, iconSize } from "../assets/dummyStyles";
 
-const DEFAULT_HOST = "https://medi-flow-backend.onrender.com".replace(/\/$/, "");
+const DEFAULT_HOST = (
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:4000"
+    : "https://medi-flow-backend.onrender.com"
+).replace(/\/$/, "");
 
 export default function ServiceDetail() {
   const { id } = useParams();

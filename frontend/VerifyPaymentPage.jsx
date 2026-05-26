@@ -2,7 +2,10 @@ import axios from "axios";
 import React, { useEffect } from "react"; // ✅ useEffect was missing
 import { useLocation, useNavigate } from "react-router-dom";
 
-const API_BASE = "https://medi-flow-backend.onrender.com";
+const API_BASE =
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:4000"
+    : "https://medi-flow-backend.onrender.com";
 
 function VerifyPaymentPage() {
   const location = useLocation();

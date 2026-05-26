@@ -103,7 +103,10 @@ const ServiceCard = ({ service }) => {
   );
 };
 function ServicePage({ previewCount = 9999 } = {}) {
-  const API_BASE = "https://medi-flow-backend.onrender.com";
+  const API_BASE =
+    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+      ? "http://localhost:4000"
+      : "https://medi-flow-backend.onrender.com";
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

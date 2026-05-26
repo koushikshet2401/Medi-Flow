@@ -5,7 +5,10 @@ import { ChevronRight, MousePointer2Off } from 'lucide-react';
 import { Medal } from 'lucide-react';
 
 const HomeDoctors = ({ previewCount = 8 }) => {
-    const API_BASE = "https://medi-flow-backend.onrender.com";
+    const API_BASE =
+        window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+            ? "http://localhost:4000"
+            : "https://medi-flow-backend.onrender.com";
     const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");

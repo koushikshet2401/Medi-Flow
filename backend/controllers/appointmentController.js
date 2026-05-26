@@ -30,21 +30,7 @@ const buildFrontendBase = (req) => {
 };
 
 // ✅ FIXED: req.auth is now a function in newer @clerk/express versions
-function resolveClerkUserId(req) {
-  try {
-    const auth = typeof req.auth === "function" ? req.auth() : req.auth || {};
-    const fromReq = auth?.userId || auth?.user_id || auth?.user?.id || null;
-    if (fromReq) return fromReq;
-    try {
-      const serverAuth = getAuth ? getAuth(req) : null;
-      return serverAuth?.userId || null;
-    } catch (e) {
-      return null;
-    }
-  } catch (e) {
-    return null;
-  }
-}
+import { resolveClerkUserId } from "../utils/authHelper.js";
 
 async function autoCleanupMissedAppointments() {
   try {

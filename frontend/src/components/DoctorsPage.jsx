@@ -3,7 +3,10 @@ import { doctorDetailStyles, doctorsPageStyles } from "../assets/dummyStyles";
 import { ChevronRight, CircleChevronDown, CircleChevronUp, Medal, MousePointer2Off, Search, X } from "lucide-react";
 import { Link } from "react-router-dom";
 function DoctorsPage() {
-  const API_BASE = "https://medi-flow-backend.onrender.com";
+  const API_BASE =
+    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+      ? "http://localhost:4000"
+      : "https://medi-flow-backend.onrender.com";
   const [allDoctors, setAllDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
