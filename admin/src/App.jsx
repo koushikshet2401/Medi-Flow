@@ -103,6 +103,14 @@ export default function App() {
         }
       />
       <Route
+        path="/doctor/:id"
+        element={
+          <RequireAuth>
+            <DoctorEditPage />
+          </RequireAuth>
+        }
+      />
+      <Route
         path="/appointments"
         element={
           <RequireAuth>

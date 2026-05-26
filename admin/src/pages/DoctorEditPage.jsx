@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
+import AdminLayout from "../components/AdminLayout";
 import {
   ArrowLeft, Save, AlertTriangle, Calendar, Clock, Shield,
   User, MapPin, Star, CheckCircle, XCircle, Stethoscope, Loader2
@@ -12,14 +14,69 @@ const API_BASE =
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-const SESSION_SLOTS = {
-  Morning:   ["9:30 AM–10:30 AM","10:30 AM–11:30 AM","11:30 AM–12:30 PM","12:30 PM–1:30 PM"],
-  Afternoon: ["2:30 PM–3:30 PM","3:30 PM–4:30 PM","4:30 PM–5:30 PM"],
-};
+// Helper functions for date formatting and sorting
+function formatDateISO(iso) {
+  if (!iso || typeof iso !== "string") return iso;
+  const parts = iso.split("-");
+  if (parts.length !== 3) return iso;
+  const [y, m, d] = parts;
+  const dateObj = new Date(Number(y), Number(m) - 1, Number(d));
+  const monthNames = [
+    "Jan", "Feb", "Mar", "Apr", "May", "June",
+    "July", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+  const day = String(Number(d));
+  const month = monthNames[dateObj.getMonth()] || "";
+  return `${day} ${month} ${y}`;
+}
+
+function normalizeToDateString(d) {
+  if (!d) return null;
+  const dt = new Date(d);
+  if (Number.isNaN(dt.getTime())) return null;
+  return dt.toISOString().split("T")[0];
+}
+
+function buildScheduleMap(schedule) {
+  const map = {};
+  if (!schedule || typeof schedule !== "object") return map;
+  Object.entries(schedule).forEach(([k, v]) => {
+    const nd = normalizeToDateString(k) || String(k);
+    map[nd] = Array.isArray(v) ? v.slice() : [];
+  });
+  return map;
+}
+
+function getSortedScheduleDates(scheduleLike) {
+  let keys = [];
+  if (Array.isArray(scheduleLike)) {
+    keys = scheduleLike.map(normalizeToDateString).filter(Boolean);
+  } else if (scheduleLike && typeof scheduleLike === "object") {
+    keys = Object.keys(scheduleLike).map(normalizeToDateString).filter(Boolean);
+  }
+
+  keys = Array.from(new Set(keys));
+  const parsed = keys.map((ds) => ({ ds, date: new Date(ds) }));
+  const dateVal = (d) => Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+
+  const today = new Date();
+  const todayVal = dateVal(today);
+
+  const past = parsed
+    .filter((p) => dateVal(p.date) < todayVal)
+    .sort((a, b) => dateVal(b.date) - dateVal(a.date));
+
+  const future = parsed
+    .filter((p) => dateVal(p.date) >= todayVal)
+    .sort((a, b) => dateVal(a.date) - dateVal(b.date));
+
+  return [...past, ...future].map((p) => p.ds);
+}
 
 export default function DoctorEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { getToken } = useAuth();
 
   const [doctor, setDoctor]   = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,6 +89,9 @@ export default function DoctorEditPage() {
   const [blockedDates, setBlockedDates] = useState([]);
   const [newBlockDate, setNewBlockDate] = useState("");
 
+  // Interactive Schedule Selector state
+  const [activeScheduleDate, setActiveScheduleDate] = useState(null);
+
   // Emergency absence
   const [absenceDate, setAbsenceDate]       = useState("");
   const [absenceSession, setAbsenceSession] = useState("Both");
@@ -42,8 +102,8 @@ export default function DoctorEditPage() {
     setTimeout(() => setToast(null), 3500);
   }
 
-  // ── Fetch doctor ──────────────────────────────────────────────────────────
-  useEffect(() => {
+  // Fetch doctor data
+  const loadDoctorData = () => {
     if (!id) return;
     setLoading(true);
     fetch(`${API_BASE}/api/doctors/${id}`)
@@ -56,12 +116,23 @@ export default function DoctorEditPage() {
         setSessionMode(s.sessions || s.sessionMode || "Both");
         setWeeklyDays(s.weeklyDays?.length ? s.weeklyDays : ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]);
         setBlockedDates(Array.isArray(s.blockedDates) ? s.blockedDates : []);
+        
+        // Pick the first upcoming date as selected active schedule date
+        const scheduleMap = buildScheduleMap(doc.schedule || {});
+        const sortedDates = getSortedScheduleDates(scheduleMap);
+        if (sortedDates.length > 0 && !activeScheduleDate) {
+          setActiveScheduleDate(sortedDates[0]);
+        }
       })
       .catch(() => showToast("Failed to load doctor", "error"))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadDoctorData();
   }, [id]);
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
+  // Helpers
   const toggleDay = (day) =>
     setWeeklyDays(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]);
 
@@ -71,13 +142,60 @@ export default function DoctorEditPage() {
     setNewBlockDate("");
   };
 
-  // ── Save availability settings ────────────────────────────────────────────
+  const removeBlockDate = (d) => {
+    setBlockedDates(prev => prev.filter(x => x !== d));
+  };
+
+  // Robust Auth Token Resolver with detailed console debugging
+  const resolveToken = async () => {
+    console.log("=== [Frontend] Auth Token Resolution Check ===");
+    
+    // 1. Try Clerk auth context/store directly
+    if (getToken) {
+      try {
+        const clerkToken = await getToken();
+        if (clerkToken) {
+          console.log("[Auth-Debug] SUCCESS: Retrieved token from Clerk useAuth context successfully:", clerkToken.slice(0, 30) + "...");
+          return clerkToken;
+        }
+      } catch (e) {
+        console.warn("[Auth-Debug] Clerk useAuth.getToken() check failed:", e);
+      }
+    }
+
+    // 2. Try localStorage keys: clerk_token, token, authToken
+    const localKeys = ["clerk_token", "token", "authToken"];
+    for (const key of localKeys) {
+      const t = localStorage.getItem(key);
+      if (t) {
+        console.log(`[Auth-Debug] SUCCESS: Resolved token from localStorage under key '${key}':`, t.slice(0, 30) + "...");
+        return t;
+      }
+    }
+
+    console.error("[Auth-Debug] FAILURE: No auth token found in Clerk context or any localStorage keys (clerk_token, token, authToken)!");
+    return null;
+  };
+
+  // Save availability settings
   const handleSave = async () => {
     setSaving(true);
     try {
+      const token = await resolveToken();
+      if (!token) {
+        console.warn("[Auth-Debug] Save aborted: Token is missing!");
+        showToast("Authentication token is missing. Please sign in again.", "error");
+        setTimeout(() => navigate("/"), 2500);
+        return;
+      }
+
+      console.log(`[Auth-Debug] Sending PUT request to ${API_BASE}/api/doctors/${id}/admin-update with Bearer token...`);
       const res = await fetch(`${API_BASE}/api/doctors/${id}/admin-update`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify({
           availabilitySettings: {
             sessionMode,
@@ -87,312 +205,350 @@ export default function DoctorEditPage() {
           },
         }),
       });
+
+      console.log("[Auth-Debug] Received Response Status:", res.status);
+      if (res.status === 401 || res.status === 403) {
+        console.error("[Auth-Debug] Unauthorized status returned from backend!");
+        showToast("Session expired or unauthorized. Redirecting to login...", "error");
+        setTimeout(() => navigate("/"), 2200);
+        return;
+      }
+
       const body = await res.json().catch(() => ({}));
       if (res.ok) {
+        console.log("[Auth-Debug] Settings successfully saved! Payload:", body);
         showToast("Availability settings saved successfully!", "success");
         setDoctor(body.data || doctor);
       } else {
+        console.warn("[Auth-Debug] Backend validation failed:", body?.message);
         showToast(body?.message || "Failed to save settings", "error");
       }
-    } catch {
+    } catch (err) {
+      console.error("[Auth-Debug] Network error saving settings:", err);
       showToast("Network error — please try again", "error");
     } finally {
       setSaving(false);
     }
   };
 
-  // ── Trigger emergency absence ─────────────────────────────────────────────
+  // Trigger emergency absence
   const handleAbsence = async () => {
-    if (!absenceDate) { showToast("Please select a date", "error"); return; }
+    if (!absenceDate) { showToast("Please select a date for closure", "error"); return; }
     const confirmed = window.confirm(
-      `Trigger Emergency Closure for Dr. ${doctor?.name} on ${absenceDate} (${absenceSession} session)?\n\nThis will automatically reschedule all affected appointments forward.`
+      `Trigger Emergency Closure for Dr. ${doctor?.name} on ${absenceDate} (${absenceSession} session)?\n\nThis will automatically reschedule all affected appointments forward in sequential order.`
     );
     if (!confirmed) return;
 
     setTriggeringAbsence(true);
     try {
+      const token = await resolveToken();
+      if (!token) {
+        console.warn("[Auth-Debug] Emergency closure aborted: Token is missing!");
+        showToast("Authentication token is missing. Please sign in again.", "error");
+        setTimeout(() => navigate("/"), 2500);
+        return;
+      }
+
+      console.log(`[Auth-Debug] Sending POST request to ${API_BASE}/api/doctors/${id}/admin-absence with Bearer token...`);
       const res = await fetch(`${API_BASE}/api/doctors/${id}/admin-absence`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify({ date: absenceDate, session: absenceSession }),
       });
+
+      console.log("[Auth-Debug] Received Response Status:", res.status);
+      if (res.status === 401 || res.status === 403) {
+        console.error("[Auth-Debug] Unauthorized status returned from backend!");
+        showToast("Session expired or unauthorized. Redirecting to login...", "error");
+        setTimeout(() => navigate("/"), 2200);
+        return;
+      }
+
       const body = await res.json().catch(() => ({}));
       if (res.ok) {
+        console.log("[Auth-Debug] Emergency closure registered! Payload:", body);
         showToast(
           `Emergency closure registered! ${body?.affectedAppointmentsCount ?? 0} appointment(s) rescheduled.`,
           "success"
         );
         setAbsenceDate("");
-        // Also add to blocked dates locally
-        if (!blockedDates.includes(absenceDate))
+        
+        // Instantly reload doctor slots & add local block date
+        if (!blockedDates.includes(absenceDate)) {
           setBlockedDates(prev => [...prev, absenceDate].sort());
+        }
+        loadDoctorData();
       } else {
+        console.warn("[Auth-Debug] Backend closure trigger failed:", body?.message);
         showToast(body?.message || "Failed to register closure", "error");
       }
-    } catch {
+    } catch (err) {
+      console.error("[Auth-Debug] Network error registering closure:", err);
       showToast("Network error — please try again", "error");
     } finally {
       setTriggeringAbsence(false);
     }
   };
-
-  // ── Render states ─────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="flex flex-col items-center gap-3 text-slate-500">
-          <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
-          <p className="font-medium text-sm">Loading doctor profile…</p>
+      <AdminLayout>
+        <div className="min-h-[80vh] flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3 text-slate-500">
+            <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
+            <p className="font-semibold text-sm">Loading doctor profile details...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   if (!doctor) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="text-center">
-          <p className="text-slate-600 font-semibold mb-4">Doctor not found.</p>
-          <button onClick={() => navigate("/list")} className="text-blue-600 hover:underline text-sm">
-            ← Back to Doctor List
-          </button>
+      <AdminLayout>
+        <div className="min-h-[80vh] flex items-center justify-center">
+          <div className="text-center bg-white p-8 rounded-2xl border border-slate-200 shadow-sm max-w-sm">
+            <AlertTriangle className="w-12 h-12 text-rose-500 mx-auto mb-3" />
+            <p className="text-slate-600 font-bold mb-4">Doctor Profile not found.</p>
+            <button
+              onClick={() => navigate("/list")}
+              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all"
+            >
+              ← Back to Doctor List
+            </button>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   const isAvailable = doctor.availability === "Available";
-  const previewSlots = SESSION_SLOTS[sessionMode] ?? [...SESSION_SLOTS.Morning, ...SESSION_SLOTS.Afternoon];
+  const scheduleMap = buildScheduleMap(doctor.schedule || {});
+  const sortedDates = getSortedScheduleDates(scheduleMap);
+  
+  // Slots calculated for currently active selected date
+  const activeSlots = activeScheduleDate ? (scheduleMap[activeScheduleDate] || []) : [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
+    <AdminLayout>
+      <div className="min-h-screen bg-slate-50/50 pb-16 font-sans">
+        
+        {/* ─── Floating Toast Notification ──────────────────────────────────── */}
+        {toast && (
+          <div className={`fixed top-5 right-5 z-50 flex items-center gap-2.5 px-5 py-3.5 rounded-2xl shadow-2xl text-sm font-semibold text-white transition-all duration-300 ${toast.type === "success" ? "bg-emerald-500 animate-slideIn" : "bg-rose-500 animate-slideIn"}`}>
+            {toast.type === "success" ? <CheckCircle className="w-4.5 h-4.5" /> : <XCircle className="w-4.5 h-4.5" />}
+            {toast.msg}
+          </div>
+        )}
 
-      {/* ─── Toast ────────────────────────────────────────────────────────── */}
-      {toast && (
-        <div className={`fixed top-5 right-5 z-50 flex items-center gap-2.5 px-5 py-3.5 rounded-2xl shadow-2xl text-sm font-semibold text-white transition-all duration-300 ${toast.type === "success" ? "bg-emerald-500" : "bg-rose-500"}`}>
-          {toast.type === "success" ? <CheckCircle className="w-4.5 h-4.5" /> : <XCircle className="w-4.5 h-4.5" />}
-          {toast.msg}
-        </div>
-      )}
-
-      {/* ─── Header ──────────────────────────────────────────────────────── */}
-      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/70 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+        {/* ─── Breadcrumb Sticky Bar ────────────────────────────────────────── */}
+        <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200/60 shadow-xs px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
           <button
             onClick={() => navigate("/list")}
-            className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm"
+            className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition-colors font-semibold text-sm cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             Doctor List
           </button>
-          <h1 className="text-slate-800 font-bold text-base sm:text-lg truncate">
-            Manage — <span className="text-blue-600">Dr. {doctor.name}</span>
+          <h1 className="text-slate-800 font-black text-sm sm:text-base truncate">
+            Manage Doctor Profile — <span className="text-blue-600">Dr. {doctor.name}</span>
           </h1>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white text-sm font-semibold rounded-xl shadow-md transition-all"
+            className="flex items-center gap-2 px-4.5 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm transition-all cursor-pointer"
           >
             {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-            {saving ? "Saving…" : "Save Settings"}
+            {saving ? "Saving..." : "Save Settings"}
           </button>
         </div>
-      </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
-        {/* ─── Doctor Profile Card ─────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/70 p-6 flex flex-col sm:flex-row gap-5 items-start">
-          <div className="relative flex-shrink-0">
-            <img
-              src={doctor.imageUrl || doctor.image || "/placeholder-doctor.jpg"}
-              alt={doctor.name}
-              className="w-24 h-24 rounded-2xl object-cover shadow-md border-2 border-blue-100"
-            />
-            <span className={`absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full border-2 border-white shadow-sm ${isAvailable ? "bg-emerald-400" : "bg-rose-400"}`} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2 mb-1">
-              <h2 className="text-xl font-bold text-slate-800">{doctor.name}</h2>
-              <span className={`text-xs px-2.5 py-0.5 rounded-full font-semibold ${isAvailable ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200" : "bg-rose-50 text-rose-700 ring-1 ring-rose-200"}`}>
-                {isAvailable ? "Available" : "Unavailable"}
-              </span>
+          {/* ──────────────────────────────────────────────────────────────────
+              SECTION 1: TOP PROFILE SECTION
+              ────────────────────────────────────────────────────────────────── */}
+          <div className="bg-white rounded-3xl shadow-xs border border-slate-200/60 p-6 flex flex-col md:flex-row gap-6 items-start hover:shadow-sm transition-all duration-300">
+            <div className="relative flex-shrink-0 mx-auto md:mx-0">
+              <img
+                src={doctor.imageUrl || doctor.image || "/placeholder-doctor.jpg"}
+                alt={doctor.name}
+                className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl object-cover shadow-md border-3 border-blue-50/70"
+              />
+              <span className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-3 border-white shadow-md ${isAvailable ? "bg-emerald-400" : "bg-rose-400"}`} />
             </div>
-            <p className="text-blue-600 font-medium text-sm mb-2">{doctor.specialization || doctor.speciality}</p>
-            <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-slate-500">
-              <span className="flex items-center gap-1"><Stethoscope className="w-3 h-3" /> {doctor.experience} yrs experience</span>
-              <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {doctor.location}</span>
-              <span className="flex items-center gap-1"><Star className="w-3 h-3 text-amber-400 fill-amber-400" /> {doctor.rating}</span>
-              <span className="flex items-center gap-1"><User className="w-3 h-3" /> {doctor.patients} patients</span>
-            </div>
-            {doctor.about && <p className="mt-2 text-xs text-slate-500 line-clamp-2">{doctor.about}</p>}
-          </div>
-          <div className="text-right flex-shrink-0">
-            <p className="text-2xl font-black text-slate-800">₹{doctor.fee}</p>
-            <p className="text-xs text-slate-400">per consultation</p>
-          </div>
-        </div>
 
-        {/* ─── Main Grid ─────────────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-          {/* ── LEFT: Session + Slot Preview ─────────────────────────── */}
-          <div className="space-y-5">
-
-            {/* Session preference */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/70 p-5">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
-                  <Clock className="w-4 h-4 text-blue-600" />
-                </div>
-                <h3 className="font-bold text-slate-800 text-sm">Session Preference</h3>
+            <div className="flex-1 min-w-0 text-center md:text-left">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 mb-1.5">
+                <h2 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">{doctor.name}</h2>
+                <span className={`text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${isAvailable ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-rose-50 text-rose-700 border border-rose-200"}`}>
+                  {isAvailable ? "Available" : "Unavailable"}
+                </span>
               </div>
-              <div className="space-y-2">
-                {[
-                  { v: "Morning",   label: "Morning Only",    sub: "9:30 AM – 1:30 PM (4 slots)" },
-                  { v: "Afternoon", label: "Afternoon Only",  sub: "2:30 PM – 5:30 PM (3 slots)" },
-                  { v: "Both",      label: "Both Sessions",   sub: "9:30 AM – 5:30 PM (7 slots)" },
-                ].map(opt => (
-                  <label key={opt.v} className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${sessionMode === opt.v ? "border-blue-300 bg-blue-50" : "border-slate-200 hover:border-blue-200"}`}>
-                    <input
-                      type="radio"
-                      name="session"
-                      value={opt.v}
-                      checked={sessionMode === opt.v}
-                      onChange={() => setSessionMode(opt.v)}
-                      className="mt-0.5 text-blue-600 accent-blue-600"
-                    />
-                    <div>
-                      <p className={`text-sm font-semibold ${sessionMode === opt.v ? "text-blue-700" : "text-slate-700"}`}>{opt.label}</p>
-                      <p className="text-xs text-slate-500">{opt.sub}</p>
+              <p className="text-blue-600 font-bold text-sm sm:text-base mb-3.5">{doctor.specialization || doctor.speciality}</p>
+              
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-2 text-xs sm:text-sm text-slate-500">
+                <span className="flex items-center gap-1.5"><Stethoscope className="w-4 h-4 text-blue-500" /> {doctor.experience} experience</span>
+                <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-rose-500" /> {doctor.location || "Delhi"}</span>
+                <span className="flex items-center gap-1.5"><Star className="w-4 h-4 text-amber-400 fill-amber-400" /> {doctor.rating || "5.0"} rating</span>
+                <span className="flex items-center gap-1.5"><User className="w-4 h-4 text-teal-500" /> {doctor.patients || "0"} patients</span>
+              </div>
+            </div>
+
+            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center md:text-right min-w-[140px] w-full md:w-auto flex-shrink-0">
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-0.5">Consultation Fee</p>
+              <p className="text-2xl sm:text-3xl font-black text-slate-800">₹{doctor.fee}</p>
+              <p className="text-[10px] text-slate-400">per session session</p>
+            </div>
+          </div>
+
+          {/* ─── Main Content Grid ─── */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            {/* ── LEFT & MIDDLE: INFO & SCHEDULE SECTIONS ── */}
+            <div className="lg:col-span-2 space-y-6">
+
+              {/* ──────────────────────────────────────────────────────────────
+                  SECTION 2: INFORMATION SECTION
+                  ────────────────────────────────────────────────────────────── */}
+              <div className="bg-white rounded-3xl shadow-xs border border-slate-200/60 p-6 hover:shadow-sm transition-all duration-300">
+                <div className="flex items-center gap-3 mb-5 border-b border-slate-100 pb-3.5">
+                  <div className="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <User className="w-4.5 h-4.5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">Information Details</h3>
+                    <p className="text-[11px] text-slate-400">Read-only biographical & profile summaries</p>
+                  </div>
+                </div>
+
+                <div className="space-y-5">
+                  <div>
+                    <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">About Doctor Biography</h4>
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50/50 p-4 rounded-2xl border border-slate-100 shadow-xs">
+                      {doctor.about || "No biography provided by the doctor."}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">Academic Qualifications</h4>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-800 bg-slate-50/50 px-4 py-3 rounded-2xl border border-slate-100 shadow-xs">
+                      {doctor.qualification || doctor.qualifications || "Doctor qualifications are not registered."}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="bg-slate-50/50 border border-slate-100 p-3 rounded-2xl text-center shadow-xs">
+                      <h5 className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 mb-0.5">Success Rate</h5>
+                      <p className="text-base sm:text-lg font-black text-emerald-600">{doctor.success || "98%"}</p>
                     </div>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Slot preview */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/70 p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center">
-                  <Calendar className="w-4 h-4 text-indigo-600" />
+                    <div className="bg-slate-50/50 border border-slate-100 p-3 rounded-2xl text-center shadow-xs">
+                      <h5 className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 mb-0.5">Patients Managed</h5>
+                      <p className="text-base sm:text-lg font-black text-slate-800">{doctor.patients || "0"}</p>
+                    </div>
+                    <div className="bg-slate-50/50 border border-slate-100 p-3 rounded-2xl text-center shadow-xs">
+                      <h5 className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 mb-0.5">Practice Location</h5>
+                      <p className="text-xs sm:text-sm font-black text-slate-800 truncate">{doctor.location || "Delhi"}</p>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="font-bold text-slate-800 text-sm">Generated Slots Preview</h3>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {previewSlots.map(s => (
-                  <span key={s} className="text-xs bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg font-medium border border-indigo-100">
-                    {s}
-                  </span>
-                ))}
-              </div>
-              <p className="text-[11px] text-slate-400 mt-3">These slots are auto-generated on every available date.</p>
-            </div>
-          </div>
 
-          {/* ── MIDDLE: Weekly Days + Blocked Dates ──────────────────── */}
-          <div className="space-y-5">
-
-            {/* Weekly availability */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/70 p-5">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-emerald-600" />
+              {/* ──────────────────────────────────────────────────────────────
+                  SECTION 3: SCHEDULE SECTION
+                  ────────────────────────────────────────────────────────────── */}
+              <div className="bg-white rounded-3xl shadow-xs border border-slate-200/60 p-6 hover:shadow-sm transition-all duration-300">
+                <div className="flex items-center gap-3 mb-5 border-b border-slate-100 pb-3.5">
+                  <div className="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center">
+                    <Calendar className="w-4.5 h-4.5 text-indigo-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">Date Schedule & Time Slots</h3>
+                    <p className="text-[11px] text-slate-400">Browse actual scheduled calendar dates and active slot times</p>
+                  </div>
                 </div>
-                <h3 className="font-bold text-slate-800 text-sm">Weekly Availability</h3>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {DAYS.map(day => {
-                  const active = weeklyDays.includes(day);
-                  return (
-                    <button
-                      key={day}
-                      onClick={() => toggleDay(day)}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border transition-all ${active ? "bg-emerald-50 border-emerald-300 text-emerald-700" : "bg-slate-50 border-slate-200 text-slate-500 hover:border-emerald-200"}`}
-                    >
-                      <span className={`w-3 h-3 rounded-full flex-shrink-0 ${active ? "bg-emerald-400" : "bg-slate-300"}`} />
-                      {day.slice(0, 3)}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="text-[11px] text-slate-400 mt-3">{weeklyDays.length} of 7 days active</p>
-            </div>
 
-            {/* Blocked dates */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/70 p-5">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center">
-                  <Calendar className="w-4 h-4 text-amber-600" />
-                </div>
-                <h3 className="font-bold text-slate-800 text-sm">Blocked Dates</h3>
-              </div>
-              <div className="flex gap-2 mb-3">
-                <input
-                  type="date"
-                  value={newBlockDate}
-                  onChange={e => setNewBlockDate(e.target.value)}
-                  className="flex-1 text-sm border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300 bg-slate-50"
-                />
-                <button
-                  onClick={addBlockDate}
-                  className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-xl transition-all shadow-sm"
-                >
-                  Block
-                </button>
-              </div>
-              <div className="max-h-44 overflow-y-auto space-y-1.5 pr-1">
-                {blockedDates.length === 0 ? (
-                  <p className="text-xs text-slate-400 text-center py-4">No dates blocked</p>
+                {sortedDates.length === 0 ? (
+                  <div className="text-center py-10 bg-slate-50 rounded-2xl border border-slate-100">
+                    <p className="text-slate-400 text-xs italic">No upcoming schedule dates active.</p>
+                  </div>
                 ) : (
-                  blockedDates.map(d => (
-                    <div key={d} className="flex items-center justify-between bg-amber-50 border border-amber-100 px-3 py-2 rounded-xl">
-                      <span className="text-sm text-amber-800 font-medium">{d}</span>
-                      <button
-                        onClick={() => setBlockedDates(prev => prev.filter(x => x !== d))}
-                        className="text-rose-400 hover:text-rose-600 text-lg leading-none font-bold transition-colors"
-                      >
-                        ×
-                      </button>
+                  <div className="space-y-5">
+                    <div>
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
+                        Select a Scheduled Date ({sortedDates.length} found)
+                      </label>
+                      <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto pr-1">
+                        {sortedDates.map((dateStr) => {
+                          const active = activeScheduleDate === dateStr;
+                          return (
+                            <button
+                              key={dateStr}
+                              onClick={() => setActiveScheduleDate(dateStr)}
+                              className={`text-[11px] px-3.5 py-2 rounded-xl font-bold border transition-all cursor-pointer ${
+                                active
+                                  ? "bg-indigo-600 border-indigo-600 text-white shadow-sm"
+                                  : "bg-slate-50 border-slate-150 text-slate-600 hover:bg-slate-100"
+                              }`}
+                            >
+                              {formatDateISO(dateStr)}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  ))
+
+                    <div>
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
+                        Time Slot Buttons for {activeScheduleDate ? formatDateISO(activeScheduleDate) : ""}
+                      </label>
+                      {activeSlots.length === 0 ? (
+                        <p className="text-xs text-slate-400 italic">No slot timings available on this day.</p>
+                      ) : (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                          {activeSlots.map((s) => (
+                            <span
+                              key={s}
+                              className="text-xs bg-indigo-50/70 border border-indigo-100 text-indigo-700 px-3 py-2 rounded-xl font-bold text-center hover:bg-indigo-100 transition-colors shadow-2xs"
+                            >
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 )}
               </div>
+
             </div>
-          </div>
 
-          {/* ── RIGHT: Emergency Absence ──────────────────────────────── */}
-          <div>
-            <div className="bg-rose-50 border border-rose-200 rounded-2xl shadow-sm p-5 h-full">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-rose-100 rounded-lg flex items-center justify-center">
-                  <AlertTriangle className="w-4 h-4 text-rose-600" />
-                </div>
-                <h3 className="font-bold text-rose-800 text-sm">Emergency Absence</h3>
-              </div>
+            {/* ── RIGHT COLUMN: SETTINGS & CLOSURE SECTIONS ── */}
+            <div className="space-y-6">
 
-              <p className="text-xs text-rose-600 mb-5 leading-relaxed">
-                Triggers an immediate closure for the selected date and session.
-                All affected patient appointments are <strong>automatically rescheduled forward</strong> in booking order — patients will see a notification in their app.
-              </p>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold text-rose-700 mb-1.5">Closure Date</label>
-                  <input
-                    type="date"
-                    value={absenceDate}
-                    onChange={e => setAbsenceDate(e.target.value)}
-                    className="w-full text-sm border border-rose-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-rose-300 bg-white"
-                  />
+              {/* ──────────────────────────────────────────────────────────────
+                  SECTION 4: AVAILABILITY MANAGEMENT SECTION
+                  ────────────────────────────────────────────────────────────── */}
+              <div className="bg-white rounded-3xl shadow-xs border border-slate-200/60 p-6 hover:shadow-sm transition-all duration-300 space-y-5">
+                <div className="flex items-center gap-3 border-b border-slate-100 pb-3.5">
+                  <div className="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center">
+                    <Shield className="w-4.5 h-4.5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">Availability Settings</h3>
+                    <p className="text-[11px] text-slate-400">Control preferences, days & blocks</p>
+                  </div>
                 </div>
 
+                {/* Session Mode */}
                 <div>
-                  <label className="block text-xs font-bold text-rose-700 mb-1.5">Session to Close</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-2">Session Preference</label>
                   <select
-                    value={absenceSession}
-                    onChange={e => setAbsenceSession(e.target.value)}
-                    className="w-full text-sm border border-rose-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-rose-300 bg-white"
+                    value={sessionMode}
+                    onChange={(e) => setSessionMode(e.target.value)}
+                    className="w-full text-xs sm:text-sm border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-100 bg-slate-50 cursor-pointer"
                   >
                     <option value="Morning">Morning Only (9:30 AM – 1:30 PM)</option>
                     <option value="Afternoon">Afternoon Only (2:30 PM – 5:30 PM)</option>
@@ -400,45 +556,142 @@ export default function DoctorEditPage() {
                   </select>
                 </div>
 
-                <button
-                  onClick={handleAbsence}
-                  disabled={triggeringAbsence || !absenceDate}
-                  className="w-full py-3 bg-rose-600 hover:bg-rose-700 disabled:bg-rose-300 text-white font-bold rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2"
-                >
-                  {triggeringAbsence
-                    ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
-                    : <><AlertTriangle className="w-4 h-4" /> Trigger Emergency Closure</>
-                  }
-                </button>
-
-                {blockedDates.length > 0 && (
-                  <div className="mt-4 pt-4 border-t border-rose-200">
-                    <p className="text-xs font-bold text-rose-700 mb-2">Currently Blocked ({blockedDates.length})</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {blockedDates.slice(0, 6).map(d => (
-                        <span key={d} className="text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded-lg font-medium">{d}</span>
-                      ))}
-                      {blockedDates.length > 6 && <span className="text-[10px] text-rose-400">+{blockedDates.length - 6} more</span>}
-                    </div>
+                {/* Weekly Days */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-2">Weekly Availability</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {DAYS.map(day => {
+                      const active = weeklyDays.includes(day);
+                      return (
+                        <button
+                          key={day}
+                          onClick={() => toggleDay(day)}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                            active 
+                              ? "bg-emerald-50 border-emerald-300 text-emerald-700 shadow-2xs" 
+                              : "bg-slate-50 border-slate-200 text-slate-500 hover:border-emerald-200"
+                          }`}
+                        >
+                          <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${active ? "bg-emerald-400 animate-pulse" : "bg-slate-350"}`} />
+                          {day.slice(0, 3)}
+                        </button>
+                      );
+                    })}
                   </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+                </div>
 
-        {/* ─── Save footer ───────────────────────────────────────────────── */}
-        <div className="flex justify-end">
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2.5 px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold rounded-2xl shadow-lg transition-all text-sm"
-          >
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            {saving ? "Saving Changes…" : "Save Availability Settings"}
-          </button>
+                {/* Blocked Dates */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-2">Blocked Dates</label>
+                  <div className="flex gap-2 mb-3">
+                    <input
+                      type="date"
+                      value={newBlockDate}
+                      onChange={e => setNewBlockDate(e.target.value)}
+                      className="flex-1 text-xs border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-100 bg-slate-50 cursor-pointer"
+                    />
+                    <button
+                      onClick={addBlockDate}
+                      className="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl transition-all shadow-sm cursor-pointer"
+                    >
+                      Block
+                    </button>
+                  </div>
+
+                  <div className="max-h-36 overflow-y-auto space-y-1.5 pr-1 border border-slate-100 rounded-xl p-2 bg-slate-50/50">
+                    {blockedDates.length === 0 ? (
+                      <p className="text-[11px] text-slate-400 text-center py-4 italic">No blocked dates set.</p>
+                    ) : (
+                      blockedDates.map(d => (
+                        <div key={d} className="flex items-center justify-between bg-white border border-slate-100 px-3 py-1.5 rounded-lg shadow-2xs">
+                          <span className="text-xs text-slate-700 font-bold">{formatDateISO(d)}</span>
+                          <button
+                            onClick={() => removeBlockDate(d)}
+                            className="text-rose-500 hover:text-rose-700 text-sm font-black cursor-pointer leading-none px-1"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                {/* Save Settings Footer */}
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="w-full flex items-center justify-center gap-2 py-3.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all cursor-pointer"
+                >
+                  {saving ? <Loader2 className="w-4.5 h-4.5 animate-spin" /> : <Save className="w-4.5 h-4.5" />}
+                  Save Availability Settings
+                </button>
+              </div>
+
+              {/* ──────────────────────────────────────────────────────────────
+                  SECTION 5: EMERGENCY ABSENCE SECTION
+                  ────────────────────────────────────────────────────────────── */}
+              <div className="bg-rose-50/70 border border-rose-200/80 rounded-3xl p-6 hover:shadow-sm transition-all duration-300 space-y-5 shadow-xs">
+                <div className="flex items-center gap-3 border-b border-rose-200/50 pb-3.5">
+                  <div className="w-9 h-9 bg-rose-100 rounded-xl flex items-center justify-center">
+                    <AlertTriangle className="w-4.5 h-4.5 text-rose-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-rose-800 text-sm sm:text-base">Emergency Absence</h3>
+                    <p className="text-[11px] text-rose-600">Absence shifting tool</p>
+                  </div>
+                </div>
+
+                {/* Warning Card */}
+                <div className="bg-white border border-rose-200/70 p-4 rounded-2xl shadow-2xs">
+                  <p className="text-xs text-rose-700 leading-relaxed font-semibold">
+                    ⚠️ Triggering a closure blocks the date/session immediately. All affected patient bookings are <strong>rescheduled forward</strong> in sequential booking order.
+                  </p>
+                </div>
+
+                <div className="space-y-3.5">
+                  <div>
+                    <label className="block text-xs font-bold text-rose-700 mb-1.5">Closure Date</label>
+                    <input
+                      type="date"
+                      value={absenceDate}
+                      onChange={e => setAbsenceDate(e.target.value)}
+                      className="w-full text-xs sm:text-sm border border-rose-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-rose-200 bg-white cursor-pointer"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-rose-700 mb-1.5">Session to Close</label>
+                    <select
+                      value={absenceSession}
+                      onChange={e => setAbsenceSession(e.target.value)}
+                      className="w-full text-xs sm:text-sm border border-rose-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-rose-200 bg-white cursor-pointer"
+                    >
+                      <option value="Morning">Morning Only (9:30 AM – 1:30 PM)</option>
+                      <option value="Afternoon">Afternoon Only (2:30 PM – 5:30 PM)</option>
+                      <option value="Both">Both Sessions (Full Day)</option>
+                    </select>
+                  </div>
+
+                  <button
+                    onClick={handleAbsence}
+                    disabled={triggeringAbsence || !absenceDate}
+                    className="w-full py-3.5 bg-rose-600 hover:bg-rose-700 disabled:bg-rose-300 text-white font-extrabold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider"
+                  >
+                    {triggeringAbsence
+                      ? <><Loader2 className="w-4 h-4 animate-spin" /> Rescheduling Appointments...</>
+                      : <><AlertTriangle className="w-4.5 h-4.5" /> Trigger Emergency Closure</>
+                    }
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

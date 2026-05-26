@@ -28,8 +28,8 @@ doctorRouter.get("/:id/available-slots", getDoctorAvailableSlots);
 doctorRouter.post("/", upload.single("image"), createDoctor);
 
 // Admin-only route (uses Clerk token from admin panel – no doctor JWT needed)
-doctorRouter.put("/:id/admin-update", adminUpdateDoctor);
-doctorRouter.post("/:id/admin-absence", triggerDoctorAbsence);
+doctorRouter.put("/:id/admin-update", doctorAuth, adminUpdateDoctor);
+doctorRouter.post("/:id/admin-absence", doctorAuth, triggerDoctorAbsence);
 
 // Doctor-authenticated routes
 doctorRouter.put("/:id", doctorAuth, upload.single("image"), updateDoctor);
