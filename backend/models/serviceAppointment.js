@@ -133,7 +133,7 @@ const serviceAppointmentSchema = new mongoose.Schema({
 
     status: {
       type: String,
-     enum: ["Pending", "Paid", "Failed", "Refunded"],
+     enum: ["Pending", "Paid", "Failed", "Refunded", "Confirmed"],
         default: "Pending",
       },
 

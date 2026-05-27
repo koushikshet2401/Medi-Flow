@@ -849,7 +849,7 @@ function ServiceAppointmentsPage() {
                     <div className="mx-4 mt-2 px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-lg flex justify-between items-center text-xs">
                       <span className="text-gray-500 font-medium">Confirmation Status:</span>
                       {a.visitConfirmation === "Coming" ? (
-                        <span className="px-1.5 py-0.5 rounded font-semibold bg-emerald-100 text-emerald-800 text-[10px]">Coming</span>
+                        <span className="px-1.5 py-0.5 rounded font-semibold bg-emerald-100 text-emerald-800 text-[10px]">Patient confirmed they are coming.</span>
                       ) : a.visitConfirmation === "Not Coming" ? (
                         <span className="px-1.5 py-0.5 rounded font-semibold bg-rose-100 text-rose-800 text-[10px]">Not Coming</span>
                       ) : (
@@ -860,7 +860,7 @@ function ServiceAppointmentsPage() {
                     {/* Refund Request Alerts & Action Buttons */}
                     {a.refundStatus === "Pending" && (
                       <div className="mx-4 mt-2 mb-1 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-between text-xs text-amber-800 animate-pulse">
-                        <span className="font-semibold">⚠️ Refund requested — canceled by user</span>
+                        <span className="font-semibold">Refund Requested</span>
                         <button
                           onClick={() => handleApproveRefund(a.id)}
                           className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded font-bold shadow-sm transition-all duration-200 cursor-pointer disabled:opacity-50 text-[11px]"
