@@ -601,8 +601,13 @@ export async function getDoctorAvailableSlots(req, res) {
     const slotsMap = {};
     const today = new Date();
     
+    // Check if current time is past 7:30 PM (19:30)
+    const isPastClosingTime = today.getHours() > 19 || (today.getHours() === 19 && today.getMinutes() >= 30);
+    
     // Generate for the next 14 days
     for (let i = 0; i < 14; i++) {
+      if (i === 0 && isPastClosingTime) continue;
+
       const dt = new Date(today);
       dt.setDate(today.getDate() + i);
       const dateStr = dt.toISOString().split("T")[0];

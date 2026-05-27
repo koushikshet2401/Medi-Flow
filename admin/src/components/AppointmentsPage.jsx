@@ -458,16 +458,16 @@ const AppointmentsPage = () => {
                   </div>
 
                   {/* Visit Confirmation Display */}
-                  <div className="mx-4 mt-1 px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-lg flex justify-between items-center text-xs">
-                    <span className="text-gray-500 font-medium">Confirmation Status:</span>
-                    {a.visitConfirmation === "Coming" ? (
-                      <span className="px-1.5 py-0.5 rounded font-semibold bg-emerald-100 text-emerald-800 text-[10px]">Patient confirmed they are coming.</span>
-                    ) : a.visitConfirmation === "Not Coming" ? (
-                      <span className="px-1.5 py-0.5 rounded font-semibold bg-rose-100 text-rose-800 text-[10px]">Not Coming</span>
-                    ) : (
-                      <span className="px-1.5 py-0.5 rounded font-semibold bg-amber-100 text-amber-800 text-[10px]">Pending</span>
-                    )}
-                  </div>
+                  {a.visitConfirmation !== "Pending" && (
+                    <div className="mx-4 mt-1 px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-lg flex justify-between items-center text-xs">
+                      <span className="text-gray-500 font-medium">Confirmation Status:</span>
+                      {a.visitConfirmation === "Coming" ? (
+                        <span className="px-1.5 py-0.5 rounded font-semibold bg-emerald-100 text-emerald-800 text-[10px]">Patient confirmed they are coming.</span>
+                      ) : (
+                        <span className="px-1.5 py-0.5 rounded font-semibold bg-rose-100 text-rose-800 text-[10px]">Not Coming</span>
+                      )}
+                    </div>
+                  )}
 
                   {/* Refund Request Alerts & Action Buttons */}
                   {a.refundStatus === "Pending" && (

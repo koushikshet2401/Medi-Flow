@@ -55,7 +55,7 @@ export default function AvailabilityPanel({
     <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
       {/* Panel header */}
       <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2.5">
-        <ShieldCheck className="w-5 h-5 text-blue-500" />
+        <ShieldCheck className="w-5 h-5 text-emerald-500" />
         <h2 className="font-bold text-slate-800 text-base">
           Availability Settings
         </h2>
@@ -72,7 +72,7 @@ export default function AvailabilityPanel({
             <select
               value={sessionMode}
               onChange={(e) => setSessionMode(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer"
+              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 cursor-pointer"
             >
               <option value="Morning">Morning Only (9:30 AM – 1:30 PM)</option>
               <option value="Afternoon">
@@ -97,8 +97,8 @@ export default function AvailabilityPanel({
                     onClick={() => toggleDay(day)}
                     className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium border transition-all cursor-pointer ${
                       active
-                        ? "bg-blue-600 text-white border-blue-600 shadow-sm"
-                        : "bg-white text-slate-600 border-slate-200 hover:border-blue-300"
+                        ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
+                        : "bg-white text-slate-600 border-slate-200 hover:border-emerald-300"
                     }`}
                   >
                     <span
@@ -127,7 +127,7 @@ export default function AvailabilityPanel({
                 type="date"
                 value={newBlockDate}
                 onChange={(e) => setNewBlockDate(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-200"
               />
             </div>
             <button
@@ -174,7 +174,7 @@ export default function AvailabilityPanel({
           type="button"
           onClick={onSave}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold text-sm transition cursor-pointer shadow-sm"
+          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-semibold text-sm transition cursor-pointer shadow-sm"
         >
           {saving ? (
             <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

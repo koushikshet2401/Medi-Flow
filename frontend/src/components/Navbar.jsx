@@ -50,6 +50,7 @@ function Navbar() {
   // Notifications state
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [seenCount, setSeenCount] = useState(0);
   const bellRef = useRef(null);
   const { getToken } = useAuth();
 
@@ -344,16 +345,18 @@ function Navbar() {
                     <div ref={bellRef} className="relative flex items-center">
                       <button
                         onClick={() => {
-                          setShowNotifications(!showNotifications);
+                          const willShow = !showNotifications;
+                          setShowNotifications(willShow);
+                          if (willShow) setSeenCount(notifications.length);
                           loadNotifications();
                         }}
                         className="relative p-2 text-slate-600 hover:text-sky-600 hover:bg-sky-50 rounded-full transition-all duration-200 cursor-pointer"
                         title="Notifications"
                       >
                         <Bell className="w-5 h-5" />
-                        {notifications.length > 0 && (
+                        {notifications.length > seenCount && (
                           <span className="absolute top-1 right-1 w-4 h-4 bg-rose-600 text-white rounded-full flex items-center justify-center text-[9px] font-extrabold border border-white animate-pulse">
-                            {notifications.length}
+                            {notifications.length - seenCount}
                           </span>
                         )}
                       </button>
