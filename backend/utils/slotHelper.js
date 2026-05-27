@@ -402,6 +402,10 @@ export async function rescheduleForAbsence(entityId, entityType, absenceSettings
             booking.time = newSlotTime;
             booking.status = "Rescheduled";
             booking.bookingStatus = "Auto-Reassigned";
+            booking.rescheduledTo = {
+              date: searchDateStr,
+              time: newSlotTime,
+            };
             await booking.save();
 
             const msg = `Alert: Due to doctor unavailability, your appointment with Dr. ${booking.doctorName || "Doctor"} has been automatically rescheduled from ${oldDate} ${oldTime} to ${searchDateStr} ${newSlotTime}.`;
@@ -433,6 +437,12 @@ export async function rescheduleForAbsence(entityId, entityType, absenceSettings
             booking.ampm = parsed.ampm;
             booking.status = "Rescheduled";
             booking.bookingStatus = "Auto-Reassigned";
+            booking.rescheduledTo = {
+              date: searchDateStr,
+              hour: parsed.hour,
+              minute: parsed.minute,
+              ampm: parsed.ampm,
+            };
             await booking.save();
 
             const msg = `Alert: Due to service unavailability, your ${booking.serviceName || "Service"} appointment has been automatically rescheduled from ${oldDate} ${oldTime} to ${searchDateStr} ${newSlotTime}.`;
