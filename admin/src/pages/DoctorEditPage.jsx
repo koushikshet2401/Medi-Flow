@@ -248,7 +248,10 @@ export default function DoctorEditPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ date: absenceDate, session: absenceSession }),
+        body: JSON.stringify({
+          date: absenceDate,
+          type: absenceSession === "Both" ? "full-day" : absenceSession.toLowerCase(),
+        }),
       });
 
       console.log("[Auth-Debug] Received Response Status:", res.status);

@@ -213,7 +213,10 @@ export default function ServiceEditPage() {
       const res = await apiFetch(`/api/services/${id}/absence`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date: absenceDate, session: absenceSession }),
+        body: JSON.stringify({
+          date: absenceDate,
+          type: absenceSession === "Both" ? "full-day" : absenceSession.toLowerCase(),
+        }),
       }, getToken);
 
       if (!res) return;
