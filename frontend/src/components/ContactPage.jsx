@@ -118,7 +118,7 @@ function ContactPage() {
       form.department || "N/A"
     }\nService: ${form.service || "N/A"}\nMessage: ${form.message}`;
 
-    const url = `https://wa.me/8299431275?text=${encodeURIComponent(text)}`;
+    const url = `https://wa.me/9380439747?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank");
 
     setForm(initial);
