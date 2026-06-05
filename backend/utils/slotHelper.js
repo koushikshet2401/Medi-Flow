@@ -166,7 +166,24 @@ export async function getAvailableSlots(entityId, entityType, dateStr) {
   }
 
   const allSlots = getSlotsForSettings(dateStr, settings, entityType);
-  const availableSlots = allSlots.filter((s) => !bookedSlots.includes(s));
+  let availableSlots = allSlots.filter((s) => !bookedSlots.includes(s));
+
+  // --- NEW: Real-Time Slot Filtering for Today ---
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  const localTodayStr = `${yyyy}-${mm}-${dd}`;
+  const utcTodayStr = today.toISOString().split("T")[0];
+
+  // If the queried date is today, filter out slots that have already passed
+  if (dateStr === localTodayStr || dateStr === utcTodayStr) {
+    const currentMinutes = today.getHours() * 60 + today.getMinutes();
+    availableSlots = availableSlots.filter((s) => {
+      const slotMinutes = parseTimeToMinutes(s);
+      return slotMinutes > currentMinutes;
+    });
+  }
 
   return {
     allSlots,

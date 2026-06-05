@@ -72,40 +72,9 @@ function parseDateTime(dateStr, timeStr) {
 }
 
 // this function will help in getting the status
-function computeStatus(item) {
-  const now = new Date();
+function getDisplayStatus(item) {
   if (!item) return "Pending";
-
-  if (item.refundStatus === "Approved") return "Refunded";
-  if (item.status === "Canceled") return "Canceled";
-  if (item.status === "Rescheduled") {
-    if (
-      item.rescheduledTo &&
-      item.rescheduledTo.date &&
-      item.rescheduledTo.time
-    ) {
-      const dt = parseDateTime(
-        item.rescheduledTo.date,
-        item.rescheduledTo.time,
-      );
-      if (now >= dt) return "Completed";
-    }
-    return "Rescheduled";
-  }
-  if (item.status === "Completed") return "Completed";
-  if (item.status === "Confirmed") {
-    const dtConfirmed = parseDateTime(item.date, item.time);
-    if (now >= dtConfirmed) return "Completed";
-    return "Confirmed";
-  }
-  if (item.status === "Pending") {
-    const dtPending = parseDateTime(item.date, item.time);
-    if (now >= dtPending) return "Completed";
-    return "Pending";
-  }
-
-  const dt = parseDateTime(item.date, item.time);
-  if (now >= dt) return "Completed";
+  if (item.status) return item.status;
   return item.confirmed ? "Confirmed" : "Pending";
 }
 
@@ -512,7 +481,7 @@ const AppointmentPage = () => {
           raw: a,
         };
       })
-      .map((x) => ({ ...x, status: computeStatus(x) }));
+      .map((x) => ({ ...x, status: getDisplayStatus(x) }));
   }, [doctorAppts]);
 
   const serviceData = useMemo(() => {
@@ -564,7 +533,7 @@ const AppointmentPage = () => {
           raw: s,
         };
       })
-      .map((x) => ({ ...x, status: computeStatus(x) }));
+      .map((x) => ({ ...x, status: getDisplayStatus(x) }));
   }, [serviceAppts]);
 
 

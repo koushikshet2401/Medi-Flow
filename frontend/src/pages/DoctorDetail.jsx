@@ -43,6 +43,28 @@ function normalizePhoneTo10(phone) {
 const MORNING_SLOTS = ["09:30 AM", "10:30 AM", "11:30 AM", "12:30 PM"];
 const AFTERNOON_SLOTS = ["02:30 PM", "03:30 PM", "04:30 PM"];
 
+const SLOT_RANGES = {
+  "09:30 AM": "09:30 AM - 10:30 AM",
+  "10:30 AM": "10:30 AM - 11:30 AM",
+  "11:30 AM": "11:30 AM - 12:30 PM",
+  "12:30 PM": "12:30 PM - 01:30 PM",
+  "02:30 PM": "02:30 PM - 03:30 PM",
+  "03:30 PM": "03:30 PM - 04:30 PM",
+  "04:30 PM": "04:30 PM - 05:30 PM",
+};
+
+const formatAssignedDate = (dateStr) => {
+  if (!dateStr) return "";
+  const dt = new Date(dateStr + "T00:00:00");
+  if (isNaN(dt)) return dateStr;
+  const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  return `${weekdays[dt.getDay()]}, ${dt.getDate()} ${months[dt.getMonth()]} ${dt.getFullYear()}`;
+};
+
 function groupSlots(allSlots) {
   const morning = allSlots.filter((s) => MORNING_SLOTS.includes(s));
   const afternoon = allSlots.filter((s) => AFTERNOON_SLOTS.includes(s));
@@ -60,7 +82,7 @@ export default function DoctorDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState("");
   const [selectedSlot, setSelectedSlot] = useState("");
   const [isVisible, setIsVisible] = useState(false);
 
@@ -141,9 +163,18 @@ export default function DoctorDetail() {
               slots: slotsPayload.slots || {},
               blockedDates: slotsPayload.blockedDates || [],
             });
-            if (slotsPayload.dates && slotsPayload.dates.length > 0) {
-              setSelectedDate(new Date(slotsPayload.dates[0] + "T00:00:00"));
+            let foundDate = "";
+            let foundTime = "";
+            for (const d of slotsPayload.dates || []) {
+              const info = slotsPayload.slots[d];
+              if (info && info.availableSlots && info.availableSlots.length > 0) {
+                foundDate = d;
+                foundTime = info.availableSlots[0];
+                break;
+              }
             }
+            setSelectedDate(foundDate);
+            setSelectedSlot(foundTime);
           }
         }
       } catch (err) {
@@ -158,23 +189,7 @@ export default function DoctorDetail() {
     };
   }, [id]);
 
-  // Only show next 6 available dates
-  const next6 = useMemo(() => {
-    return slotsData.dates.slice(0, 6).map((d) => new Date(d + "T00:00:00"));
-  }, [slotsData]);
-
   const fee = Number(doctor?.fee ?? doctor?.fees ?? 0);
-
-  const slotsInfo = useMemo(() => {
-    if (!selectedDate) return { allSlots: [], availableSlots: [], bookedSlots: [] };
-    const key = selectedDate.toISOString().split("T")[0];
-    return slotsData.slots[key] || { allSlots: [], availableSlots: [], bookedSlots: [] };
-  }, [selectedDate, slotsData]);
-
-  const { morning: morningSlots, afternoon: afternoonSlots } = useMemo(
-    () => groupSlots(slotsInfo.allSlots || []),
-    [slotsInfo]
-  );
 
   // Mobile input handlers: only digits, max 10
   const handleMobileChange = (value) => {
@@ -242,8 +257,7 @@ export default function DoctorDetail() {
 
     setIsSubmitting(true);
 
-    const dateISO = selectedDate.toISOString().split("T")[0];
-
+    const dateISO = selectedDate;
     const doctorNameValue = doctor?.name || "";
     const specialityValue =
       doctor?.specialization ||
@@ -537,56 +551,7 @@ export default function DoctorDetail() {
               {/* LEFT COLUMN */}
               <div className={doctorDetailStyles.dateSection}>
 
-                {/* ── NEW: Compact horizontal date strip ───────────────── */}
-                <div>
-                  <h3 className={doctorDetailStyles.dateTitle}>
-                    <CalendarCheck className={doctorDetailStyles.dateTitleIcon} />{" "}
-                    Select Date
-                    <span className="ml-auto text-xs text-gray-400 font-normal normal-case">Next 6 days</span>
-                  </h3>
 
-                  {/* Date strip */}
-                  <div className="flex gap-2 overflow-x-auto pb-1 mt-3 scrollbar-hide">
-                    {next6.length === 0 ? (
-                      <p className="text-sm text-gray-400 py-2">No available dates found.</p>
-                    ) : (
-                      next6.map((date) => {
-                        const isSelected =
-                          selectedDate?.toDateString() === date.toDateString();
-                        const today = isToday(date);
-
-                        return (
-                          <button
-                            key={date.toISOString()}
-                            onClick={() => {
-                              setSelectedDate(date);
-                              setSelectedSlot("");
-                            }}
-                            className={`
-                              flex-shrink-0 flex flex-col items-center
-                              px-3.5 py-2.5 rounded-xl border-2 cursor-pointer
-                              min-w-[60px] transition-all duration-200
-                              ${isSelected
-                                ? "bg-[#185FA5] border-[#185FA5] text-white shadow-lg shadow-[#185FA5]/20"
-                                : "bg-white border-[#B5D4F4] text-gray-600 hover:border-[#185FA5] hover:bg-[#E6F1FB]"
-                              }
-                            `}
-                          >
-                            <span className={`text-[9px] font-bold uppercase tracking-widest ${isSelected ? "text-blue-200" : "text-gray-400"}`}>
-                              {today ? "Today" : date.toLocaleDateString("en-US", { weekday: "short" })}
-                            </span>
-                            <span className={`text-lg font-bold leading-tight ${isSelected ? "text-white" : "text-gray-800"}`}>
-                              {date.getDate()}
-                            </span>
-                            <span className={`text-[9px] font-medium ${isSelected ? "text-blue-200" : "text-gray-400"}`}>
-                              {date.toLocaleDateString("en-US", { month: "short" })}
-                            </span>
-                          </button>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
 
                 {/* PATIENT FORM */}
                 <div className={doctorDetailStyles.patientForm}>
@@ -651,99 +616,43 @@ export default function DoctorDetail() {
                     />
                   </div>
                 </div>
+                {/* ASSIGNED SLOT */}
+                {selectedDate && selectedSlot ? (
+                  <div className="bg-[#E6F1FB] border border-[#85B7EB] rounded-2xl p-6 shadow-sm flex flex-col gap-4 mt-6">
+                    <h3 className="text-lg font-bold text-[#042C53] flex items-center gap-2">
+                      <Clock className="w-5 h-5 text-[#185FA5]" />
+                      Assigned Booking Slot
+                    </h3>
+                    <p className="text-sm text-[#0C447C] leading-relaxed">
+                      To maintain a fair, queue-based booking system, we automatically allocate the next available slot.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                      <div className="bg-white rounded-xl p-4 border border-[#B5D4F4]">
+                        <div className="text-xs text-[#185FA5] font-semibold uppercase tracking-wider">Date</div>
+                        <div className="text-base font-bold text-[#042C53] mt-1">
+                          {formatAssignedDate(selectedDate)}
+                        </div>
+                      </div>
+                      <div className="bg-white rounded-xl p-4 border border-[#B5D4F4]">
+                        <div className="text-xs text-[#185FA5] font-semibold uppercase tracking-wider">Time Interval</div>
+                        <div className="text-base font-bold text-[#042C53] mt-1">
+                          {SLOT_RANGES[selectedSlot] || selectedSlot}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-rose-50 border border-rose-200 rounded-2xl p-6 shadow-sm text-center mt-6">
+                    <h3 className="text-lg font-bold text-rose-800">No Slots Available</h3>
+                    <p className="text-sm text-rose-600 mt-2">
+                      There are no available slots in the upcoming 14 days. Please contact the administrator or check back later.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* RIGHT COLUMN */}
               <div className={doctorDetailStyles.timeSlotsSection}>
-                {/* ── NEW: Grouped time slots ──────────────────────────── */}
-                <h3 className={doctorDetailStyles.timeSlotsTitle}>
-                  <Clock className={doctorDetailStyles.timeSlotsIcon} />{" "}
-                  Available Time Slots
-                </h3>
-
-                {slotsInfo.allSlots.length === 0 ? (
-                  <p className={doctorDetailStyles.noSlotsMessage}>
-                    No time slots for this date.
-                  </p>
-                ) : (
-                  <div className="space-y-4">
-                    {/* Morning group */}
-                    {morningSlots.length > 0 && (
-                      <div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <Sun size={13} className="text-amber-500" />
-                          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Morning</span>
-                          <div className="flex-1 h-px bg-[#E6F1FB]" />
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {morningSlots.map((slot) => {
-                            const isBooked = slotsInfo.bookedSlots?.includes(slot);
-                            const isSelected = selectedSlot === slot;
-                            return (
-                              <button
-                                key={slot}
-                                disabled={isBooked}
-                                onClick={() => !isBooked && setSelectedSlot(slot)}
-                                className={`
-                                  flex items-center gap-1.5 px-3 py-1.5 rounded-xl
-                                  text-sm font-semibold border-2 transition-all duration-200
-                                  ${isSelected
-                                    ? "bg-[#185FA5] border-[#185FA5] text-white shadow-md"
-                                    : isBooked
-                                      ? "bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed line-through"
-                                      : "bg-white border-[#B5D4F4] text-gray-600 hover:border-[#185FA5] hover:bg-[#E6F1FB] hover:text-[#185FA5] cursor-pointer"
-                                  }
-                                `}
-                              >
-                                <Clock size={11} className={isSelected ? "text-blue-200" : "text-[#378ADD]"} />
-                                {slot}
-                                {isBooked && <span className="text-[10px] font-normal ml-0.5">(Full)</span>}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Afternoon group */}
-                    {afternoonSlots.length > 0 && (
-                      <div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <Sunset size={13} className="text-orange-400" />
-                          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Afternoon</span>
-                          <div className="flex-1 h-px bg-[#E6F1FB]" />
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {afternoonSlots.map((slot) => {
-                            const isBooked = slotsInfo.bookedSlots?.includes(slot);
-                            const isSelected = selectedSlot === slot;
-                            return (
-                              <button
-                                key={slot}
-                                disabled={isBooked}
-                                onClick={() => !isBooked && setSelectedSlot(slot)}
-                                className={`
-                                  flex items-center gap-1.5 px-3 py-1.5 rounded-xl
-                                  text-sm font-semibold border-2 transition-all duration-200
-                                  ${isSelected
-                                    ? "bg-[#185FA5] border-[#185FA5] text-white shadow-md"
-                                    : isBooked
-                                      ? "bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed line-through"
-                                      : "bg-white border-[#B5D4F4] text-gray-600 hover:border-[#185FA5] hover:bg-[#E6F1FB] hover:text-[#185FA5] cursor-pointer"
-                                  }
-                                `}
-                              >
-                                <Clock size={11} className={isSelected ? "text-blue-200" : "text-[#378ADD]"} />
-                                {slot}
-                                {isBooked && <span className="text-[10px] font-normal ml-0.5">(Full)</span>}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
 
                 {/* SUMMARY */}
                 <div className={doctorDetailStyles.summaryContainer}>
@@ -772,12 +681,7 @@ export default function DoctorDetail() {
                       </span>
                       <span className={doctorDetailStyles.summaryValue}>
                         {selectedDate
-                          ? selectedDate.toLocaleDateString("en-US", {
-                              weekday: "long",
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })
+                          ? formatAssignedDate(selectedDate)
                           : "Not selected"}
                       </span>
                     </div>
